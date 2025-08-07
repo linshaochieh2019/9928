@@ -8,8 +8,8 @@
  */
 
 const {setGlobalOptions} = require("firebase-functions/v2");
-const {onRequest} = require("firebase-functions/https");
-const logger = require("firebase-functions/logger");
+const {onRequest} = require("firebase-functions/v2/https");
+// const logger = require("firebase-functions/logger");
 
 // For cost control, you can set the maximum number of containers that can be
 // running at the same time. This helps mitigate the impact of unexpected
@@ -21,7 +21,7 @@ const logger = require("firebase-functions/logger");
 // functions should each use functions.runWith({ maxInstances: 10 }) instead.
 // In the v1 API, each function can only serve one request per container, so
 // this will be the maximum concurrent request count.
-setGlobalOptions({ maxInstances: 10 });
+setGlobalOptions({maxInstances: 10});
 
 // Create and deploy your first functions
 // https://firebase.google.com/docs/functions/get-started
@@ -34,17 +34,46 @@ setGlobalOptions({ maxInstances: 10 });
 
 // Main code
 
+
 const express = require("express");
 const cors = require("cors");
 
 const app = express();
-app.use(cors());
+// app.use(cors());
+app.use(cors({
+  origin: true,             // allow all origins (or specify domain here)
+  methods: ["GET", "POST", "OPTIONS"],
+  credentials: true
+}));
 app.use(express.json());
-
-// Your test endpoint
+ 
+// === API Routes ===
+// Define routes directly on the app. This makes the code cleaner and
+// independent of the "/api" prefix used in firebase.json.
+ 
+// Test endpoint: Handles GET /ping
 app.get("/ping", (req, res) => {
-  res.json({ message: "pong from Firebase Function" });
+  res.json({message: "pong from Firebase Function"});
 });
-
-// Export the Express app as a Firebase Function
-exports.api = onRequest({ region: "asia-east1" }, app);
+ 
+// Example POST endpoint: Handles POST /hello
+app.post("/hello", (req, res) => {
+  const name = req.body.name || "guest";
+  res.json({message: `Hello, ${name}!`});
+});
+ 
+// A catch-all 404 handler for any routes that don't exist.
+app.use((req, res) => {
+  res.status(404).json({error: "Route not found"});
+});
+ 
+// === Export function ===
+// This is the magic. It intercepts the request and removes the "/api" prefix
+// if it exists. This makes the Express app's routing consistent whether
+// it's called from Hosting or directly.
+exports.api = onRequest((req, res) => {
+  if (req.path.startsWith("/api")) {
+    req.url = req.url.replace("/api", ""); // or req.url.substring(4)
+  }
+  return app(req, res);
+});
