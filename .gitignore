@@ -1,0 +1,21 @@
+# .gitignore
+
+# Node (server)
+node_modules/
+.env
+dist/
+coverage/
+logs/
+*.log
+
+# Angular (client)
+client/node_modules/
+client/dist/
+client/.angular/cache/
+
+# OS junk
+.DS_Store
+Thumbs.db
+
+# VS Code settings
+.vscode/
