@@ -1,7 +1,8 @@
 {
   "/api": {
-    "target": "http://localhost:5000",
+    "target": "http://localhost:5001/project-2900855426560950076/asia-east1",
     "secure": false,
-    "changeOrigin": true
+    "changeOrigin": true,
+    "logLevel": "debug"
   }
 }

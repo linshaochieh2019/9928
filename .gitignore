@@ -1,21 +1,27 @@
-# .gitignore
-
-# Node (server)
+# Dependencies
 node_modules/
-.env
+
+# Build output
 dist/
 coverage/
-logs/
-*.log
 
-# Angular (client)
-client/node_modules/
+# Angular specific
 client/dist/
 client/.angular/cache/
 
-# OS junk
+# Logs
+*.log
+npm-debug.log*
+
+# Environment variables
+.env
+
+# Firebase - .firebaserc is often committed to share project aliases
+.firebase/
+firebase-debug.log
+
+# IDE / Editor specific
 .DS_Store
 Thumbs.db
-
-# VS Code settings
 .vscode/
+.idea/

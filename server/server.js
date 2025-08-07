@@ -11,11 +11,8 @@ app.get('/api/ping', (req, res) => {
   res.json({ message: 'Connection successful!' });
 });
 
-// app.use('/api/teachers', require('./routes/teachers'));
-// app.use('/api/employers', require('./routes/employers'));
+const PORT = process.env.PORT || 5000;
 
-PORT = process.env.PORT || 5000;
-
-app.listen(process.env.PORT || PORT, () => {
-  console.log('Server running on port ' + PORT);
+app.listen(PORT, () => {
+  console.log(`Server running on port ${PORT}`);
 });
