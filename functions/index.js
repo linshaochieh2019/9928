@@ -9,7 +9,7 @@
 
 const {setGlobalOptions} = require("firebase-functions/v2");
 const {onRequest} = require("firebase-functions/v2/https");
-// const logger = require("firebase-functions/logger");
+const {logger} = require("firebase-functions/logger");
 
 // For cost control, you can set the maximum number of containers that can be
 // running at the same time. This helps mitigate the impact of unexpected
@@ -58,9 +58,14 @@ app.get("/ping", (req, res) => {
 });
  
 // Test endpoint: MongoDB connection
-app.get("/mongodb", async (req, res) => {
-  await connectToDatabase(); // using mongoose + uri from config
-  res.json({message: "Connected to MongoDB"});
+app.get("/mongodb", async (req, res, next) => {
+  try {
+    await connectToDatabase(); // using mongoose + uri from config
+    res.json({message: "Connected to MongoDB"});
+  } catch (error) {
+    // Pass errors from async routes to the global error handler
+    next(error);
+  }
 });
 
 // Example POST endpoint: Handles POST /hello
@@ -74,6 +79,16 @@ app.use((req, res) => {
   res.status(404).json({error: "Route not found"});
 });
 
+// Global error handler. This must be the last `app.use()` and must have 4 arguments.
+app.use((err, req, res, next) => {
+  logger.error("An unhandled error occurred:", err);
+
+  // Respond with a generic 500 error
+  res.status(500).json({
+    error: "Internal Server Error",
+    message: "An unexpected error occurred on the server.",
+  });
+});
 
 
  
