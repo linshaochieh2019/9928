@@ -31,10 +31,11 @@ setGlobalOptions({maxInstances: 10});
 //   response.send("Hello from Firebase!");
 // });
 
+// Mongo DB
+const connectToDatabase = require('./mongo');
+
 
 // Main code
-
-
 const express = require("express");
 const cors = require("cors");
 
@@ -56,6 +57,12 @@ app.get("/ping", (req, res) => {
   res.json({message: "pong from Firebase Function"});
 });
  
+// Test endpoint: MongoDB connection
+app.get("/mongodb", async (req, res) => {
+  await connectToDatabase(); // using mongoose + uri from config
+  res.json({message: "Connected to MongoDB"});
+});
+
 // Example POST endpoint: Handles POST /hello
 app.post("/hello", (req, res) => {
   const name = req.body.name || "guest";
@@ -66,6 +73,9 @@ app.post("/hello", (req, res) => {
 app.use((req, res) => {
   res.status(404).json({error: "Route not found"});
 });
+
+
+
  
 // === Export function ===
 // This is the magic. It intercepts the request and removes the "/api" prefix

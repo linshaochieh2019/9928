@@ -1,2 +1,9 @@
 node_modules/
 *.local
+
+# Firebase Emulator runtime config. Contains secrets!
+.runtimeconfig.json
+
+# Firebase debug logs
+firebase-debug.log
+firebase-debug.*.log
