@@ -1,10 +1,14 @@
 import { Component, signal } from '@angular/core';
-import { RouterOutlet } from '@angular/router';
+
+// Routing
+import { RouterOutlet, RouterLink, RouterLinkActive } from '@angular/router';
+
+// Components and Services
 import { PingService } from './services/ping';
 
 @Component({
   selector: 'app-root',
-  imports: [RouterOutlet],
+  imports: [RouterOutlet, RouterLink, RouterLinkActive],
   templateUrl: './app.html',
   styleUrl: './app.scss'
 })
