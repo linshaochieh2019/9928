@@ -14,6 +14,16 @@ const MONGODB_URI = defineSecret("MONGODB_URI");
 // Mongo DB
 const { connectToDatabase } = require("./mongo");
 
+// Lazy connect once on cold start
+let dbInitPromise;
+function initDB() {
+  if (!dbInitPromise) {
+    const uri = MONGODB_URI.value() || process.env.MONGODB_URI;
+    dbInitPromise = connectToDatabase(uri);
+  }
+  return dbInitPromise;
+}
+
 // Middleware
 const express = require("express");
 const cors = require("cors");
@@ -63,11 +73,26 @@ app.use((err, req, res, next) => {
   res.status(500).json({ error: "Internal Server Error", message: "An unexpected error occurred on the server." });
 });
 
+// // Export function with secret wired in
+// exports.api = onRequest(
+//   { secrets: [MONGODB_URI] }, // <-- makes secret available in prod
+//   (req, res) => {
+//     if (req.path.startsWith("/api")) req.url = req.url.replace("/api", "");
+//     return app(req, res);
+//   }
+// );
+
 // Export function with secret wired in
 exports.api = onRequest(
-  { secrets: [MONGODB_URI] }, // <-- makes secret available in prod
-  (req, res) => {
-    if (req.path.startsWith("/api")) req.url = req.url.replace("/api", "");
-    return app(req, res);
+  { secrets: [MONGODB_URI] },
+  async (req, res) => {
+    try {
+      await initDB(); 
+      if (req.path.startsWith("/api")) req.url = req.url.replace("/api", "");
+      return app(req, res);
+    } catch (err) {
+      logger.error("DB init failed", err);
+      res.status(500).json({ error: "Database connection failed" });
+    }
   }
 );
