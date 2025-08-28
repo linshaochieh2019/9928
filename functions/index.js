@@ -10,6 +10,7 @@ require("dotenv").config();
 
 // ---- Secrets (v2) ----
 const MONGODB_URI = defineSecret("MONGODB_URI");
+const JWT_SECRET = defineSecret("JWT_SECRET");
 
 // Mongo DB
 const { connectToDatabase } = require("./mongo");
@@ -73,21 +74,12 @@ app.use((err, req, res, next) => {
   res.status(500).json({ error: "Internal Server Error", message: "An unexpected error occurred on the server." });
 });
 
-// // Export function with secret wired in
-// exports.api = onRequest(
-//   { secrets: [MONGODB_URI] }, // <-- makes secret available in prod
-//   (req, res) => {
-//     if (req.path.startsWith("/api")) req.url = req.url.replace("/api", "");
-//     return app(req, res);
-//   }
-// );
-
 // Export function with secret wired in
 exports.api = onRequest(
-  { secrets: [MONGODB_URI] },
+  { secrets: [MONGODB_URI, JWT_SECRET] },
   async (req, res) => {
     try {
-      await initDB(); 
+      await initDB(); // <-- ensure DB is ready before handling any route
       if (req.path.startsWith("/api")) req.url = req.url.replace("/api", "");
       return app(req, res);
     } catch (err) {
