@@ -23,7 +23,7 @@ router.post("/profile", authenticate, async (req, res) => {
 // Get own profile
 router.get("/profile", authenticate, async (req, res) => {
   try {
-    const teacher = await Teacher.findOne({ user: req.user.id });
+    const teacher = await Teacher.findOne({ user: req.user.id }).populate("user", "name email role");
     if (!teacher) return res.status(404).json({ error: "Profile not found" });
     res.json(teacher);
   } catch (err) {
