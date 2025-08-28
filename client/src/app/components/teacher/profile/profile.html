@@ -1,0 +1,49 @@
+<h2>My Teacher Profile</h2>
+<p><strong>Name:</strong> {{ teacher.user?.name }}</p>
+
+<form (ngSubmit)="saveProfile()" #profileForm="ngForm">
+
+  <label>
+    Bio:
+    <textarea [(ngModel)]="teacher.bio" name="bio"></textarea>
+  </label>
+  <br />
+
+  <label>
+    Subjects (comma separated):
+    <input
+      [(ngModel)]="teacher.subjects"
+      name="subjects"
+      placeholder="English, Math"
+    />
+  </label>
+  <br />
+
+  <label>
+    Experience (years):
+    <input
+      [(ngModel)]="teacher.experience"
+      name="experience"
+      type="number"
+    />
+  </label>
+  <br />
+
+  <label>
+    Hourly Rate:
+    <input
+      [(ngModel)]="teacher.hourlyRate"
+      name="hourlyRate"
+      type="number"
+    />
+  </label>
+  <br />
+
+  <label>
+    Availability:
+    <input [(ngModel)]="teacher.availability" name="availability" />
+  </label>
+  <br />
+
+  <button type="submit">Save Profile</button>
+</form>
