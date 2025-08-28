@@ -1,61 +1,44 @@
 const express = require("express");
 const Teacher = require("../models/Teacher");
-
+const { authenticate } = require("../middleware/auth");
 const router = express.Router();
 
-// CREATE
-router.post("/", async (req, res, next) => {
+// Create or Update profile
+router.post("/profile", authenticate, async (req, res) => {
   try {
-    const teacher = new Teacher(req.body);
+    const existing = await Teacher.findOne({ user: req.user.id });
+    if (existing) {
+      Object.assign(existing, req.body);
+      await existing.save();
+      return res.json(existing);
+    }
+    const teacher = new Teacher({ ...req.body, user: req.user.id });
     await teacher.save();
-    res.status(201).json(teacher);
+    res.json(teacher);
   } catch (err) {
-    next(err);
+    res.status(500).json({ error: err.message });
   }
 });
 
-// READ all
-router.get("/", async (req, res, next) => {
+// Get own profile
+router.get("/profile", authenticate, async (req, res) => {
   try {
-    const teachers = await Teacher.find();
-    res.json(teachers);
+    const teacher = await Teacher.findOne({ user: req.user.id });
+    if (!teacher) return res.status(404).json({ error: "Profile not found" });
+    res.json(teacher);
   } catch (err) {
-    next(err);
+    res.status(500).json({ error: err.message });
   }
 });
 
-// READ one
-router.get("/:id", async (req, res, next) => {
+// Public: Get teacher by id
+router.get("/:id", async (req, res) => {
   try {
-    const teacher = await Teacher.findById(req.params.id);
+    const teacher = await Teacher.findById(req.params.id).populate("user", "email");
     if (!teacher) return res.status(404).json({ error: "Not found" });
     res.json(teacher);
   } catch (err) {
-    next(err);
-  }
-});
-
-// UPDATE
-router.put("/:id", async (req, res, next) => {
-  try {
-    const teacher = await Teacher.findByIdAndUpdate(req.params.id, req.body, {
-      new: true,
-    });
-    if (!teacher) return res.status(404).json({ error: "Not found" });
-    res.json(teacher);
-  } catch (err) {
-    next(err);
-  }
-});
-
-// DELETE
-router.delete("/:id", async (req, res, next) => {
-  try {
-    const teacher = await Teacher.findByIdAndDelete(req.params.id);
-    if (!teacher) return res.status(404).json({ error: "Not found" });
-    res.json({ message: "Deleted successfully" });
-  } catch (err) {
-    next(err);
+    res.status(500).json({ error: err.message });
   }
 });
 
