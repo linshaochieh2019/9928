@@ -1,0 +1,19 @@
+<!-- client/src/app/components/register/register.component.html -->
+<div class="auth-container">
+  <h2>Sign Up</h2>
+  <form (ngSubmit)="onRegister()">
+    <input type="text" [(ngModel)]="name" name="name" placeholder="Full Name" required />
+    <input type="email" [(ngModel)]="email" name="email" placeholder="Email" required />
+    <input type="password" [(ngModel)]="password" name="password" placeholder="Password" required />
+
+    <label for="role">Role</label>
+    <select [(ngModel)]="role" name="role">
+      <option value="teacher">Teacher</option>
+      <option value="employer">Employer</option>
+    </select>
+
+    <button type="submit">Register</button>
+  </form>
+  <p *ngIf="error" class="error">{{ error }}</p>
+  <p>Already have an account? <a routerLink="/login">Login</a></p>
+</div>
