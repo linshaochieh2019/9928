@@ -3,6 +3,11 @@ const express = require("express");
 const jwt = require("jsonwebtoken");
 const User = require("../models/User");
 
+// Secrets
+const { defineSecret } = require("firebase-functions/params");
+const JWT_SECRET = defineSecret("JWT_SECRET");
+
+// Router
 const router = express.Router();
 
 // Register
@@ -25,9 +30,14 @@ router.post("/login", async (req, res) => {
     return res.status(401).json({ error: "Invalid credentials" });
   }
 
+  
+  // ✅ Hybrid secret: Firebase Secrets Manager in prod, .env.local in dev
+  const secret =
+    (JWT_SECRET.value && JWT_SECRET.value()) || process.env.JWT_SECRET;
+
   const token = jwt.sign(
     { id: user._id, role: user.role },
-    process.env.JWT_SECRET,
+    secret,
     { expiresIn: "7d" }
   );
 
