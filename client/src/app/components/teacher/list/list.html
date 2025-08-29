@@ -1,40 +1,18 @@
 <h2 class="text-xl font-bold mb-4">Teachers</h2>
 
 @if (loading) {
-  <p>Loading...</p>
+<p>Loading...</p>
 } @else {
-  <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
-    @for (teacher of teachers; track teacher._id) {
-      <div class="border rounded-lg p-4 shadow hover:shadow-lg transition">
-        <h3 class="font-semibold text-lg">
-          {{ teacher.user?.name || "Unnamed Teacher" }}
-        </h3>
-
-        <p class="text-gray-600">
-          {{ teacher.subjects?.join(', ') || 'No subjects specified' }}
-        </p>
-
-        <p class="text-sm text-gray-500 line-clamp-2">
-          {{ teacher.bio || 'No bio available' }}
-        </p>
-
-        <p class="mt-2 text-sm">
-          <strong>Experience:</strong>
-          {{ teacher.experience ? teacher.experience + ' yrs' : 'N/A' }}
-        </p>
-
-        <p class="text-sm">
-          <strong>Rate:</strong>
-          {{ teacher.hourlyRate ? ('$' + teacher.hourlyRate + '/hr') : 'N/A' }}
-        </p>
-
-        <a
-          class="text-blue-600 hover:underline block mt-2"
-          [routerLink]="['/teachers', teacher._id]"
-        >
-          View Profile →
-        </a>
-      </div>
-    }
-  </div>
+@for (t of teachers; track t._id) {
+<div class="teacher-card">
+  <img [src]="t.profilePhoto || 'assets/default-avatar.png'" alt="Profile" />
+  <h3>{{ t.displayName || t.user?.name }}</h3>
+  <p>{{ t.bio }}</p>
+  <p><strong>Nationality:</strong> {{ t.nationality }}</p>
+  <p><strong>Experience:</strong> {{ t.yearsExperience }} years</p>
+  <button [routerLink]="['/teachers', t._id]">View Profile</button>
+</div>
+} @empty {
+<p>No teachers available right now.</p>
+}
 }
