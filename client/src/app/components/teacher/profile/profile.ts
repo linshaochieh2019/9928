@@ -1,41 +1,39 @@
 import { Component, OnInit } from '@angular/core';
-import { FormsModule } from '@angular/forms';
+import { ActivatedRoute } from '@angular/router';
 import { CommonModule } from '@angular/common';
-
-import { TeacherService } from '../../../services/teacher.service'; 
-import { Teacher } from '../../../models/teacher.model'
-
+import { TeacherService } from '../../../services/teacher.service';
+import { Teacher } from '../../../models/teacher.model';
 
 @Component({
   selector: 'app-teacher-profile',
-  templateUrl: './profile.html',
   standalone: true,
-  imports: [CommonModule, FormsModule]
+  imports: [CommonModule],
+  templateUrl: './profile.html',
 })
-export class ProfileComponent implements OnInit {
-  teacher: Teacher = {};
+export class TeacherProfileComponent implements OnInit {
+  teacher?: Teacher;
+  loading = true;
 
-  constructor(private teacherService: TeacherService) {}
+  constructor(
+    private route: ActivatedRoute,
+    private teacherService: TeacherService
+  ) {}
 
   ngOnInit(): void {
-    this.teacherService.getProfile().subscribe({
-      next: (data) => (this.teacher = data),
-      error: () => {
-        this.teacher = {}; // if no profile yet
-      },
-    });
-  }
-
-  saveProfile() {
-    this.teacherService.saveProfile(this.teacher).subscribe({
-      next: (data) => {
-        this.teacher = data;
-        alert('Profile saved!');
-      },
-      error: (err) => {
-        console.error(err);
-        alert('Error saving profile');
-      },
-    });
+    const id = this.route.snapshot.paramMap.get('id');
+    if (id) {
+      this.teacherService.getTeacherById(id).subscribe({
+        next: (data) => {
+          this.teacher = data;
+          this.loading = false;
+        },
+        error: (err) => {
+          console.error('Failed to load teacher profile', err);
+          this.loading = false;
+        },
+      });
+    } else {
+      this.loading = false;
+    }
   }
 }

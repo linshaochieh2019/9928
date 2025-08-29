@@ -2,10 +2,12 @@
 const express = require("express");
 const jwt = require("jsonwebtoken");
 const User = require("../models/User");
+const Teacher = require("../models/Teacher");
 
 // Secrets
 const { defineSecret } = require("firebase-functions/params");
 const JWT_SECRET = defineSecret("JWT_SECRET");
+const { authenticate} = require("../middleware/auth")
 
 // Router
 const router = express.Router();
@@ -29,7 +31,6 @@ router.post("/login", async (req, res) => {
   if (!user || !(await user.comparePassword(password))) {
     return res.status(401).json({ error: "Invalid credentials" });
   }
-
   
   // ✅ Hybrid secret: Firebase Secrets Manager in prod, .env.local in dev
   const secret =
@@ -43,5 +44,33 @@ router.post("/login", async (req, res) => {
 
   res.json({ token, role: user.role, name: user.name });
 });
+
+
+// Get logged-in user info
+router.get("/me", authenticate, async (req, res) => {
+  try {
+    const user = await User.findById(req.user.id).select("name email role");
+    if (!user) return res.status(404).json({ error: "User not found" });
+
+    // if teacher, attach teacherId
+    let teacherId = null;
+    if (user.role === "teacher") {
+      const teacher = await Teacher.findOne({ user: user._id }).select("_id");
+      teacherId = teacher?._id || null;
+    }
+
+    res.json({
+      id: user._id,
+      name: user.name,
+      email: user.email,
+      role: user.role,
+      teacherId,
+    });
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+});
+
+
 
 module.exports = router;
