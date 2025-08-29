@@ -39,10 +39,12 @@ const { authenticate, authorize } = require("./middleware/auth");
 
 // === API Routes ===
 const teacherRoutes = require("./routes/teacherRoutes");
+const employerRoutes = require("./routes/employers");
 
 // Mount teacher CRUD under /teachers
 app.use("/auth", authRoutes);
 app.use("/teachers", teacherRoutes);
+app.use("/employers", employerRoutes);
 
 // Routes
 app.get("/ping", (req, res) => {
