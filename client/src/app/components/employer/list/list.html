@@ -1,25 +1,26 @@
 <h2>Employers</h2>
 
 @if (loading) {
-  <div>Loading...</div>
+  <div>Loading employers...</div>
 } @else if (error) {
-  <div class="error">{{ error }}</div>
+  <div>{{ error }}</div>
 } @else {
   @if (employers.length > 0) {
     <ul>
-      @for (emp of employers; track emp._id) {
-        <li class="employer-card">
-          <h3>{{ emp.companyName }}</h3>
-          <p><strong>Industry:</strong> {{ emp.industry || 'N/A' }}</p>
-          <p><strong>Location:</strong> {{ emp.location || 'N/A' }}</p>
-          <p><strong>Size:</strong> {{ emp.size || '-' }}</p>
-          <p><strong>Description:</strong> {{ emp.companyDescription }}</p>
-          <p><strong>Contact:</strong> {{ emp.user?.name }} ({{ emp.contactPhone }})</p>
-          @if (emp.companyWebsite) {
-            <p>
-              <a [href]="emp.companyWebsite" target="_blank">Visit Website</a>
-            </p>
+      @for (employer of employers; track employer._id) {
+        <li>
+          <a [routerLink]="['/employers', employer._id]">
+            @if (employer.logoUrl) {
+              <img [src]="employer.logoUrl" alt="Logo" width="40" height="40" />
+            }
+            <strong>{{ employer.name }}</strong>
+          </a>
+          @if (employer.contact.verified) {
+            ✔ Verified
           }
+          <div>
+            <small>{{ employer.type }} | {{ employer.location.mainAddress }}</small>
+          </div>
         </li>
       }
     </ul>

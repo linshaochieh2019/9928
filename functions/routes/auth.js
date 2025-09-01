@@ -3,6 +3,7 @@ const express = require("express");
 const jwt = require("jsonwebtoken");
 const User = require("../models/User");
 const Teacher = require("../models/Teacher");
+const Employer = require("../models/Employer");
 
 // Secrets
 const { defineSecret } = require("firebase-functions/params");
@@ -54,9 +55,14 @@ router.get("/me", authenticate, async (req, res) => {
 
     // if teacher, attach teacherId
     let teacherId = null;
+    let employerId = null;
+
     if (user.role === "teacher") {
       const teacher = await Teacher.findOne({ user: user._id }).select("_id");
       teacherId = teacher?._id || null;
+    } else if (user.role === "employer") {
+      const employer = await Employer.findOne({ user: user._id }).select("_id");
+      employerId = employer?._id || null;
     }
 
     res.json({
@@ -65,6 +71,7 @@ router.get("/me", authenticate, async (req, res) => {
       email: user.email,
       role: user.role,
       teacherId,
+      employerId,
     });
   } catch (err) {
     res.status(500).json({ error: err.message });

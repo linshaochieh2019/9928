@@ -3,14 +3,47 @@ import { User } from "./user.model";
 export interface Employer {
   _id?: string;
   user?: User;
-  companyName: string;
-  companyDescription?: string;
-  companyWebsite?: string;
-  industry?: string;       // e.g. cram school, kindergarten
-  location?: string;       // city/region in Taiwan
-  size?: number;           // number of employees
-  logoUrl?: string;        // optional company logo
-  contactPhone?: string;
-  createdAt?: Date;
-  updatedAt?: Date;
+
+  // 1. Basic Identity
+  name: string;
+  logoUrl?: string;
+  type: "Kindergarten" | "Cram School" | "International School" | "University" | "Online Platform" | "Corporate Training";
+  website?: string;
+
+  // 2. Location
+  location: {
+    mainAddress: string;
+    branches: string[];
+    onlineOnly: boolean;
+  };
+
+  // 3. Contact
+  contact: {
+    personName: string;
+    position: string;
+    email: string;
+    phone: string;
+    verified: boolean;
+  };
+
+  // 4. About the Organization
+  about: {
+    description: string;
+    yearEstablished: number;
+    numberOfStudents: number;
+    numberOfForeignTeachers: number;
+  };
+
+  // 5. Hiring Preferences
+  hiringPreferences: {
+    typicalSubjects: string[];
+    employmentTypes: ("Full-time" | "Part-time" | "Hourly" | "Online")[];
+    visaSponsorship: boolean;
+  };
+
+  // 6. Job Postings (future)
+  jobPostings: string[];
+
+  createdAt?: string;
+  updatedAt?: string;
 }

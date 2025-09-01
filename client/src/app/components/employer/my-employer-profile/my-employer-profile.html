@@ -1,0 +1,103 @@
+<h2>My Employer Profile</h2>
+
+@if (loading) {
+  <p>Loading...</p>
+} @else {
+  <!-- 1. Basic Identity -->
+  <section>
+    <h3>Basic Identity</h3>
+    <label>School/Employer Name:
+      <input [(ngModel)]="employer.name" name="name" />
+    </label>
+    <label>Logo URL:
+      <input [(ngModel)]="employer.logoUrl" name="logoUrl" />
+    </label>
+    <label>Type:
+      <select [(ngModel)]="employer.type" name="type">
+        @for (t of typeOptions; track t) {
+          <option [value]="t">{{ t }}</option>
+        }
+      </select>
+    </label>
+    <label>Website:
+      <input [(ngModel)]="employer.website" name="website" />
+    </label>
+  </section>
+
+  <!-- 2. Location -->
+  <section>
+    <h3>Location</h3>
+    <label>Main Address:
+      <input [(ngModel)]="employer.location.mainAddress" name="mainAddress" />
+    </label>
+    <label>Online Only:
+      <input type="checkbox" [(ngModel)]="employer.location.onlineOnly" name="onlineOnly" />
+    </label>
+
+    <h4>Branch Locations</h4>
+    @for (branch of employer.location.branches; track $index) {
+      <div>
+        <input [(ngModel)]="employer.location.branches[$index]" name="branch{{$index}}" />
+      </div>
+    }
+    <button type="button" (click)="addBranch()">+ Add Branch</button>
+  </section>
+
+  <!-- 3. Contact -->
+  <section>
+    <h3>Contact</h3>
+    <label>Contact Person:
+      <input [(ngModel)]="employer.contact.personName" name="personName" />
+    </label>
+    <label>Position:
+      <input [(ngModel)]="employer.contact.position" name="position" />
+    </label>
+    <label>Email:
+      <input [(ngModel)]="employer.contact.email" name="email" />
+    </label>
+    <label>Phone:
+      <input [(ngModel)]="employer.contact.phone" name="phone" />
+    </label>
+  </section>
+
+  <!-- 4. About -->
+  <section>
+    <h3>About the Organization</h3>
+    <textarea [(ngModel)]="employer.about.description" name="description" placeholder="Short description"></textarea>
+    <label>Year Established:
+      <input type="number" [(ngModel)]="employer.about.yearEstablished" name="yearEstablished" />
+    </label>
+    <label>Number of Students:
+      <input type="number" [(ngModel)]="employer.about.numberOfStudents" name="numberOfStudents" />
+    </label>
+    <label>Number of Foreign Teachers:
+      <input type="number" [(ngModel)]="employer.about.numberOfForeignTeachers" name="numberOfForeignTeachers" />
+    </label>
+  </section>
+
+  <!-- 5. Hiring Preferences -->
+  <section>
+    <h3>Hiring Preferences</h3>
+    <label>Typical Subjects (comma-separated):
+      <input [(ngModel)]="employer.hiringPreferences.typicalSubjects" name="typicalSubjects" />
+    </label>
+
+    <h4>Employment Types</h4>
+    @for (option of employmentTypeOptions; track option) {
+      <label>
+        <input
+          type="checkbox"
+          [checked]="employer.hiringPreferences.employmentTypes.includes(option)"
+          (change)="toggleEmploymentType(option)" />
+        {{ option }}
+      </label>
+    }
+
+    <label>
+      Visa Sponsorship:
+      <input type="checkbox" [(ngModel)]="employer.hiringPreferences.visaSponsorship" name="visaSponsorship" />
+    </label>
+  </section>
+
+  <button type="button" (click)="saveProfile()">Save Profile</button>
+}
