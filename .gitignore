@@ -26,3 +26,6 @@ firebase-debug.log
 Thumbs.db
 .vscode/
 .idea/
+
+# Angular environment files
+client/src/environments/environment*.ts
