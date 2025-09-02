@@ -3,12 +3,13 @@ import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { switchMap } from 'rxjs/operators';
 import { Teacher } from '../models/teacher.model';
+import { getStorage, ref, uploadBytes, getDownloadURL } from 'firebase/storage';
 
 @Injectable({ providedIn: 'root' })
 export class TeacherService {
   private apiUrl = '/api/teachers';
 
-  constructor(private http: HttpClient) {}
+  constructor(private http: HttpClient) { }
 
   // Public
   getTeachers(): Observable<Teacher[]> {
@@ -29,6 +30,20 @@ export class TeacherService {
     return this.http.get<{ teacherId: string }>('/api/auth/me').pipe(
       switchMap((me) => this.getTeacherById(me.teacherId))
     );
+  }
+
+  // 
+  async uploadProfilePhoto(file: File, userId: string) {
+    const storage = getStorage();
+    const path = `teachers/${userId}/profile-photo.jpg`;
+    const storageRef = ref(storage, path);
+
+    // Upload to Firebase
+    await uploadBytes(storageRef, file);
+    const downloadURL = await getDownloadURL(storageRef);
+
+    // Save URL to backend
+    return this.http.put('/api/teachers/me/profile-photo', { profilePhoto: downloadURL }).toPromise();
   }
 
 }

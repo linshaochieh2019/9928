@@ -2,8 +2,10 @@ const mongoose = require("mongoose");
 
 const EmployerSchema = new mongoose.Schema({
     user: { type: mongoose.Schema.Types.ObjectId, ref: "User", required: true, unique: true },
-    name: { type: String, required: true },
+    name: { type: String },
     logoUrl: String,
+    images: [String],             // all uploaded image URLs
+    coverImage: { type: String },  // one selected as cover
     type: {
         type: String,
         enum: ["Kindergarten", "Cram School", "International School", "University", "Online Platform", "Corporate Training"],

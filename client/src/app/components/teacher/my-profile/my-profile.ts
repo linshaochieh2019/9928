@@ -1,5 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
+import { AuthService } from '../../../services/auth';
 import { Teacher } from '../../../models/teacher.model';
 import { TeacherService } from '../../../services/teacher.service';
 import { FormsModule } from '@angular/forms';
@@ -159,13 +160,14 @@ export class MyProfileComponent implements OnInit {
     "Other"
   ];
 
-  constructor(private teacherService: TeacherService) { }
+  constructor(private teacherService: TeacherService, private authService: AuthService) { }
 
   ngOnInit(): void {
     this.teacherService.getMyProfile().subscribe({
       next: (data) => {
         this.teacher = { ...this.teacher, ...data }; // preserve defaults
         this.loading = false;
+        console.log('Loaded profile', this.teacher);
       },
       error: (err) => {
         console.error('Failed to load my profile', err);
@@ -267,6 +269,55 @@ export class MyProfileComponent implements OnInit {
       if (option === "Other") this.teacher.preferredLocationOther = "";
     } else {
       this.teacher.preferredLocations.push(option);
+    }
+  }
+
+  // Image 
+
+  selectedFile: File | null = null;
+  previewUrl: string | ArrayBuffer | null = null;
+  updating = false;
+
+  onFileSelected(event: Event) {
+    const input = event.target as HTMLInputElement;
+    if (!input.files || input.files.length === 0) return;
+
+    this.selectedFile = input.files[0];
+
+    // ✅ create a temporary preview
+    const reader = new FileReader();
+    reader.onload = (e: any) => {
+      this.previewUrl = e.target.result;
+    };
+    reader.readAsDataURL(this.selectedFile);
+  }
+
+  async updatePhoto() {
+    console.log("Update button clicked"); // ✅ Debug log
+    if (!this.selectedFile) {
+      console.warn("No file selected");
+      return;
+    }
+
+    const userId = this.authService.getUserId();
+    if (!userId) {
+      console.error('No userId found — are you logged in?');
+      return;
+    } else {
+      console.log("Uploading photo for userId:", userId); // ✅ see if correct
+    }
+
+    this.updating = true;
+    try {
+      const updated: any = await this.teacherService.uploadProfilePhoto(this.selectedFile, userId);
+      console.log("Upload result:", updated); // ✅ Debug log
+      this.teacher.profilePhoto = updated.profilePhoto;
+      this.selectedFile = null;
+      this.previewUrl = null;
+    } catch (err) {
+      console.error('Upload failed', err);
+    } finally {
+      this.updating = false;
     }
   }
 

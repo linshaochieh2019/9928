@@ -1,14 +1,42 @@
 <h2>My Teacher Profile</h2>
 
+<div>
+  <!-- Profile Photo Upload -->
+  <h3>My Profile Photo</h3>
+
+  <!-- Current photo -->
+
+  <div>
+    <img [src]="teacher.profilePhoto || 'assets/default-avatar.png'" alt="Profile photo" width="150" height="150"
+      style="border-radius: 50%; margin-bottom: 10px;" />
+  </div>
+
+  <!-- File input -->
+  <input type="file" (change)="onFileSelected($event)" accept="image/*" />
+
+  <!-- Preview before upload -->
+  <div *ngIf="previewUrl" style="margin-top: 10px;">
+    <p>Preview:</p>
+    <img [src]="previewUrl" alt="New preview" width="150" height="150"
+      style="border-radius: 50%; border: 2px solid #ccc;" />
+  </div>
+
+  <!-- Update button -->
+  <button (click)="updatePhoto()" [disabled]="!selectedFile || updating" style="margin-top: 10px;">
+    {{ updating ? 'Updating...' : 'Update Photo' }}
+  </button>
+</div>
+
+
 <!-- 1. Basic Identity -->
 <section>
   <h3>Basic Identity</h3>
   <label>Display Name:
     <input [(ngModel)]="teacher.displayName" name="displayName" />
   </label>
-  <label>Profile Photo URL:
+  <!-- <label>Profile Photo URL:
     <input [(ngModel)]="teacher.profilePhoto" name="profilePhoto" />
-  </label>
+  </label> -->
   <label>Nationality:
     <input [(ngModel)]="teacher.nationality" name="nationality" />
   </label>

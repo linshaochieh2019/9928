@@ -19,6 +19,16 @@ router.post("/register", async (req, res) => {
     const { email, password, role, name } = req.body;
     const user = new User({ email, password, role, name });
     await user.save();
+
+    // Set up profiles depending on user role
+    if (role === "teacher") {
+      const teacher = new Teacher({ user: user._id });
+      await teacher.save();
+    } else if (role === "employer") {
+      const employer = new Employer({ user: user._id });
+      await employer.save();
+    }
+
     res.status(201).json({ message: "User registered successfully" });
   } catch (err) {
     res.status(400).json({ error: "Registration failed", details: err.message });
@@ -38,19 +48,19 @@ router.post("/login", async (req, res) => {
     (JWT_SECRET.value && JWT_SECRET.value()) || process.env.JWT_SECRET;
 
   const token = jwt.sign(
-    { id: user._id, role: user.role },
+    { userId: user._id, role: user.role, name: user.name },
     secret,
     { expiresIn: "7d" }
   );
 
-  res.json({ token, role: user.role, name: user.name });
+  res.json({ token }); // return token only and rely on /me for consistency
 });
 
 
 // Get logged-in user info
 router.get("/me", authenticate, async (req, res) => {
   try {
-    const user = await User.findById(req.user.id).select("name email role");
+    const user = await User.findById(req.user.userId).select("name email role");
     if (!user) return res.status(404).json({ error: "User not found" });
 
     // if teacher, attach teacherId
@@ -66,7 +76,7 @@ router.get("/me", authenticate, async (req, res) => {
     }
 
     res.json({
-      id: user._id,
+      userId: user._id,
       name: user.name,
       email: user.email,
       role: user.role,

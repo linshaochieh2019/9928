@@ -3,6 +3,7 @@ import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { Employer } from '../../../models/employer.model';
 import { EmployerService } from '../../../services/employer.service';
+import { AuthService } from '../../../services/auth';
 
 @Component({
   selector: 'app-my-employer-profile',
@@ -42,7 +43,7 @@ export class MyEmployerProfileComponent implements OnInit {
     "Online"
   ];
 
-  constructor(private employerService: EmployerService) { }
+  constructor(private employerService: EmployerService, private authService: AuthService) { }
 
   ngOnInit(): void {
     this.employerService.getMyProfile().subscribe({
@@ -101,4 +102,38 @@ export class MyEmployerProfileComponent implements OnInit {
   removeBranch(index: number): void {
     this.employer.location.branches.splice(index, 1);
   }
+
+  // Image handling
+  selectedFile: File | null = null;
+  previewUrl: string | null = null;
+
+  onFileSelected(event: Event) {
+    const input = event.target as HTMLInputElement;
+    if (!input.files || input.files.length === 0) return;
+
+    this.selectedFile = input.files[0];
+    const reader = new FileReader();
+    reader.onload = (e: any) => {
+      this.previewUrl = e.target.result;
+    };
+    reader.readAsDataURL(this.selectedFile);
+  }
+
+  async uploadImage() {
+    if (!this.selectedFile) return;
+    const userId = this.authService.getUserId();
+    if (!userId) return;
+
+    const updated: any = await this.employerService.uploadImage(this.selectedFile, userId);
+    this.employer = updated;
+    this.selectedFile = null;
+    this.previewUrl = null;
+  }
+
+  setCover(imageUrl: string) {
+    this.employerService.setCoverImage(imageUrl).subscribe((updated: any) => {
+      this.employer = updated;
+    });
+  }
+
 }

@@ -10,6 +10,10 @@ export interface Employer {
   type: "Kindergarten" | "Cram School" | "International School" | "University" | "Online Platform" | "Corporate Training";
   website?: string;
 
+  // ✅ Add new fields
+  images?: string[];
+  coverImage?: string;
+
   // 2. Location
   location: {
     mainAddress: string;

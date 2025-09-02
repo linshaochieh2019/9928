@@ -10,8 +10,10 @@
       @for (employer of employers; track employer._id) {
         <li>
           <a [routerLink]="['/employers', employer._id]">
-            @if (employer.logoUrl) {
-              <img [src]="employer.logoUrl" alt="Logo" width="40" height="40" />
+            @if (employer.coverImage) {
+              <img [src]="employer.coverImage" alt="Cover Image" width="60" height="40" />
+            } @else if (employer.images && employer.images.length > 0) {
+              <img [src]="employer.images[0]" alt="Image" width="60" height="40" />
             }
             <strong>{{ employer.name }}</strong>
           </a>

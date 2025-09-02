@@ -1,0 +1,15 @@
+rules_version = '2';
+service firebase.storage {
+  match /b/{bucket}/o {
+
+    // Teachers
+    match /teachers/{allPaths=**} {
+      allow read, write: if true; // MVP only
+    }
+
+    // Employers
+    match /employers/{allPaths=**} {
+      allow read, write: if true; // MVP only
+    }
+  }
+}

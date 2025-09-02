@@ -6,18 +6,20 @@ import { tap } from 'rxjs/operators';
 @Injectable({ providedIn: 'root' })
 export class AuthService {
   private apiUrl = '/api/auth'; // proxy to Firebase function
+  private currentUser: any;
 
   constructor(private http: HttpClient) { }
 
   login(email: string, password: string) {
-    return this.http.post<{ token: string; role: string; name: string }>(
+    return this.http.post<{ token: string }>(
       `${this.apiUrl}/login`,
       { email, password }
     ).pipe(
       tap(res => {
         localStorage.setItem('token', res.token);
-        localStorage.setItem('role', res.role);
-        localStorage.setItem('name', res.name);
+
+        // After login, fetch /me immediately
+        this.fetchMe().subscribe();
       })
     );
   }
@@ -28,17 +30,50 @@ export class AuthService {
 
   logout() {
     localStorage.clear();
+    this.currentUser = null;
   }
 
   isLoggedIn() {
     return !!localStorage.getItem('token');
   }
 
+  /** ✅ Call this once on app startup */
+  fetchMe() {
+    return this.http.get<any>(`${this.apiUrl}/me`).pipe(
+      tap(user => {
+        this.currentUser = user;
+        localStorage.setItem('userId', user.userId);
+        localStorage.setItem('teacherId', user.teacherId ?? '');
+        localStorage.setItem('employerId', user.employerId ?? '');
+        localStorage.setItem('role', user.role);
+        localStorage.setItem('name', user.name);
+      })
+    );
+  }
+
+  // Getters for user info
+  getUser() {
+    return this.currentUser;
+  }
+
+  getUserId() {
+    return this.currentUser?.userId || localStorage.getItem('userId');
+  }
+
+  getTeacherId() {
+    return this.currentUser?.teacherId || localStorage.getItem('teacherId');
+  }
+
+  getEmployerId() {
+    return this.currentUser?.employerId || localStorage.getItem('employerId');
+  }
+
   getRole() {
-    return localStorage.getItem('role');
+    return this.currentUser?.role || localStorage.getItem('role');
   }
 
   getUserName() {
-    return localStorage.getItem('name');
+    return this.currentUser?.name || localStorage.getItem('name');
   }
+
 }

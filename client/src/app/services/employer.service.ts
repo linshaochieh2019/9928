@@ -2,13 +2,14 @@ import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable, switchMap } from 'rxjs';
 import { Employer } from '../models/employer.model';
+import { getStorage, ref, uploadBytes, getDownloadURL } from 'firebase/storage';
 
 
 @Injectable({ providedIn: 'root' })
 export class EmployerService {
   private apiUrl = '/api/employers';
 
-  constructor(private http: HttpClient) {}
+  constructor(private http: HttpClient) { }
 
   // ✅ Create or update profile
   createOrUpdate(profile: Employer): Observable<Employer> {
@@ -30,5 +31,22 @@ export class EmployerService {
     return this.http.get<{ employerId: string }>('/api/auth/me').pipe(
       switchMap((me) => this.getEmployerById(me.employerId))
     );
+  }
+
+  // Upload new image
+  async uploadImage(file: File, userId: string) {
+    const storage = getStorage();
+    const path = `employers/${userId}/images/${Date.now()}-${file.name}`;
+    const storageRef = ref(storage, path);
+
+    await uploadBytes(storageRef, file);
+    const downloadURL = await getDownloadURL(storageRef);
+
+    return this.http.put('/api/employers/me/images', { imageUrl: downloadURL }).toPromise();
+  }
+
+  // Set cover image
+  setCoverImage(imageUrl: string) {
+    return this.http.put('/api/employers/me/cover-image', { imageUrl });
   }
 }
