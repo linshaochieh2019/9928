@@ -1,0 +1,33 @@
+.profile-card {
+  border: 1px solid #e5e7eb; /* light gray border */
+  border-radius: 0.75rem;    /* rounded corners */
+  background: #fff;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.05); /* subtle shadow */
+
+  .card-header {
+    background: transparent; /* no Bootstrap gray */
+    border-bottom: 1px solid #e5e7eb;
+    font-weight: 600;
+    font-size: 1.1rem;
+    color: var(--brand-dark);
+    padding: 1rem 1.25rem;
+  }
+
+  .card-body {
+    padding: 1.5rem;
+  }
+
+  .form-label {
+    font-weight: 500;
+    color: var(--brand-dark);
+  }
+
+  .form-control {
+    border-radius: 0.5rem;
+    border-color: #d1d5db; /* neutral gray */
+    &:focus {
+      border-color: var(--brand-primary);
+      box-shadow: 0 0 0 0.2rem rgba(40, 114, 121, 0.25);
+    }
+  }
+}

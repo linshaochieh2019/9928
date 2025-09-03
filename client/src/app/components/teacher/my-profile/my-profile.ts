@@ -10,6 +10,7 @@ import { FormsModule } from '@angular/forms';
   standalone: true,
   imports: [CommonModule, FormsModule],
   templateUrl: './my-profile.html',
+  styleUrls: ['./my-profile.scss']
 })
 export class MyProfileComponent implements OnInit {
   // initialize teacher so it's never undefined
