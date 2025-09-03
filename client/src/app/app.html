@@ -1,28 +1,9 @@
-<h1>9928</h1>
+<!-- App Header -->
+<app-navbar></app-navbar>
 
-<nav style="display: flex; justify-content: space-between; align-items: center;">
-  <!-- Left links -->
-  <ul style="list-style: none; display: flex; gap: 1rem; margin: 0; padding: 0;">
-    <li><a routerLink="/" routerLinkActive="active" [routerLinkActiveOptions]="{ exact: true }">Landing</a></li>
-    <li><a routerLink="/teachers" routerLinkActive="active">Teachers</a></li>
-    <li><a routerLink="/employers" routerLinkActive="active">Employers</a></li>
-  </ul>
-
-  <!-- Right side: auth links -->
-  <ul style="list-style: none; display: flex; gap: 1rem; margin: 0; padding: 0;">
-    @if (!authService.isLoggedIn()) {
-      <li><a routerLink="/login" routerLinkActive="active">Login</a></li>
-      <li><a routerLink="/register" routerLinkActive="active">Register</a></li>
-    }
-
-    @if (authService.isLoggedIn()) {
-      <li><a routerLink="/my-profile" routerLinkActive="active">My Profile</a></li>
-      <li>
-        ✅ Logged in as <strong>{{ authService.getUserName() }}</strong>
-        <button (click)="logout()">Logout</button>
-      </li>
-    }
-  </ul>
-</nav>
-
+<!-- Main content -->
 <router-outlet></router-outlet>
+
+
+<!-- Footer -->
+<app-footer></app-footer>
