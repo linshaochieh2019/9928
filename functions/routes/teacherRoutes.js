@@ -1,18 +1,19 @@
 const express = require("express");
 const Teacher = require("../models/Teacher");
-const { authenticate } = require("../middleware/auth");
+const { authenticate, authorize } = require("../middleware/auth");
+const { mongo, default: mongoose } = require("mongoose");
 const router = express.Router();
 
 // Create or Update profile
-router.post("/profile", authenticate, async (req, res) => {
+router.post("/profile", authenticate, authorize("teacher"), async (req, res) => {
   try {
-    const existing = await Teacher.findOne({ user: req.user.id });
+    const existing = await Teacher.findOne({ user: req.user.userId });
     if (existing) {
       Object.assign(existing, req.body);
       await existing.save();
       return res.json(existing);
     }
-    const teacher = new Teacher({ ...req.body, user: req.user.id });
+    const teacher = new Teacher({ ...req.body, user: req.user.userId });
     await teacher.save();
     res.json(teacher);
   } catch (err) {
@@ -20,12 +21,13 @@ router.post("/profile", authenticate, async (req, res) => {
   }
 });
 
-// Get own profile
-router.get("/profile", authenticate, async (req, res) => {
+// Public: Get all teachers (list for directory)
+router.get("/", async (req, res) => {
   try {
-    const teacher = await Teacher.findOne({ user: req.user.id }).populate("user", "name email role");
-    if (!teacher) return res.status(404).json({ error: "Profile not found" });
-    res.json(teacher);
+    const teachers = await Teacher.find()
+      .populate("user", "name") // only show public-safe fields
+      .select("-__v"); // remove Mongoose version key
+    res.json(teachers);
   } catch (err) {
     res.status(500).json({ error: err.message });
   }
@@ -39,6 +41,27 @@ router.get("/:id", async (req, res) => {
     res.json(teacher);
   } catch (err) {
     res.status(500).json({ error: err.message });
+  }
+});
+
+// Update teacher profile photo
+router.put("/me/profile-photo", authenticate, authorize("teacher"), async (req, res) => {
+  try {
+    const { profilePhoto } = req.body; // frontend sends the Firebase download URL
+
+    if (!profilePhoto) {
+      return res.status(400).json({ error: "profilePhoto is required" });
+    }
+
+    const teacher = await Teacher.findOneAndUpdate(
+      { user: req.user.userId },
+      { profilePhoto },
+      { new: true }
+    );
+
+    res.json({ profilePhoto: teacher.profilePhoto });
+  } catch (err) {
+    res.status(500).json({ error: "Failed to update profile photo", details: err.message });
   }
 });
 

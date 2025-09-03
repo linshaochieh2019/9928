@@ -1,49 +1,107 @@
-<h2>My Teacher Profile</h2>
-<p><strong>Name:</strong> {{ teacher.user?.name }}</p>
+@if (loading) {
+<p>Loading...</p>
+} @else if (teacher) {
+<h2>{{ teacher.displayName }}</h2>
 
-<form (ngSubmit)="saveProfile()" #profileForm="ngForm">
+@if (teacher.profilePhoto) {
+<img [src]="teacher.profilePhoto" alt="{{ teacher.displayName }}" width="150" />
+}
 
-  <label>
-    Bio:
-    <textarea [(ngModel)]="teacher.bio" name="bio"></textarea>
-  </label>
-  <br />
+<!-- 1. Basic Identity -->
+<section>
+  <h3>Basic Identity</h3>
+  <p><strong>Nationality:</strong> {{ teacher.nationality }}</p>
+  <p><strong>Date of Birth:</strong> {{ teacher.dateOfBirth | date }}</p>
+  <p><strong>Location:</strong> {{ teacher.location }}</p>
+</section>
 
-  <label>
-    Subjects (comma separated):
-    <input
-      [(ngModel)]="teacher.subjects"
-      name="subjects"
-      placeholder="English, Math"
-    />
-  </label>
-  <br />
+<!-- 2. Professional Summary -->
+<section>
+  <h3>Professional Summary</h3>
+  <p>{{ teacher.bio }}</p>
+  @if (teacher.introVideo) {
+  <p><a [href]="teacher.introVideo" target="_blank">Watch Intro Video</a></p>
+  }
+</section>
 
-  <label>
-    Experience (years):
-    <input
-      [(ngModel)]="teacher.experience"
-      name="experience"
-      type="number"
-    />
-  </label>
-  <br />
+<!-- 3. Qualifications -->
+<section>
+  <h3>Qualifications</h3>
 
-  <label>
-    Hourly Rate:
-    <input
-      [(ngModel)]="teacher.hourlyRate"
-      name="hourlyRate"
-      type="number"
-    />
-  </label>
-  <br />
+  <h4>Education</h4>
+  @for (edu of teacher.education; track $index) {
+  <p>{{ edu.degree }} in {{ edu.major }}, {{ edu.institution }} ({{ edu.year }})</p>
+  }
 
-  <label>
-    Availability:
-    <input [(ngModel)]="teacher.availability" name="availability" />
-  </label>
-  <br />
+  <h4>Teaching Certifications</h4>
+  @for (cert of teacher.teachingCertifications; track $index) {
+  <p>{{ cert.name }} ({{ cert.year }})</p>
+  }
 
-  <button type="submit">Save Profile</button>
-</form>
+  <h4>Other Certificates</h4>
+  @for (cert of teacher.otherCertificates; track $index) {
+  <p>{{ cert.name }} ({{ cert.year }})</p>
+  }
+</section>
+
+<!-- 4. Experience -->
+<section>
+  <h3>Experience</h3>
+  <p><strong>Years of Teaching:</strong> {{ teacher.yearsExperience }}</p>
+
+  <h4>Work History</h4>
+  @for (job of teacher.workHistory; track $index) {
+  <p>
+    {{ job.role }} at {{ job.school }} ({{ job.country }}) —
+    {{ job.startDate | date }} to {{ job.endDate | date }}
+  </p>
+  }
+</section>
+
+<!-- 5. Skills & Specializations -->
+<section>
+  <h3>Skills & Specializations</h3>
+
+  <h4>Age Groups</h4>
+  @for (group of teacher.ageGroups; track $index) {
+  <span class="tag">{{ group }}</span>
+  }
+
+  <h4>Subjects</h4>
+  @for (subj of teacher.subjects; track $index) {
+  <span class="tag">{{ subj }}</span>
+  }
+
+  <h4>Language Skills</h4>
+  @for (skill of teacher.languageSkills; track $index) {
+  <p>{{ skill.language }} — {{ skill.level }}</p>
+  }
+</section>
+
+<!-- 6. Availability & Preferences -->
+<section>
+  <h3>Availability & Preferences</h3>
+
+  <h4>Employment Type</h4>
+  @for (type of teacher.employmentType; track $index) {
+  <span class="tag">{{ type }}</span>
+  }
+
+  <h4>Preferred Locations</h4>
+  @for (loc of teacher.preferredLocations; track $index) {
+  @if (loc === 'Other') {
+  <span class="tag">{{ teacher.preferredLocationOther }}</span>
+  } @else {
+  <span class="tag">{{ loc }}</span>
+  }
+  }
+</section>
+
+<!-- 7. Compensation -->
+<section>
+  <h3>Compensation</h3>
+  <p><strong>Expected Rate/Salary:</strong> {{ teacher.expectedRate }}</p>
+</section>
+
+
+}

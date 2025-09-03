@@ -1,0 +1,27 @@
+<h2>Employer Profile</h2>
+
+@if (loading) {
+  <p>Loading...</p>
+} @else if (error) {
+  <p>{{ error }}</p>
+} @else if (employer) {
+  <div>
+    @if (employer.logoUrl) {
+      <img [src]="employer.logoUrl" alt="Logo" width="80" height="80" />
+    }
+    <h3>{{ employer.name }}</h3>
+    <p><strong>Type:</strong> {{ employer.type }}</p>
+    <p><strong>Location:</strong> {{ employer.location.mainAddress }}</p>
+    <p><strong>About:</strong> {{ employer.about.description }}</p>
+
+    <h4>Hiring Preferences</h4>
+    <ul>
+      @for (s of employer.hiringPreferences.typicalSubjects; track s) {
+        <li>{{ s }}</li>
+      }
+    </ul>
+    <p><strong>Visa Sponsorship:</strong> 
+      {{ employer.hiringPreferences.visaSponsorship ? 'Yes' : 'No' }}
+    </p>
+  </div>
+}

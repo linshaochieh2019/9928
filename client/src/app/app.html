@@ -1,17 +1,28 @@
-<h1>Teacher CRUD Demo</h1>
+<h1>9928</h1>
 
-<nav>
-  <a routerLink="/" routerLinkActive="active" [routerLinkActiveOptions]="{ exact: true }">Landing</a> |
-  <a routerLink="/login" routerLinkActive="active">Login</a> |
-  <a routerLink="/register" routerLinkActive="active">Register</a> |
-  <a routerLink="/profile" routerLinkActive="active">My Profile</a>
+<nav style="display: flex; justify-content: space-between; align-items: center;">
+  <!-- Left links -->
+  <ul style="list-style: none; display: flex; gap: 1rem; margin: 0; padding: 0;">
+    <li><a routerLink="/" routerLinkActive="active" [routerLinkActiveOptions]="{ exact: true }">Landing</a></li>
+    <li><a routerLink="/teachers" routerLinkActive="active">Teachers</a></li>
+    <li><a routerLink="/employers" routerLinkActive="active">Employers</a></li>
+  </ul>
+
+  <!-- Right side: auth links -->
+  <ul style="list-style: none; display: flex; gap: 1rem; margin: 0; padding: 0;">
+    @if (!authService.isLoggedIn()) {
+      <li><a routerLink="/login" routerLinkActive="active">Login</a></li>
+      <li><a routerLink="/register" routerLinkActive="active">Register</a></li>
+    }
+
+    @if (authService.isLoggedIn()) {
+      <li><a routerLink="/my-profile" routerLinkActive="active">My Profile</a></li>
+      <li>
+        ✅ Logged in as <strong>{{ authService.getUserName() }}</strong>
+        <button (click)="logout()">Logout</button>
+      </li>
+    }
+  </ul>
 </nav>
-
-@if (authService.isLoggedIn()) {
-  <div style="margin-top: 10px;">
-    ✅ Logged in as <strong>{{ authService.getUserName() }}</strong>
-    <button (click)="logout()">Logout</button>
-  </div>
-}
 
 <router-outlet></router-outlet>

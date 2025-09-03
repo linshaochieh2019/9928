@@ -1,0 +1,18 @@
+<h2 class="text-xl font-bold mb-4">Teachers</h2>
+
+@if (loading) {
+<p>Loading...</p>
+} @else {
+@for (t of teachers; track t._id) {
+<div class="teacher-card">
+  <img [src]="t.profilePhoto || 'assets/default-avatar.png'" alt="Profile" />
+  <h3>{{ t.displayName || t.user?.name }}</h3>
+  <p>{{ t.bio }}</p>
+  <p><strong>Nationality:</strong> {{ t.nationality }}</p>
+  <p><strong>Experience:</strong> {{ t.yearsExperience }} years</p>
+  <button [routerLink]="['/teachers', t._id]">View Profile</button>
+</div>
+} @empty {
+<p>No teachers available right now.</p>
+}
+}
