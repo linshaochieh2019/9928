@@ -65,4 +65,80 @@ router.put("/me/profile-photo", authenticate, authorize("teacher"), async (req, 
   }
 });
 
+// ✅ Section update
+router.patch("/me/:section", authenticate, authorize("teacher"), async (req, res) => {
+  try {
+    const { section } = req.params;
+    const teacher = await Teacher.findOne({ user: req.user.userId });
+    if (!teacher) return res.status(404).json({ error: "Profile not found" });
+
+    switch (section) {
+      case "basic":
+        Object.assign(teacher, {
+          displayName: req.body.displayName,
+          nationality: req.body.nationality,
+          dateOfBirth: req.body.dateOfBirth,
+          location: req.body.location,
+          profilePhoto: req.body.profilePhoto,
+        });
+        break;
+
+      case "professional":
+        Object.assign(teacher, {
+          bio: req.body.bio,
+          introVideo: req.body.introVideo,
+        });
+        break;
+
+      case "qualifications":
+        Object.assign(teacher, {
+          education: req.body.education,
+          teachingCertifications: req.body.teachingCertifications,
+          otherCertificates: req.body.otherCertificates,
+        });
+        break;
+
+      case "experience":
+        Object.assign(teacher, {
+          yearsExperience: req.body.yearsExperience,
+          workHistory: req.body.workHistory,
+        });
+        break;
+
+      case "skills":
+        Object.assign(teacher, {
+          ageGroups: req.body.ageGroups,
+          subjects: req.body.subjects,
+          languageSkills: req.body.languageSkills,
+        });
+        break;
+
+      case "preferences":
+        Object.assign(teacher, {
+          employmentType: req.body.employmentType,
+          preferredLocations: req.body.preferredLocations,
+          preferredLocationOther: req.body.preferredLocationOther,
+          workVisaStatus: req.body.workVisaStatus,
+          availableFrom: req.body.availableFrom,
+        });
+        break;
+
+      case "compensation":
+        Object.assign(teacher, {
+          expectedRate: req.body.expectedRate,
+        });
+        break;
+
+      default:
+        return res.status(400).json({ error: "Invalid section" });
+    }
+
+    await teacher.save();
+    res.json(teacher);
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+});
+
+
 module.exports = router;

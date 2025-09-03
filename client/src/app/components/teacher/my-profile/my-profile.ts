@@ -177,12 +177,15 @@ export class MyProfileComponent implements OnInit {
     });
   }
 
+  // Full Update
   saveProfile(): void {
     this.teacherService.saveProfile(this.teacher).subscribe({
       next: () => alert('Profile saved!'),
       error: (err) => alert('Error saving profile: ' + err.message)
     });
   }
+
+
 
   addEducation(): void {
     (this.teacher.education ??= []).push({
@@ -322,5 +325,69 @@ export class MyProfileComponent implements OnInit {
     }
   }
 
+  saveSection(section: string) {
+    let data: any = {};
+
+    switch (section) {
+      case 'basic':
+        data = {
+          displayName: this.teacher.displayName,
+          nationality: this.teacher.nationality,
+          dateOfBirth: this.teacher.dateOfBirth,
+          location: this.teacher.location,
+          profilePhoto: this.teacher.profilePhoto
+        };
+        break;
+
+      case 'professional':
+        data = {
+          bio: this.teacher.bio,
+          introVideo: this.teacher.introVideo
+        };
+        break;
+
+      case 'qualifications':
+        data = {
+          education: this.teacher.education,
+          teachingCertifications: this.teacher.teachingCertifications,
+          otherCertificates: this.teacher.otherCertificates
+        };
+        break;
+
+      case 'experience':
+        data = {
+          yearsExperience: this.teacher.yearsExperience,
+          workHistory: this.teacher.workHistory
+        };
+        break;
+
+      case 'skills':
+        data = {
+          ageGroups: this.teacher.ageGroups,
+          subjects: this.teacher.subjects,
+          languageSkills: this.teacher.languageSkills
+        };
+        break;
+
+      case 'preferences':
+        data = {
+          employmentType: this.teacher.employmentType,
+          preferredLocations: this.teacher.preferredLocations,
+          preferredLocationOther: this.teacher.preferredLocationOther,
+          workVisaStatus: this.teacher.workVisaStatus,
+          availableFrom: this.teacher.availableFrom
+        };
+        break;
+
+      case 'compensation':
+        data = { expectedRate: this.teacher.expectedRate };
+        break;
+    }
+
+    this.teacherService.updateSection(section, data).subscribe({
+      next: () => alert(`${section} saved!`),
+      error: (err) => alert(`Error saving ${section}: ${err.message}`)
+    });
+  }
 
 }

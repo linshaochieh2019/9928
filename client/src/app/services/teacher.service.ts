@@ -46,4 +46,9 @@ export class TeacherService {
     return this.http.put('/api/teachers/me/profile-photo', { profilePhoto: downloadURL }).toPromise();
   }
 
+  // Update specific section of the profile
+  updateSection(section: string, data: any) {
+    return this.http.patch(`/api/teachers/me/${section}`, data);
+  }
+
 }
