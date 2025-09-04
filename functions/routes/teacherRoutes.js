@@ -77,7 +77,7 @@ router.patch("/me/:section", authenticate, authorize("teacher"), async (req, res
         Object.assign(teacher, {
           displayName: req.body.displayName,
           nationality: req.body.nationality,
-          dateOfBirth: req.body.dateOfBirth,
+          age: req.body.age,
           location: req.body.location,
           profilePhoto: req.body.profilePhoto,
         });
