@@ -1,147 +1,220 @@
 <main class="container py-4">
   <h2 class="fw-bold mb-4" style="color: var(--brand-primary);">My Teacher Profile</h2>
 
-  <!-- Profile Photo Upload (no card, simplified flow) -->
-  <div class="text-center mb-4">
-    <div class="position-relative d-inline-block">
-      <img [src]="previewUrl || teacher?.profilePhoto || 'assets/default-avatar.png'" alt="Profile photo"
-        class="rounded-circle border border-3 shadow-sm" [style.border-color]="'var(--brand-primary)'" width="150"
-        height="150" />
-    </div>
-    <div class="mt-2">
-      <label class="btn btn-link fw-semibold" [style.color]="'var(--brand-primary)'">
-        Upload Photo
-        <input type="file" hidden (change)="onFileSelected($event)" accept="image/*" />
-      </label>
-    </div>
-  </div>
-
   <!-- Basic Identity -->
   <div class="card profile-card mb-4">
-    <div class="card-header">Basic Identity</div>
-    <button class="btn btn-sm btn-primary" (click)="saveSection('basic')">Save</button>
+    <div class="card-header fw-bold">Basic Identity</div>
+    <div class="card-body">
+      <div class="row align-items-center">
+        <!-- Left: Profile photo -->
+        <div class="col-md-3 text-center">
+          <div class="position-relative d-inline-block">
+            <img [src]="previewUrl || teacher.profilePhoto || 'assets/default-avatar.png'" alt="Profile photo"
+              class="rounded-circle border border-3 shadow-sm mb-2" [style.border-color]="'var(--brand-primary)'"
+              width="120" height="120" />
+          </div>
+          <div>
+            <label class="btn btn-link fw-semibold p-0" [style.color]="'var(--brand-primary)'">
+              Upload Photo
+              <input type="file" hidden (change)="onFileSelected($event)" accept="image/*" />
+            </label>
+          </div>
+        </div>
 
-    <div class="card-body row g-3">
-      <div class="col-md-6">
-        <label class="form-label">Display Name</label>
-        <input class="form-control" [(ngModel)]="teacher.displayName" name="displayName" />
-      </div>
-      <div class="col-md-6">
-        <label class="form-label">Nationality</label>
-        <input class="form-control" [(ngModel)]="teacher.nationality" name="nationality" />
-      </div>
-      <div class="col-md-6">
-        <label class="form-label">Date of Birth</label>
-        <input type="date" class="form-control" [(ngModel)]="teacher.dateOfBirth" name="dateOfBirth" />
-      </div>
-      <div class="col-md-6">
-        <label class="form-label">Location</label>
-        <input class="form-control" [(ngModel)]="teacher.location" name="location" />
+        <!-- Right: Form fields -->
+        <div class="col-md-9">
+          <div class="row g-3">
+            <div class="col-md-6">
+              <label class="form-label">Display Name</label>
+              <input class="form-control" [(ngModel)]="teacher.displayName" name="displayName" />
+            </div>
+            <div class="col-md-6">
+              <label class="form-label">Nationality</label>
+              <input class="form-control" [(ngModel)]="teacher.nationality" name="nationality" />
+            </div>
+            <div class="col-md-6">
+              <label class="form-label">Age</label>
+              <input type="number" class="form-control" [(ngModel)]="teacher.age" name="age" placeholder="e.g., 30" />
+            </div>
+            <div class="col-md-6">
+              <label class="form-label">Location</label>
+              <input class="form-control" [(ngModel)]="teacher.location" name="location" />
+            </div>
+          </div>
+
+          <!-- Save button -->
+          <div class="d-flex justify-content-end mt-3">
+            <button class="btn btn-primary" type="button" (click)="saveSection('basic')">Save</button>
+          </div>
+        </div>
       </div>
     </div>
   </div>
 
   <!-- Professional Summary -->
   <div class="card profile-card mb-4">
-    <div class="card-header">Professional Summary</div>
+    <div class="card-header fw-bold">Professional Summary</div>
     <div class="card-body">
       <div class="mb-3">
         <label class="form-label">Bio</label>
         <textarea class="form-control" [(ngModel)]="teacher.bio" name="bio" rows="4"
-          placeholder="Short teaching philosophy"></textarea>
+          placeholder="Write a short teaching philosophy or introduction"></textarea>
       </div>
-      <div>
-        <label class="form-label">Intro Video URL</label>
-        <input class="form-control" [(ngModel)]="teacher.introVideo" name="introVideo" />
+
+      <div class="mb-3">
+        <label class="form-label">Intro Video (Link)</label>
+        <input type="url" class="form-control" [(ngModel)]="teacher.introVideo" name="introVideo"
+          placeholder="https://example.com/video" />
+      </div>
+
+      <!-- Save button -->
+      <div class="d-flex justify-content-end">
+        <button class="btn btn-primary" type="button" (click)="saveSection('professional')">
+          Save
+        </button>
       </div>
     </div>
   </div>
 
   <!-- Qualifications -->
   <div class="card profile-card mb-4">
-    <div class="card-header">Qualifications</div>
+    <div class="card-header fw-bold">Qualifications</div>
     <div class="card-body">
+      <!-- Education -->
       <h6>Education</h6>
       @for (edu of teacher.education; track $index) {
-      <div class="row g-2 mb-2">
-        <div class="col-md-3"><input class="form-control" [(ngModel)]="edu.degree" name="degree{{$index}}"
-            placeholder="Degree" /></div>
-        <div class="col-md-3"><input class="form-control" [(ngModel)]="edu.major" name="major{{$index}}"
-            placeholder="Major" /></div>
-        <div class="col-md-3"><input class="form-control" [(ngModel)]="edu.institution" name="institution{{$index}}"
-            placeholder="Institution" /></div>
-        <div class="col-md-3"><input type="number" class="form-control" [(ngModel)]="edu.year" name="year{{$index}}"
-            placeholder="Year" /></div>
+      <div class="row g-2 mb-2 align-items-center">
+        <div class="col-md-2">
+          <input class="form-control" [(ngModel)]="edu.degree" name="degree{{$index}}" placeholder="Degree" />
+        </div>
+        <div class="col-md-2">
+          <input class="form-control" [(ngModel)]="edu.major" name="major{{$index}}" placeholder="Major" />
+        </div>
+        <div class="col-md-2">
+          <input class="form-control" [(ngModel)]="edu.institution" name="institution{{$index}}"
+            placeholder="Institution" />
+        </div>
+        <div class="col-md-2">
+          <input type="number" class="form-control" [(ngModel)]="edu.year" name="year{{$index}}" placeholder="Year" />
+        </div>
+        <div class="col-md-1">
+          <button class="btn btn-sm btn-outline-danger w-100" type="button" (click)="removeEducation($index)">
+            Remove
+          </button>
+        </div>
       </div>
       }
-      <button class="btn btn-sm btn-outline-primary" type="button" (click)="addEducation()">+ Add Education</button>
+      <button class="btn btn-sm btn-secondary mb-3" type="button" (click)="addEducation()">+ Add Education</button>
 
+      <!-- Teaching Certifications -->
       <h6 class="mt-3">Teaching Certifications</h6>
       @for (cert of teacher.teachingCertifications; track $index) {
       <div class="row g-2 mb-2">
-        <div class="col-md-6"><input class="form-control" [(ngModel)]="cert.name" name="teachingCertName{{$index}}"
-            placeholder="Certification" /></div>
-        <div class="col-md-4"><input type="number" class="form-control" [(ngModel)]="cert.year"
-            name="teachingCertYear{{$index}}" placeholder="Year" /></div>
-        <div class="col-md-2"><button class="btn btn-sm btn-outline-danger w-100" type="button"
-            (click)="removeTeachingCert($index)">Remove</button></div>
+        <div class="col-md-2">
+          <input class="form-control" [(ngModel)]="cert.name" name="teachingCertName{{$index}}"
+            placeholder="Certification" />
+        </div>
+        <div class="col-md-2">
+          <input type="number" class="form-control" [(ngModel)]="cert.year" name="teachingCertYear{{$index}}"
+            placeholder="Year" />
+        </div>
+        <div class="col-md-1">
+          <button class="btn btn-sm btn-outline-danger w-100" type="button" (click)="removeTeachingCert($index)">
+            Remove
+          </button>
+        </div>
       </div>
       }
-      <button class="btn btn-sm btn-outline-primary" type="button" (click)="addTeachingCert()">+ Add Teaching
+      <button class="btn btn-sm btn-secondary mb-3" type="button" (click)="addTeachingCert()">+ Add Teaching
         Certification</button>
 
+      <!-- Other Certificates -->
       <h6 class="mt-3">Other Certificates</h6>
       @for (cert of teacher.otherCertificates; track $index) {
       <div class="row g-2 mb-2">
-        <div class="col-md-6"><input class="form-control" [(ngModel)]="cert.name" name="otherCertName{{$index}}"
-            placeholder="Certificate" /></div>
-        <div class="col-md-4"><input type="number" class="form-control" [(ngModel)]="cert.year"
-            name="otherCertYear{{$index}}" placeholder="Year" /></div>
-        <div class="col-md-2"><button class="btn btn-sm btn-outline-danger w-100" type="button"
-            (click)="removeOtherCert($index)">Remove</button></div>
+        <div class="col-md-2">
+          <input class="form-control" [(ngModel)]="cert.name" name="otherCertName{{$index}}"
+            placeholder="Certificate" />
+        </div>
+        <div class="col-md-2">
+          <input type="number" class="form-control" [(ngModel)]="cert.year" name="otherCertYear{{$index}}"
+            placeholder="Year" />
+        </div>
+        <div class="col-md-1">
+          <button class="btn btn-sm btn-outline-danger w-100" type="button" (click)="removeOtherCert($index)">
+            Remove
+          </button>
+        </div>
       </div>
       }
-      <button class="btn btn-sm btn-outline-primary" type="button" (click)="addOtherCert()">+ Add Other
+      <button class="btn btn-sm btn-secondary mb-3" type="button" (click)="addOtherCert()">+ Add Other
         Certificate</button>
+
+      <!-- Save button -->
+      <div class="d-flex justify-content-end mt-3">
+        <button class="btn btn-primary" type="button" (click)="saveSection('qualifications')">Save</button>
+      </div>
     </div>
   </div>
 
   <!-- Experience -->
   <div class="card profile-card mb-4">
-    <div class="card-header">Experience</div>
+    <div class="card-header fw-bold">Experience</div>
     <div class="card-body">
       <div class="mb-3">
-        <label class="form-label">Years of Teaching</label>
-        <input type="number" class="form-control" [(ngModel)]="teacher.yearsExperience" name="yearsExperience" />
+        <label class="form-label">Years of Experience</label>
+        <input type="number" class="form-control" [(ngModel)]="teacher.yearsExperience" name="yearsExperience"
+          placeholder="e.g., 5" />
       </div>
 
       <h6>Work History</h6>
       @for (job of teacher.workHistory; track $index) {
-      <div class="row g-2 mb-2">
-        <div class="col-md-3"><input class="form-control" [(ngModel)]="job.school" name="school{{$index}}"
-            placeholder="School" /></div>
-        <div class="col-md-3"><input class="form-control" [(ngModel)]="job.role" name="role{{$index}}"
-            placeholder="Role" /></div>
-        <div class="col-md-2"><input class="form-control" [(ngModel)]="job.country" name="country{{$index}}"
-            placeholder="Country" /></div>
-        <div class="col-md-2"><input type="date" class="form-control" [(ngModel)]="job.startDate"
-            name="start{{$index}}" /></div>
-        <div class="col-md-2"><input type="date" class="form-control" [(ngModel)]="job.endDate" name="end{{$index}}" />
+      <div class="row g-2 mb-2 align-items-center">
+        <div class="col-md-2">
+          <input class="form-control" [(ngModel)]="job.school" name="school{{$index}}" placeholder="School" />
+        </div>
+        <div class="col-md-2">
+          <input class="form-control" [(ngModel)]="job.role" name="role{{$index}}" placeholder="Role" />
+        </div>
+        <div class="col-md-2">
+          <input class="form-control" [(ngModel)]="job.country" name="country{{$index}}" placeholder="Country" />
+        </div>
+        <div class="col-md-2">
+          <input type="date" class="form-control" [(ngModel)]="job.startDate" name="start{{$index}}" />
+        </div>
+        <div class="col-md-2">
+          <input type="date" class="form-control" [(ngModel)]="job.endDate" name="end{{$index}}" />
+        </div>
+        <div class="col-md-2">
+          <button class="btn btn-sm btn-outline-danger w-100" type="button" (click)="removeWorkHistory($index)">
+            Remove
+          </button>
         </div>
       </div>
       }
-      <button class="btn btn-sm btn-outline-primary" type="button" (click)="addWorkHistory()">+ Add Work</button>
+
+      <button class="btn btn-sm btn-secondary mb-3" type="button" (click)="addWorkHistory()">
+        + Add Work
+      </button>
+
+      <!-- Save button -->
+      <div class="d-flex justify-content-end mt-3">
+        <button class="btn btn-primary" type="button" (click)="saveSection('experience')">
+          Save
+        </button>
+      </div>
     </div>
   </div>
 
   <!-- Skills & Specializations -->
   <div class="card profile-card mb-4">
-    <div class="card-header">Skills &amp; Specializations</div>
+    <div class="card-header fw-bold">Skills & Specializations</div>
     <div class="card-body">
+      <!-- Age Groups -->
       <h6>Age Groups</h6>
-      <div class="d-flex flex-wrap gap-3">
+      <div class="form-check-columns">
         @for (option of ageGroupOptions; track $index) {
-        <div class="form-check">
+        <div class="form-check mb-2">
           <input type="checkbox" class="form-check-input" [checked]="teacher.ageGroups.includes(option)"
             (change)="toggleAgeGroup(option)" />
           <label class="form-check-label">{{ option }}</label>
@@ -149,23 +222,16 @@
         }
       </div>
 
-      <h6 class="mt-3">Subjects</h6>
-      @for (group of subjectGroups; track $index) {
-      <strong>{{ group.category }}</strong>
-      <div class="d-flex flex-wrap gap-3 mb-2">
-        @for (option of group.options; track option) {
-        <div class="form-check">
-          <input type="checkbox" class="form-check-input" [checked]="teacher.subjects.includes(option)"
-            (change)="toggleSubject(option)" />
-          <label class="form-check-label">{{ option }}</label>
-        </div>
-        }
-      </div>
-      }
 
-      <h6 class="mt-3">Language Skills</h6>
+      <!-- Subjects -->
+      <h6 class="mt-5">Subjects</h6>
+      <textarea class="form-control" [(ngModel)]="teacher.subjects" name="subjects" rows="3"
+        placeholder="Enter subjects you can teach (e.g., English, Math, Physics)"></textarea>
+
+      <!-- Language Skills -->
+      <h6 class="mt-5">Language Skills</h6>
       @for (skill of teacher.languageSkills; track $index) {
-      <div class="row g-2 mb-2">
+      <div class="row g-2 mb-2 align-items-center">
         <div class="col-md-5">
           <select class="form-select" [(ngModel)]="skill.language" name="lang{{$index}}">
             @for (lang of commonLanguages; track lang) {
@@ -181,23 +247,32 @@
           </select>
         </div>
         <div class="col-md-2">
-          <button class="btn btn-sm btn-outline-danger w-100" type="button"
-            (click)="removeLanguageSkill($index)">Remove</button>
+          <button class="btn btn-sm btn-outline-danger w-100" type="button" (click)="removeLanguageSkill($index)">
+            Remove
+          </button>
         </div>
       </div>
       }
-      <button class="btn btn-sm btn-outline-primary" type="button" (click)="addLanguageSkill()">+ Add Language</button>
+      <button class="btn btn-sm btn-secondary mb-3" type="button" (click)="addLanguageSkill()">
+        + Add Language
+      </button>
+
+      <!-- Save button -->
+      <div class="d-flex justify-content-end mt-3">
+        <button class="btn btn-primary" type="button" (click)="saveSection('skills')">Save</button>
+      </div>
     </div>
   </div>
 
   <!-- Availability & Preferences -->
   <div class="card profile-card mb-4">
-    <div class="card-header">Availability &amp; Preferences</div>
+    <div class="card-header fw-bold">Availability & Preferences</div>
     <div class="card-body">
+      <!-- Employment Type -->
       <h6>Employment Type</h6>
-      <div class="d-flex flex-wrap gap-3">
+      <div class="form-check-columns">
         @for (option of employmentTypeOptions; track $index) {
-        <div class="form-check">
+        <div class="form-check mb-2">
           <input type="checkbox" class="form-check-input" [checked]="teacher.employmentType.includes(option)"
             (change)="toggleEmploymentType(option)" />
           <label class="form-check-label">{{ option }}</label>
@@ -205,34 +280,78 @@
         }
       </div>
 
+      <!-- Preferred Locations -->
       <h6 class="mt-3">Preferred Locations</h6>
-      <div class="d-flex flex-wrap gap-3">
+      <div class="form-check-columns">
         @for (option of locationOptions; track $index) {
-        <div class="form-check">
+        <div class="form-check mb-2">
           <input type="checkbox" class="form-check-input" [checked]="teacher.preferredLocations.includes(option)"
             (change)="toggleLocation(option)" />
           <label class="form-check-label">{{ option }}</label>
         </div>
         @if (option === 'Other' && teacher.preferredLocations.includes('Other')) {
-        <input type="text" class="form-control mt-2" [(ngModel)]="teacher.preferredLocationOther"
-          name="preferredLocationOther" placeholder="Enter custom location" />
+        <div class="mb-2">
+          <input type="text" class="form-control" [(ngModel)]="teacher.preferredLocationOther"
+            name="preferredLocationOther" placeholder="Enter custom location" />
+        </div>
         }
         }
+      </div>
+
+      <!-- Work Visa Status -->
+      <h6 class="mt-3">Work Visa Status</h6>
+      <input class="form-control mb-3" [(ngModel)]="teacher.workVisaStatus" name="workVisaStatus"
+        placeholder="e.g., Needs sponsorship, ARC Holder, APRC Holder " />
+
+      <!-- Available From -->
+      <h6>Available From</h6>
+
+      <div class="mb-3">
+        <!-- Immediately -->
+        <div class="form-check">
+          <input type="radio" class="form-check-input" name="availableFromOption" value="immediately"
+            [(ngModel)]="availableFromChoice" />
+          <label class="form-check-label">Immediately</label>
+        </div>
+
+        <!-- Specific Date -->
+        <div class="form-check">
+          <input type="radio" class="form-check-input" name="availableFromOption" value="date"
+            [(ngModel)]="availableFromChoice" />
+          <label class="form-check-label">Specific Date</label>
+        </div>
+
+        <!-- Date Picker (only visible if Specific Date is chosen) -->
+        <div *ngIf="availableFromChoice === 'date'" class="mt-2">
+          <input type="date" class="form-control" [(ngModel)]="teacher.availableFrom" name="availableFromDate" />
+        </div>
+      </div>
+
+
+      <!-- Save button -->
+      <div class="d-flex justify-content-end mt-3">
+        <button class="btn btn-primary" type="button" (click)="saveSection('preferences')">Save</button>
       </div>
     </div>
   </div>
 
   <!-- Compensation -->
   <div class="card profile-card mb-4">
-    <div class="card-header">Compensation</div>
+    <div class="card-header fw-bold">Compensation</div>
     <div class="card-body">
       <label class="form-label">Expected Rate/Salary</label>
-      <input class="form-control" [(ngModel)]="teacher.expectedRate" name="expectedRate" />
+      <input class="form-control" [(ngModel)]="teacher.expectedRate" name="expectedRate"
+        placeholder="e.g., NT$700/hour or NT$60,000/month or Negotiable" />
+
+      <!-- Save button (now inside card-body, with padding) -->
+      <div class="d-flex justify-content-end mt-3">
+        <button class="btn btn-primary" type="button" (click)="saveSection('compensation')">
+          Save
+        </button>
+      </div>
     </div>
   </div>
 
-  <!-- Save Button -->
-  <div class="d-flex justify-content-end">
-    <button class="btn btn-primary" type="button" (click)="saveProfile()">Save Profile</button>
-  </div>
+
+
 </main>

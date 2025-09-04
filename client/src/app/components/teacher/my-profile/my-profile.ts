@@ -19,7 +19,7 @@ export class MyProfileComponent implements OnInit {
     displayName: '',
     profilePhoto: '',
     nationality: '',
-    dateOfBirth: '',
+    age: 0,
     location: '',
 
     // 2. Professional Summary
@@ -37,7 +37,7 @@ export class MyProfileComponent implements OnInit {
 
     // 5. Skills & Specializations
     ageGroups: [],
-    subjects: [],
+    subjects: '',
     languageSkills: [],
 
     // 6. Availability & Preferences
@@ -59,6 +59,8 @@ export class MyProfileComponent implements OnInit {
   languages = '';
   employmentType = '';
   preferredLocations = '';
+  availableFromChoice: string = ''; // 'immediately' | 'date'
+
 
   // loading state
   loading = true;
@@ -74,62 +76,6 @@ export class MyProfileComponent implements OnInit {
     "Adults (Business / Professional English)",
     "Special Needs Education",
     "Test Prep Students (IELTS, TOEFL, TOEIC, SAT, etc.)"
-  ];
-
-  // subject groups
-  subjectGroups = [
-    {
-      category: "English / Language",
-      options: [
-        "General English (ESL/EFL)",
-        "Phonics / Early Reading",
-        "Grammar / Writing",
-        "Conversation / Speaking",
-        "Business English",
-        "Academic English (University prep, essays, presentations)",
-        "Exam Prep: IELTS / TOEFL / TOEIC",
-        "Exam Prep: Cambridge (KET, PET, FCE, CAE, CPE)"
-      ]
-    },
-    {
-      category: "Other Languages",
-      options: [
-        "Japanese",
-        "Korean",
-        "French",
-        "German",
-        "Spanish",
-        "Italian",
-        'Russian',
-        "Vietnamese",
-        "Indonesian",
-      ]
-    },
-
-    {
-      category: "Math",
-      options: ["Elementary Math", "Secondary / High School Math"]
-    },
-    {
-      category: "Science",
-      options: ["General Science", "Physics", "Chemistry", "Biology"]
-    },
-    {
-      category: "Social Studies / Humanities",
-      options: ["History", "Geography", "Civics / Social Studies"]
-    },
-    {
-      category: "Technology",
-      options: ["Computer Science / Coding", "STEM / Robotics"]
-    },
-    {
-      category: "Arts",
-      options: ["Visual Arts", "Music", "Drama / Performing Arts"]
-    },
-    {
-      category: "Physical Education",
-      options: ["General PE", "Sports Coaching (basketball, soccer, etc.)"]
-    }
   ];
 
   // Common languages & levels
@@ -167,8 +113,15 @@ export class MyProfileComponent implements OnInit {
     this.teacherService.getMyProfile().subscribe({
       next: (data) => {
         this.teacher = { ...this.teacher, ...data }; // preserve defaults
+
+        if (this.teacher.availableFrom === 'immediately') {
+          this.availableFromChoice = 'immediately';
+        } else if (this.teacher.availableFrom) {
+          this.availableFromChoice = 'date';
+        }
+
         this.loading = false;
-        console.log('Loaded profile', this.teacher);
+        console.log('Loaded profile', this.teacher._id);
       },
       error: (err) => {
         console.error('Failed to load my profile', err);
@@ -185,8 +138,6 @@ export class MyProfileComponent implements OnInit {
     });
   }
 
-
-
   addEducation(): void {
     (this.teacher.education ??= []).push({
       degree: '',
@@ -195,6 +146,11 @@ export class MyProfileComponent implements OnInit {
       year: new Date().getFullYear()
     });
   }
+
+  removeEducation(index: number): void {
+    this.teacher.education.splice(index, 1);
+  }
+
 
   addWorkHistory(): void {
     (this.teacher.workHistory ??= []).push({
@@ -206,8 +162,13 @@ export class MyProfileComponent implements OnInit {
     });
   }
 
+  removeWorkHistory(index: number): void {
+    this.teacher.workHistory.splice(index, 1);
+  }
+
+
   addTeachingCert(): void {
-    this.teacher.teachingCertifications.push({
+    (this.teacher.teachingCertifications ??= []).push({
       name: '',
       year: new Date().getFullYear(),
     });
@@ -218,10 +179,7 @@ export class MyProfileComponent implements OnInit {
   }
 
   addOtherCert(): void {
-    this.teacher.otherCertificates.push({
-      name: '',
-      year: new Date().getFullYear(),
-    });
+    (this.teacher.otherCertificates ??= []).push({ name: '', year: new Date().getFullYear() });
   }
 
   removeOtherCert(index: number): void {
@@ -234,16 +192,6 @@ export class MyProfileComponent implements OnInit {
       this.teacher.ageGroups.splice(index, 1); // remove if already selected
     } else {
       this.teacher.ageGroups.push(option); // add if not selected
-    }
-  }
-
-  toggleSubject(option: string): void {
-    this.teacher.subjects ??= [];
-    const index = this.teacher.subjects.indexOf(option);
-    if (index >= 0) {
-      this.teacher.subjects.splice(index, 1);
-    } else {
-      this.teacher.subjects.push(option);
     }
   }
 
@@ -277,7 +225,6 @@ export class MyProfileComponent implements OnInit {
   }
 
   // Image 
-
   selectedFile: File | null = null;
   previewUrl: string | ArrayBuffer | null = null;
   updating = false;
@@ -296,44 +243,32 @@ export class MyProfileComponent implements OnInit {
     reader.readAsDataURL(this.selectedFile);
   }
 
-  async updatePhoto() {
-    console.log("Update button clicked"); // ✅ Debug log
-    if (!this.selectedFile) {
-      console.warn("No file selected");
-      return;
-    }
-
-    const userId = this.authService.getUserId();
-    if (!userId) {
-      console.error('No userId found — are you logged in?');
-      return;
-    } else {
-      console.log("Uploading photo for userId:", userId); // ✅ see if correct
-    }
-
-    this.updating = true;
-    try {
-      const updated: any = await this.teacherService.uploadProfilePhoto(this.selectedFile, userId);
-      console.log("Upload result:", updated); // ✅ Debug log
-      this.teacher.profilePhoto = updated.profilePhoto;
-      this.selectedFile = null;
-      this.previewUrl = null;
-    } catch (err) {
-      console.error('Upload failed', err);
-    } finally {
-      this.updating = false;
-    }
-  }
-
-  saveSection(section: string) {
+  // Save individual section 
+  async saveSection(section: string) {
     let data: any = {};
 
     switch (section) {
       case 'basic':
+        // First upload photo if a new one was selected
+        if (this.selectedFile) {
+          try {
+            const uploaded: any = await this.teacherService.uploadProfilePhoto(
+              this.selectedFile,
+              this.authService.getUserId()
+            );
+            this.teacher.profilePhoto = uploaded.profilePhoto;
+            this.selectedFile = null;
+            this.previewUrl = null;
+          } catch (err) {
+            console.error("Photo upload failed", err);
+            return; // stop saving if photo failed
+          }
+        }
+
         data = {
           displayName: this.teacher.displayName,
           nationality: this.teacher.nationality,
-          dateOfBirth: this.teacher.dateOfBirth,
+          age: this.teacher.age,
           location: this.teacher.location,
           profilePhoto: this.teacher.profilePhoto
         };
@@ -375,7 +310,10 @@ export class MyProfileComponent implements OnInit {
           preferredLocations: this.teacher.preferredLocations,
           preferredLocationOther: this.teacher.preferredLocationOther,
           workVisaStatus: this.teacher.workVisaStatus,
-          availableFrom: this.teacher.availableFrom
+          availableFrom:
+            this.availableFromChoice === 'date'
+              ? this.teacher.availableFrom // ISO date string
+              : 'immediately'
         };
         break;
 

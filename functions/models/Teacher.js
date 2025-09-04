@@ -8,8 +8,8 @@ const teacherSchema = new mongoose.Schema({
   displayName: { type: String }, // can override user.name for privacy
   profilePhoto: { type: String }, // URL to uploaded image
   nationality: { type: String },
-  dateOfBirth: { type: Date },
-  location: { type: String }, // current city in Taiwan or abroad
+  age: { type: Number },        // ✅ store age directly
+  location: { type: String },   // shown as "Current Location" in UI
 
   // 2. Professional Summary
   bio: { type: String },
@@ -54,7 +54,7 @@ const teacherSchema = new mongoose.Schema({
 
   // 5. Skills & Specializations
   ageGroups: [String], // e.g., "Kindergarten", "Adults"
-  subjects: [String],
+  subjects: { type: String },
   languageSkills: [
     {
       _id: false,
@@ -97,7 +97,7 @@ const teacherSchema = new mongoose.Schema({
   preferredLocationOther: { type: String, default: "" },
 
   workVisaStatus: { type: String }, // "Has ARC", "Needs sponsorship"
-  availableFrom: { type: Date },
+  availableFrom: { type: String }, // can be "immediately" or "YYYY-MM-DD"
 
   // 7. Compensation
   expectedRate: { type: String }, // "NT$800/hour" or "NT$60k/month"
