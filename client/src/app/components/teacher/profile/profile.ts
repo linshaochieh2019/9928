@@ -1,8 +1,9 @@
 import { Component, OnInit } from '@angular/core';
-import { ActivatedRoute } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 import { CommonModule } from '@angular/common';
 import { DomSanitizer, SafeResourceUrl } from '@angular/platform-browser';
 import { TeacherService } from '../../../services/teacher.service';
+import { AuthService } from '../../../services/auth';
 import { Teacher } from '../../../models/teacher.model';
 
 @Component({
@@ -42,7 +43,9 @@ export class TeacherProfileComponent implements OnInit {
 
   constructor(
     private route: ActivatedRoute,
+    private router: Router,
     private teacherService: TeacherService,
+    private authService: AuthService,
     public sanitizer: DomSanitizer
   ) { }
 
@@ -80,4 +83,13 @@ export class TeacherProfileComponent implements OnInit {
     const match = url.match(regExp);
     return (match && match[2].length === 11) ? match[2] : '';
   }
+
+  isOwner() {
+    return this.teacher?.user?._id === this.authService.getUserId();
+  }
+
+  goEdit() {
+    this.router.navigate(['/my-profile']);
+  }
+
 }

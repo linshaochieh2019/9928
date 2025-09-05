@@ -4,6 +4,7 @@ import { AuthService } from '../../../services/auth';
 import { Teacher } from '../../../models/teacher.model';
 import { TeacherService } from '../../../services/teacher.service';
 import { FormsModule } from '@angular/forms';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-my-profile',
@@ -108,7 +109,7 @@ export class MyProfileComponent implements OnInit {
     "Other"
   ];
 
-  constructor(private teacherService: TeacherService, private authService: AuthService) { }
+  constructor(private teacherService: TeacherService, private authService: AuthService, private router: Router) { }
 
   ngOnInit(): void {
     this.teacherService.getMyProfile().subscribe({
@@ -139,10 +140,14 @@ export class MyProfileComponent implements OnInit {
     });
   }
 
-// Router for preview
+  // Router for preview
   goToPreview() {
-    // this.router.navigate(['/teacher', this.teacher._id]);
-    // WIP
+    const teacherId = this.authService.getTeacherId();
+    if (teacherId) {
+      this.router.navigate(['/teachers', teacherId]);
+    } else {
+      console.warn('No teacherId found for current user');
+    }
   }
 
   addEducation(): void {

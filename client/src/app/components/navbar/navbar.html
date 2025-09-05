@@ -25,32 +25,29 @@
       <!-- Right side: auth links -->
       <ul class="navbar-nav ms-auto mb-2 mb-lg-0">
         @if (!authService.isLoggedIn()) {
-          <li class="nav-item me-2">
-            <a class="btn btn-outline-primary" routerLink="/login">Login</a>
-          </li>
-          <li class="nav-item">
-            <a class="btn btn-primary" routerLink="/register">Register</a>
-          </li>
+        <li class="nav-item me-2">
+          <a class="btn btn-outline-primary" routerLink="/login">Login</a>
+        </li>
+        <li class="nav-item">
+          <a class="btn btn-primary" routerLink="/register">Register</a>
+        </li>
         }
 
         @if (authService.isLoggedIn()) {
-          <li class="nav-item dropdown mx-4">
-            <a
-              class="nav-link dropdown-toggle"
-              href="#"
-              id="userDropdown"
-              role="button"
-              data-bs-toggle="dropdown"
-              aria-expanded="false"
-            >
-              {{ authService.getUserName() }}
-            </a>
-            <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="userDropdown">
-              <li><a class="dropdown-item" routerLink="/my-profile">My Profile</a></li>
-              <li><hr class="dropdown-divider"></li>
-              <li><button class="dropdown-item text-danger" (click)="logout()">Log out</button></li>
-            </ul>
-          </li>
+        <li class="nav-item dropdown mx-4">
+          <a class="nav-link dropdown-toggle" href="#" id="userDropdown" role="button" data-bs-toggle="dropdown"
+            aria-expanded="false">
+            {{ authService.getUserName() }}
+          </a>
+          <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="userDropdown">
+            <li><a (click)="goToMyProfile()" class="nav-link">My Profile</a>
+            </li>
+            <li>
+              <hr class="dropdown-divider">
+            </li>
+            <li><button class="dropdown-item text-danger" (click)="logout()">Log out</button></li>
+          </ul>
+        </li>
         }
       </ul>
     </div>

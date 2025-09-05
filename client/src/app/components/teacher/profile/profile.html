@@ -1,5 +1,14 @@
 <div class="container my-4">
 
+  <!-- ✅ Edit Profile Button ABOVE the card -->
+  @if (isOwner()) {
+  <div class="d-flex justify-content-end mb-2">
+    <button (click)="goEdit()" class="btn btn-outline-brand">
+      Edit Profile 🖊️
+    </button>
+  </div>
+  }
+
   <!-- Combined Hero + Basic Info -->
   <div class="card shadow-sm p-4 d-flex flex-row align-items-center mb-4">
     <!-- Profile Photo -->

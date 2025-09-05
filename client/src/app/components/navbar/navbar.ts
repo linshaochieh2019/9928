@@ -1,5 +1,5 @@
 import { Component } from '@angular/core';
-import { RouterLink, RouterLinkActive } from '@angular/router';
+import { RouterLink, RouterLinkActive, Router } from '@angular/router';
 import { CommonModule } from '@angular/common';
 import { AuthService } from '../../services/auth';
 
@@ -10,7 +10,19 @@ import { AuthService } from '../../services/auth';
   templateUrl: './navbar.html',
 })
 export class NavbarComponent {
-  constructor(public authService: AuthService) {}
+  constructor(public authService: AuthService, private router: Router) { }
+
+  goToMyProfile() {
+    const teacherId = this.authService.getTeacherId();
+    const employerId = this.authService.getEmployerId();
+    if (teacherId) {
+      this.router.navigate(['/teachers', teacherId]);
+    } else if (employerId) {
+      this.router.navigate(['/employers', employerId]);
+    } else {
+      console.warn('No teacher profile found for this user');
+    }
+  }
 
   logout() {
     this.authService.logout();

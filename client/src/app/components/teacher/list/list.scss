@@ -1,3 +1,13 @@
 .text-brand {
   color: var(--brand-primary) !important;
 }
+
+.card .headline {
+  display: -webkit-box;
+  -webkit-line-clamp: 1;   /* only 1 line */
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: normal;     /* allows wrapping before truncation */
+  min-height: 1.5rem;      /* keeps card heights consistent */
+}
