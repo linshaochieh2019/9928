@@ -27,3 +27,18 @@ body {
   background-color: var(--brand-secondary);
   border-color: var(--brand-secondary);
 }
+
+
+/* Outline brand button */
+.btn-outline-brand {
+  color: var(--brand-primary);
+  border: 1px solid var(--brand-primary);
+  background-color: transparent;
+  transition: all 0.2s ease-in-out;
+}
+.btn-outline-brand:hover,
+.btn-outline-brand:focus {
+  background-color: var(--brand-primary);
+  color: #fff;
+  border-color: var(--brand-primary);
+}
