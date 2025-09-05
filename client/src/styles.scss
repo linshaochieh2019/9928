@@ -1,1 +1,44 @@
-/* You can add global styles to this file, and also import other style files */
+/* src/styles.css */
+:root {
+  --brand-primary: #287279;   /* Teal */
+  --brand-secondary: #2C7BE5; /* Accent Blue */
+  --brand-light: #F8F9FA;     /* Light Gray */
+  --brand-dark: #212529;      /* Dark Text */
+  --brand-danger: #E74C3C;    /* Red */
+}
+
+body {
+  background-color: var(--brand-light);
+  color: var(--brand-dark);
+}
+
+/* Override Bootstrap buttons */
+.btn-primary {
+  background-color: var(--brand-primary);
+  border-color: var(--brand-primary);
+}
+
+.btn-primary:hover {
+  background-color: #1f5a60;
+  border-color: #1f5a60;
+}
+
+.btn-secondary {
+  background-color: var(--brand-secondary);
+  border-color: var(--brand-secondary);
+}
+
+
+/* Outline brand button */
+.btn-outline-brand {
+  color: var(--brand-primary);
+  border: 1px solid var(--brand-primary);
+  background-color: transparent;
+  transition: all 0.2s ease-in-out;
+}
+.btn-outline-brand:hover,
+.btn-outline-brand:focus {
+  background-color: var(--brand-primary);
+  color: #fff;
+  border-color: var(--brand-primary);
+}

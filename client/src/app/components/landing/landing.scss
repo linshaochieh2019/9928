@@ -1,0 +1,18 @@
+.hero-section {
+  background-color: #fff; /* white */
+  padding: 6rem 1rem;
+  width: 100%;
+}
+
+.how-it-works-section {
+  background-color: #f8f9fa; /* light gray */
+  padding: 6rem 1rem;
+  width: 100%;
+}
+
+/* Ensure row spans full width */
+.how-it-works-section .row {
+  margin-left: 0;
+  margin-right: 0;
+  width: 100%;
+}

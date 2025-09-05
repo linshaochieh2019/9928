@@ -1,1 +1,70 @@
-<p>landing works!</p>
+<!-- landing.component.html -->
+<section class="hero-section text-center">
+    <div>
+        <h1 class="display-4 fw-bold">Find Qualified Teachers in Taiwan Fast</h1>
+        <p class="lead text-muted mb-4">
+            9928 connects schools and employers with foreign teachers quickly and securely.
+        </p>
+        <div class="d-flex justify-content-center gap-3">
+            <!-- Employers CTA -->
+            <a routerLink="/teachers" class="btn btn-primary btn-lg">Browse Teachers</a>
+            <!-- Teachers CTA -->
+            <a routerLink="/employers" class="btn btn-outline-secondary btn-lg">
+                Browse Employers
+            </a>
+        </div>
+    </div>
+</section>
+
+
+<!-- How It Works Section -->
+<section class="how-it-works-section text-center py-5">
+    <h2 class="fw-bold mb-4 text-dark">How It Works</h2>
+    <p class="text-muted mb-5">
+        Whether you're an employer or a teacher, getting started is simple.
+    </p>
+
+    <div class="row mx-0">
+        <!-- Employers -->
+        <div class="col-md-6 mb-4">
+            <h4 class="fw-bold mb-4" style="color: var(--brand-primary);">
+                For Employers
+            </h4>
+            <div class="d-flex justify-content-center gap-5 flex-wrap">
+                <div>
+                    <i class="bi bi-pencil-square fs-1" style="color: var(--brand-primary);"></i>
+                    <p class="mt-2">Post your job</p>
+                </div>
+                <div>
+                    <i class="bi bi-search fs-1" style="color: var(--brand-primary);"></i>
+                    <p class="mt-2">Browse teachers</p>
+                </div>
+                <div>
+                    <i class="bi bi-envelope fs-1" style="color: var(--brand-primary);"></i>
+                    <p class="mt-2">Contact directly</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Teachers -->
+        <div class="col-md-6 mb-4">
+            <h4 class="fw-bold mb-4" style="color: var(--brand-secondary);">
+                For Teachers
+            </h4>
+            <div class="d-flex justify-content-center gap-5 flex-wrap">
+                <div>
+                    <i class="bi bi-person-plus fs-1" style="color: var(--brand-secondary);"></i>
+                    <p class="mt-2">Sign up</p>
+                </div>
+                <div>
+                    <i class="bi bi-card-text fs-1" style="color: var(--brand-secondary);"></i>
+                    <p class="mt-2">Build your profile</p>
+                </div>
+                <div>
+                    <i class="bi bi-briefcase fs-1" style="color: var(--brand-secondary);"></i>
+                    <p class="mt-2">Get hired</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>

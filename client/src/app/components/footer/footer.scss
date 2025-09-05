@@ -1,0 +1,18 @@
+.footer-section {
+  background-color: #212529; // dark gray / black
+  color: #adb5bd; // muted text
+
+  .footer-link {
+    color: #adb5bd;
+    text-decoration: none;
+
+    &:hover {
+      color: #ffffff;
+      text-decoration: underline;
+    }
+  }
+
+  hr {
+    opacity: 0.2;
+  }
+}

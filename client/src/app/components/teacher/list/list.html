@@ -1,18 +1,84 @@
-<h2 class="text-xl font-bold mb-4">Teachers</h2>
+<div class="container my-4">
 
-@if (loading) {
-<p>Loading...</p>
-} @else {
-@for (t of teachers; track t._id) {
-<div class="teacher-card">
-  <img [src]="t.profilePhoto || 'assets/default-avatar.png'" alt="Profile" />
-  <h3>{{ t.displayName || t.user?.name }}</h3>
-  <p>{{ t.bio }}</p>
-  <p><strong>Nationality:</strong> {{ t.nationality }}</p>
-  <p><strong>Experience:</strong> {{ t.yearsExperience }} years</p>
-  <button [routerLink]="['/teachers', t._id]">View Profile</button>
+  <!-- Page Title -->
+  <div class="text-center mb-5">
+    <h1 class="fw-bold" style="color: var(--brand-dark);">
+      Find Your Next Great Teacher
+    </h1>
+    <p class="text-muted fs-5">
+      Browse our community of talented and passionate educators from around the world.
+    </p>
+  </div>
+
+  <!-- Search -->
+  <div class="mb-4">
+    <input type="text" class="form-control" placeholder="Search by name, location, or subject..."
+      [(ngModel)]="searchTerm">
+  </div>
+
+  <!-- Featured Teachers -->
+  <h2 class="mb-4">Featured Teachers</h2>
+  @if (teachers.length > 0) {
+  <div class="row g-4">
+    @for (teacher of paginatedTeachers; track teacher._id) {
+    <div class="col-md-4">
+      <div class="card h-100 shadow-sm">
+
+        <!-- Profile Photo -->
+        <img [src]="teacher.profilePhoto" alt="{{ teacher.displayName }}" class="card-img-top"
+          style="object-fit: cover; height: 250px;">
+
+        <div class="card-body d-flex flex-column">
+          <!-- Name + Headline -->
+          <h5 class="card-title">{{ teacher.displayName }}</h5>
+          <p class="text-brand fw-semibold mb-2">{{ teacher.headline }}</p>
+
+          <!-- Quick Info -->
+          <p class="mb-1"><strong>Nationality:</strong> {{ teacher.nationality }}</p>
+          <p class="mb-1"><strong>Current Location:</strong> {{ teacher.location }}</p>
+          <p class="mb-3"><strong>Experience:</strong> {{ teacher.yearsExperience }}+ years teaching</p>
+
+          <!-- Push buttons to bottom -->
+          <div class="mt-auto d-flex gap-2">
+            <a [routerLink]="['/teachers', teacher._id]" class="btn btn-outline-brand btn-sm flex-fill">
+              View Profile
+            </a>
+            <button class="btn btn-secondary btn-sm flex-fill" (click)="contactTeacher(teacher)">
+              Contact
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+    }
+  </div>
+
+
+  <!-- Pagination -->
+  <nav class="mt-4">
+    <ul class="pagination justify-content-center">
+      <!-- Previous -->
+      <li class="page-item" [class.disabled]="page === 1">
+        <button class="page-link" (click)="changePage(page - 1)">Previous</button>
+      </li>
+
+      <!-- Page numbers -->
+      @for (p of pages; track p) {
+      <li class="page-item" [class.active]="page === p">
+        <button class="page-link" (click)="changePage(p)">{{ p }}</button>
+      </li>
+      }
+
+      <!-- Next -->
+      <li class="page-item" [class.disabled]="page === totalPages">
+        <button class="page-link" (click)="changePage(page + 1)">Next</button>
+      </li>
+    </ul>
+  </nav>
+
+
+
+  } @else {
+  <div class="alert alert-info">No teachers found.</div>
+  }
 </div>
-} @empty {
-<p>No teachers available right now.</p>
-}
-}

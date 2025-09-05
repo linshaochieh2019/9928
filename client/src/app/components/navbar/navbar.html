@@ -1,0 +1,58 @@
+<nav class="navbar navbar-expand-lg navbar-light bg-light">
+  <div class="container-fluid">
+    <!-- Brand -->
+    <a class="navbar-brand d-flex align-items-center" routerLink="/">
+      <img src="assets/logo.png" alt="9928 Logo" width="90" height="90" class="me-2">
+    </a>
+
+    <!-- Toggle button for mobile -->
+    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+      <span class="navbar-toggler-icon"></span>
+    </button>
+
+    <!-- Navbar content -->
+    <div class="collapse navbar-collapse" id="navbarNav">
+      <!-- Left links -->
+      <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+        <li class="nav-item">
+          <a class="nav-link" routerLink="/teachers" routerLinkActive="active">Teachers</a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link" routerLink="/employers" routerLinkActive="active">Employers</a>
+        </li>
+      </ul>
+
+      <!-- Right side: auth links -->
+      <ul class="navbar-nav ms-auto mb-2 mb-lg-0">
+        @if (!authService.isLoggedIn()) {
+          <li class="nav-item me-2">
+            <a class="btn btn-outline-primary" routerLink="/login">Login</a>
+          </li>
+          <li class="nav-item">
+            <a class="btn btn-primary" routerLink="/register">Register</a>
+          </li>
+        }
+
+        @if (authService.isLoggedIn()) {
+          <li class="nav-item dropdown mx-4">
+            <a
+              class="nav-link dropdown-toggle"
+              href="#"
+              id="userDropdown"
+              role="button"
+              data-bs-toggle="dropdown"
+              aria-expanded="false"
+            >
+              {{ authService.getUserName() }}
+            </a>
+            <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="userDropdown">
+              <li><a class="dropdown-item" routerLink="/my-profile">My Profile</a></li>
+              <li><hr class="dropdown-divider"></li>
+              <li><button class="dropdown-item text-danger" (click)="logout()">Log out</button></li>
+            </ul>
+          </li>
+        }
+      </ul>
+    </div>
+  </div>
+</nav>
