@@ -40,6 +40,12 @@
               <label class="form-label">Current Location</label>
               <input class="form-control" [(ngModel)]="teacher.location" name="location" />
             </div>
+            <div class="col-md-12">
+              <label class="form-label">Headline</label>
+              <input class="form-control" [(ngModel)]="teacher.headline" name="headline"
+                placeholder="e.g., Experienced High School Math Teacher" />
+            </div>
+
           </div>
 
           <!-- Save button -->
@@ -171,7 +177,7 @@
       @for (job of teacher.workHistory; track $index) {
       <div class="row g-2 mb-2 align-items-center">
         <div class="col-md-2">
-          <input class="form-control" [(ngModel)]="job.school" name="school{{$index}}" placeholder="School" />
+          <input class="form-control" [(ngModel)]="job.school" name="school{{$index}}" placeholder="Organization" />
         </div>
         <div class="col-md-2">
           <input class="form-control" [(ngModel)]="job.role" name="role{{$index}}" placeholder="Role" />

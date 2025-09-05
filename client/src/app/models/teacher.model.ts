@@ -10,6 +10,7 @@ export interface Teacher {
   nationality?: string;
   age: number;              // ✅ simplified
   location: string;         // current location
+  headline: string;        // new field for brief professional headline
 
   // 2. Professional Summary
   bio?: string;

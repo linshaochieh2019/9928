@@ -21,6 +21,7 @@ export class MyProfileComponent implements OnInit {
     nationality: '',
     age: 0,
     location: '',
+    headline: '',
 
     // 2. Professional Summary
     bio: '',
@@ -270,7 +271,8 @@ export class MyProfileComponent implements OnInit {
           nationality: this.teacher.nationality,
           age: this.teacher.age,
           location: this.teacher.location,
-          profilePhoto: this.teacher.profilePhoto
+          profilePhoto: this.teacher.profilePhoto,
+          headline: this.teacher.headline
         };
         break;
 

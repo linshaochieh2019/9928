@@ -80,6 +80,7 @@ router.patch("/me/:section", authenticate, authorize("teacher"), async (req, res
           age: req.body.age,
           location: req.body.location,
           profilePhoto: req.body.profilePhoto,
+          headline: req.body.headline,
         });
         break;
 

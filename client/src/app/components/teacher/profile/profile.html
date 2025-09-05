@@ -1,19 +1,30 @@
 <div class="container my-4">
-  <!-- Header Card -->
-  <div class="card shadow-sm mb-4">
-    <div class="card-body d-flex align-items-center">
-      <img [src]="teacher?.profilePhoto || 'assets/default-avatar.png'" 
-           alt="Profile Photo"
-           class="rounded-circle me-3"
-           style="width:100px; height:100px; object-fit:cover;">
-      <div>
-        <h3 class="mb-1">{{ teacher?.displayName }}</h3>
-        <p class="text-muted mb-1">{{ teacher?.nationality }} • {{ teacher?.location }}</p>
-        <div>
-          <button class="btn btn-primary btn-sm me-2">Contact</button>
-          @if (teacher?.resumeUrl) {
-            <a [href]="teacher?.resumeUrl" class="btn btn-secondary btn-sm" target="_blank">Resume</a>
-          }
+
+  <!-- Combined Hero + Basic Info -->
+  <div class="card shadow-sm p-4 d-flex flex-row align-items-center mb-4">
+    <!-- Profile Photo -->
+    <img [src]="teacher.profilePhoto || 'assets/default-avatar.png'" alt="Profile Photo"
+      class="rounded-circle border me-4" style="width:180px; height:180px; object-fit:cover;">
+
+    <!-- Info -->
+    <div class="flex-grow-1 mx-3">
+      <!-- Name + Headline -->
+      <h1 class="h4 fw-bold mb-1 text-dark">{{ teacher.displayName }}</h1>
+      <p class="fs-6 text-muted mb-3">{{ teacher.headline }}</p>
+
+      <!-- Identity Details (Vertical Layout) -->
+      <div class="d-flex flex-column gap-2 text-muted small">
+        <div class="d-flex align-items-center">
+          <i class="bi bi-flag me-2 text-secondary"></i>
+          <span><strong>Nationality:</strong> {{ teacher.nationality || '—' }}</span>
+        </div>
+        <div class="d-flex align-items-center">
+          <i class="bi bi-geo-alt me-2 text-secondary"></i>
+          <span><strong>Current Location:</strong> {{ teacher.location || '—' }}</span>
+        </div>
+        <div class="d-flex align-items-center">
+          <i class="bi bi-calendar3 me-2 text-secondary"></i>
+          <span><strong>Age:</strong> {{ teacher.age || '—' }}</span>
         </div>
       </div>
     </div>
@@ -21,112 +32,144 @@
 
   <!-- Professional Summary -->
   <div class="card shadow-sm mb-4">
-    <div class="card-header">Professional Summary</div>
     <div class="card-body">
-      <p>{{ teacher?.bio }}</p>
-      @if (teacher?.introVideo) {
-        <video controls class="w-100 rounded">
-          <source [src]="teacher?.introVideo" type="video/mp4">
-        </video>
-      }
+      <h2 class="h5 fw-bold mb-3 text-dark">Professional Summary</h2>
+
+      <!-- Bio -->
+      <h6 class="fw-semibold text-secondary mb-2">Bio</h6>
+      <p class="mb-3 text-secondary" style="line-height: 1.6;">
+        {{ teacher.bio || 'No professional summary provided.' }}
+      </p>
+
+      <!-- Intro Video -->
+      <div *ngIf="teacher.introVideo" class="mt-3">
+        <h6 class="fw-semibold text-secondary mb-2">Intro Video</h6>
+
+        <div class="d-flex justify-content-left mt-3">
+          <div class="ratio ratio-16x9 border rounded shadow-sm" style="max-width: 600px; width: 100%;">
+            <iframe [src]="getYoutubeEmbedUrl(teacher.introVideo)" title="Intro Video" allowfullscreen></iframe>
+          </div>
+        </div>
+      </div>
     </div>
   </div>
 
+
   <!-- Qualifications -->
   <div class="card shadow-sm mb-4">
-    <div class="card-header">Qualifications</div>
     <div class="card-body">
-      <h6>Education</h6>
-      <ul>
-        @for (e of teacher?.education; track e) {
-          <li>{{ e.degree }} in {{ e.major }} – {{ e.institution }} ({{ e.year }})</li>
-        }
+      <h2 class="h5 fw-bold mb-3 text-dark">Qualifications</h2>
+
+      <!-- Education -->
+      <h6 class="fw-semibold text-secondary">Education</h6>
+      <ul class="list-unstyled mb-3">
+        <li *ngFor="let edu of teacher.education" class="mb-1">
+          🎓 {{ edu.degree }} in {{ edu.major }} — {{ edu.institution }} ({{ edu.year }})
+        </li>
       </ul>
-      <h6>Teaching Certifications</h6>
-      <ul>
-        @for (c of teacher?.teachingCertifications; track c) {
-          <li>{{ c.name }} ({{ c.year }})</li>
-        }
+
+      <!-- Teaching Certifications -->
+      <h6 class="fw-semibold text-secondary">Teaching Certifications</h6>
+      <ul class="list-unstyled mb-3">
+        <li *ngFor="let cert of teacher.teachingCertifications" class="mb-1">
+          📜 {{ cert.name }} ({{ cert.year }})
+        </li>
       </ul>
-      <h6>Other Certificates</h6>
-      <ul>
-        @for (c of teacher?.otherCertificates; track c) {
-          <li>{{ c.name }} ({{ c.year }})</li>
-        }
+
+      <!-- Other Certificates -->
+      <h6 class="fw-semibold text-secondary">Other Certificates</h6>
+      <ul class="list-unstyled mb-0">
+        <li *ngFor="let cert of teacher.otherCertificates" class="mb-1">
+          📄 {{ cert.name }} ({{ cert.year }})
+        </li>
       </ul>
     </div>
   </div>
 
   <!-- Experience -->
   <div class="card shadow-sm mb-4">
-    <div class="card-header">Experience</div>
     <div class="card-body">
-      <p>{{ teacher?.yearsExperience }} years teaching experience</p>
-      <ul>
-        @for (job of teacher?.workHistory; track job) {
-          <li>
-            {{ job.role }} – {{ job.school }} ({{ job.country }}, {{ job.startDate }} – {{ job.endDate }})
-          </li>
-        }
+      <h2 class="h5 fw-bold mb-3 text-dark">Experience</h2>
+      <p><strong>Years of Experience:</strong> {{ teacher.yearsExperience || '—' }}</p>
+      <ul class="list-unstyled mb-0">
+        <li *ngFor="let job of teacher.workHistory" class="mb-2">
+          💼 <strong>{{ job.role }}</strong> at {{ job.school }} ({{ job.country }})
+          <br />
+          <small class="text-muted">
+            {{ job.startDate | date:'yyyy/MM' }} – {{ job.endDate ? (job.endDate | date:'yyyy/MM') : 'Present' }}
+          </small>
+        </li>
       </ul>
     </div>
   </div>
 
   <!-- Skills & Specializations -->
   <div class="card shadow-sm mb-4">
-    <div class="card-header">Skills & Specializations</div>
     <div class="card-body">
-      <h6>Subjects</h6>
-      @for (s of teacher?.subjects; track s) {
-        <span class="badge bg-primary me-1">{{ s }}</span>
-      }
-      <h6 class="mt-3">Age Groups</h6>
-      @for (a of teacher?.ageGroups; track a) {
-        <span class="badge bg-secondary me-1">{{ a }}</span>
-      }
-      <h6 class="mt-3">Languages</h6>
-      <ul>
-        @for (l of teacher?.languageSkills; track l) {
-          <li>{{ l.language }} – {{ l.level }}</li>
-        }
+      <h2 class="h5 fw-bold mb-3 text-dark">Skills & Specializations</h2>
+
+      <h6 class="fw-semibold text-secondary">Age Groups</h6>
+      <div class="mb-3">
+        <span *ngFor="let group of teacher.ageGroups" class="badge me-1 mb-1"
+          [ngStyle]="{'background-color': 'var(--brand-secondary)', 'color': 'white'}">
+          {{ group }}
+        </span>
+      </div>
+
+      <h6 class="fw-semibold text-secondary">Subjects</h6>
+      <p class="mb-3 text-secondary" style="line-height: 1.6;">
+        {{ teacher.subjects || 'No subjects provided.' }}
+      </p>
+
+      <h6 class="fw-semibold text-secondary">Language Skills</h6>
+      <ul class="list-unstyled mb-0">
+        <li *ngFor="let skill of teacher.languageSkills" class="mb-1">
+          🌐 {{ skill.language }} — {{ skill.level }}
+        </li>
       </ul>
     </div>
   </div>
 
-  <!-- Availability -->
+  <!-- Availability & Preferences -->
   <div class="card shadow-sm mb-4">
-    <div class="card-header">Availability & Preferences</div>
     <div class="card-body">
-      <p><strong>Employment:</strong> {{ teacher?.employmentType?.join(", ") }}</p>
-      <p><strong>Preferred Locations:</strong> {{ teacher?.preferredLocations?.join(", ") }}</p>
-      <p><strong>Work Visa Status:</strong> {{ teacher?.workVisaStatus }}</p>
-      <p><strong>Available From:</strong> {{ teacher?.availableFrom }}</p>
+      <h2 class="h5 fw-bold mb-3 text-dark">Availability & Preferences</h2>
+
+      <p>
+        <strong>Employment Type: </strong>
+        <span *ngFor="let type of teacher.employmentType" class="badge me-1"
+          [ngStyle]="{'background-color': 'var(--brand-secondary)', 'color': 'white'}">
+          {{ type }}
+        </span>
+      </p>
+
+      <p>
+        <strong>Preferred Locations: </strong>
+        <span *ngFor="let loc of teacher.preferredLocations" class="badge me-1"
+          [ngStyle]="{'background-color': 'var(--brand-secondary)', 'color': 'white'}">
+          {{ loc }}
+        </span>
+        <span *ngIf="teacher.preferredLocationOther" class="badge me-1"
+          [ngStyle]="{'background-color': 'var(--brand-secondary)', 'color': 'white'}">
+          {{ teacher.preferredLocationOther }}
+        </span>
+      </p>
+
+      <p><strong>Work Visa Status:</strong> {{ teacher.workVisaStatus || '—' }}</p>
+      <p><strong>Available From:</strong>
+        {{ teacher.availableFrom === 'immediately'
+        ? 'Immediately'
+        : (teacher.availableFrom | date:'yyyy/MM/dd') }}
+      </p>
     </div>
   </div>
 
   <!-- Compensation -->
   <div class="card shadow-sm mb-4">
-    <div class="card-header">Compensation</div>
     <div class="card-body">
-      <p>{{ teacher?.expectedRate }}</p>
+      <h2 class="h5 fw-bold mb-3 text-dark">Compensation</h2>
+      <p class="mb-0"><strong>Expected Rate/Salary:</strong> {{ teacher.expectedRate || 'Negotiable' }}</p>
     </div>
   </div>
 
-  <!-- Trust & Reviews -->
-  <div class="card shadow-sm mb-4">
-    <div class="card-header">Trust & Reviews</div>
-    <div class="card-body">
-      @if (teacher?.ratings?.length) {
-        @for (r of teacher?.ratings; track r) {
-          <div class="mb-2">
-            <strong>{{ r.employer }}</strong> 
-            <span class="text-warning">{{ '★'.repeat(r.rating) }}</span>
-            <p class="mb-0">{{ r.comment }}</p>
-          </div>
-        }
-      } @else {
-        <p>No reviews yet.</p>
-      }
-    </div>
-  </div>
 </div>

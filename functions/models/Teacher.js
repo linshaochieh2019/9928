@@ -10,6 +10,8 @@ const teacherSchema = new mongoose.Schema({
   nationality: { type: String },
   age: { type: Number },        // ✅ store age directly
   location: { type: String },   // shown as "Current Location" in UI
+  headline: { type: String },
+
 
   // 2. Professional Summary
   bio: { type: String },
