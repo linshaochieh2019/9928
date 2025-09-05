@@ -10,23 +10,17 @@
     </p>
   </div>
 
-  <!-- (optional) Search + Filters -->
+  <!-- Search -->
   <div class="mb-4">
-    <input type="text" class="form-control mb-3" placeholder="Search by name, location, or subject...">
-
-    <div class="d-flex gap-2 flex-wrap">
-      <span class="badge rounded-pill bg-light text-dark border">Subject</span>
-      <span class="badge rounded-pill bg-light text-dark border">Location</span>
-      <span class="badge rounded-pill bg-light text-dark border">Experience</span>
-      <span class="badge rounded-pill bg-light text-dark border">Nationality</span>
-    </div>
+    <input type="text" class="form-control" placeholder="Search by name, location, or subject..."
+      [(ngModel)]="searchTerm">
   </div>
 
   <!-- Featured Teachers -->
   <h2 class="mb-4">Featured Teachers</h2>
   @if (teachers.length > 0) {
   <div class="row g-4">
-    @for (teacher of teachers; track teacher._id) {
+    @for (teacher of paginatedTeachers; track teacher._id) {
     <div class="col-md-4">
       <div class="card h-100 shadow-sm">
 

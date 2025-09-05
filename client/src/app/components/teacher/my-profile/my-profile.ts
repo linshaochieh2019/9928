@@ -131,12 +131,18 @@ export class MyProfileComponent implements OnInit {
     });
   }
 
-  // Full Update
+  // Full Update (no longer used)
   saveProfile(): void {
     this.teacherService.saveProfile(this.teacher).subscribe({
       next: () => alert('Profile saved!'),
       error: (err) => alert('Error saving profile: ' + err.message)
     });
+  }
+
+// Router for preview
+  goToPreview() {
+    // this.router.navigate(['/teacher', this.teacher._id]);
+    // WIP
   }
 
   addEducation(): void {
