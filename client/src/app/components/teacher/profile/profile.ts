@@ -89,7 +89,7 @@ export class TeacherProfileComponent implements OnInit {
   }
 
   goEdit() {
-    this.router.navigate(['/my-profile']);
+    this.router.navigate(['teacher/my-profile']);
   }
 
 }

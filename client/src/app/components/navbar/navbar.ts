@@ -20,7 +20,7 @@ export class NavbarComponent {
     } else if (employerId) {
       this.router.navigate(['/employers', employerId]);
     } else {
-      console.warn('No teacher profile found for this user');
+      console.warn('No profile found for this user');
     }
   }
 
