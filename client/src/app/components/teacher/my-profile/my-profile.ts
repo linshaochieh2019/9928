@@ -112,7 +112,7 @@ export class MyProfileComponent implements OnInit {
   constructor(private teacherService: TeacherService, private authService: AuthService, private router: Router) { }
 
   ngOnInit(): void {
-    this.teacherService.getMyProfile().subscribe({
+    this.teacherService.getMyTeacherProfile().subscribe({
       next: (data) => {
         this.teacher = { ...this.teacher, ...data }; // preserve defaults
 
@@ -284,6 +284,13 @@ export class MyProfileComponent implements OnInit {
           location: this.teacher.location,
           profilePhoto: this.teacher.profilePhoto,
           headline: this.teacher.headline
+        };
+        break;
+
+      case 'contact':
+        data = {
+          phone: this.teacher.phone,
+          contactEmail: this.teacher.contactEmail
         };
         break;
 

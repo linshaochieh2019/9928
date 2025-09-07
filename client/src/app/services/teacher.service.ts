@@ -16,6 +16,12 @@ export class TeacherService {
     return this.http.get<Teacher[]>(this.apiUrl);
   }
 
+  // ✅ Get current logged-in teacher profile
+  getMyTeacherProfile(): Observable<Teacher> {
+    return this.http.get<Teacher>(`${this.apiUrl}/me`);
+  }
+
+  // ✅ Get teacher by ID
   getTeacherById(id: string): Observable<Teacher> {
     return this.http.get<Teacher>(`${this.apiUrl}/${id}`);
   }

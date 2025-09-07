@@ -3,6 +3,7 @@ const Teacher = require("../models/Teacher");
 const { authenticate, authorize } = require("../middleware/auth");
 const { mongo, default: mongoose } = require("mongoose");
 const router = express.Router();
+const { maskContact } = require("../utils/maskContact");
 
 // Create or Update profile
 router.post("/profile", authenticate, authorize("teacher"), async (req, res) => {
@@ -27,7 +28,23 @@ router.get("/", async (req, res) => {
     const teachers = await Teacher.find()
       .populate("user", "name") // only show public-safe fields
       .select("-__v"); // remove Mongoose version key
-    res.json(teachers);
+
+    // Mask contact info for each teacher
+    const safeTeachers = teachers.map(maskContact);
+    res.json(safeTeachers);
+
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+});
+
+// Private: Get my profile (unmasked)
+router.get("/me", authenticate, authorize("teacher"), async (req, res) => {
+  try {
+    const teacher = await Teacher.findOne({ user: req.user.userId });
+    if (!teacher) return res.status(404).json({ error: "Profile not found" });
+
+    res.json(teacher); // full profile, no masking
   } catch (err) {
     res.status(500).json({ error: err.message });
   }
@@ -36,9 +53,19 @@ router.get("/", async (req, res) => {
 // Public: Get teacher by id
 router.get("/:id", async (req, res) => {
   try {
-    const teacher = await Teacher.findById(req.params.id).populate("user", "email");
+    // const teacher = await Teacher.findById(req.params.id).populate("user", "email");        
+    const teacher = await Teacher.findById(req.params.id);
     if (!teacher) return res.status(404).json({ error: "Not found" });
-    res.json(teacher);
+
+    // If logged in as the owner → return full
+    if (req.user && req.user.userId === teacher.user._id.toString()) {
+      return res.json(teacher);
+    }
+
+    // Mask contact info
+    const safeTeacher = maskContact(teacher);
+    res.json(safeTeacher);
+
   } catch (err) {
     res.status(500).json({ error: err.message });
   }
@@ -81,6 +108,13 @@ router.patch("/me/:section", authenticate, authorize("teacher"), async (req, res
           location: req.body.location,
           profilePhoto: req.body.profilePhoto,
           headline: req.body.headline,
+        });
+        break;
+
+      case "contact":
+        Object.assign(teacher, {
+          phone: req.body.phone,
+          contactEmail: req.body.contactEmail, // 👈 new field
         });
         break;
 
@@ -140,6 +174,7 @@ router.patch("/me/:section", authenticate, authorize("teacher"), async (req, res
     res.status(500).json({ error: err.message });
   }
 });
+
 
 
 module.exports = router;

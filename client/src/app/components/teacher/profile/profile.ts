@@ -16,6 +16,8 @@ export class TeacherProfileComponent implements OnInit {
   teacher: Teacher = {
     // minimal safe defaults so template never breaks
     displayName: '',
+    phone: '',
+    contactEmail: '',
     profilePhoto: '',
     nationality: '',
     location: '',
@@ -84,8 +86,17 @@ export class TeacherProfileComponent implements OnInit {
     return (match && match[2].length === 11) ? match[2] : '';
   }
 
-  isOwner() {
-    return this.teacher?.user?._id === this.authService.getUserId();
+  isOwner(): boolean {
+    const teacherUserId =
+      typeof this.teacher?.user === 'string'
+        ? this.teacher.user
+        : this.teacher?.user?._id;
+
+    const authUserId = this.authService.getUserId();
+
+    console.log('Comparing teacher user ID', teacherUserId, 'with auth user ID', authUserId);
+
+    return teacherUserId === authUserId;
   }
 
   goEdit() {

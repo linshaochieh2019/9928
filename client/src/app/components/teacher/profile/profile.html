@@ -9,35 +9,72 @@
   </div>
   }
 
-  <!-- Combined Hero + Basic Info -->
-  <div class="card shadow-sm p-4 d-flex flex-row align-items-center mb-4">
-    <!-- Profile Photo -->
-    <img [src]="teacher.profilePhoto || 'assets/default-avatar.png'" alt="Profile Photo"
-      class="rounded-circle border me-4" style="width:180px; height:180px; object-fit:cover;">
+  <!-- Profile Header Row -->
+  <div class="row g-4 mb-4">
+    <!-- Left: Basic Info Card -->
+    <div class="col-12 col-lg-7">
+      <div class="card shadow-sm p-4 h-100">
+        <!-- Profile Photo + Info -->
+        <div class="d-flex">
+          <!-- Profile Photo -->
+          <img [src]="teacher.profilePhoto || 'assets/default-avatar.png'" alt="Profile Photo"
+            class="rounded-circle border me-4" style="width:160px; height:160px; object-fit:cover;">
 
-    <!-- Info -->
-    <div class="flex-grow-1 mx-3">
-      <!-- Name + Headline -->
-      <h1 class="h4 fw-bold mb-1 text-dark">{{ teacher.displayName }}</h1>
-      <p class="fs-6 text-muted mb-3">{{ teacher.headline }}</p>
+          <!-- Info -->
+          <div class="flex-grow-1">
+            <h1 class="h4 fw-bold mb-1 text-dark">{{ teacher.displayName }}</h1>
+            <p class="fs-6 text-muted mb-3">{{ teacher.headline }}</p>
 
-      <!-- Identity Details (Vertical Layout) -->
-      <div class="d-flex flex-column gap-2 text-muted small">
-        <div class="d-flex align-items-center">
-          <i class="bi bi-flag me-2 text-secondary"></i>
-          <span><strong>Nationality:</strong> {{ teacher.nationality || '—' }}</span>
+            <div class="d-flex flex-column gap-2 text-muted small">
+              <div class="d-flex align-items-center">
+                <i class="bi bi-flag me-2 text-secondary"></i>
+                <span><strong>Nationality:</strong> {{ teacher.nationality || '—' }}</span>
+              </div>
+              <div class="d-flex align-items-center">
+                <i class="bi bi-geo-alt me-2 text-secondary"></i>
+                <span><strong>Current Location:</strong> {{ teacher.location || '—' }}</span>
+              </div>
+              <div class="d-flex align-items-center">
+                <i class="bi bi-calendar3 me-2 text-secondary"></i>
+                <span><strong>Age:</strong> {{ teacher.age || '—' }}</span>
+              </div>
+            </div>
+          </div>
         </div>
-        <div class="d-flex align-items-center">
-          <i class="bi bi-geo-alt me-2 text-secondary"></i>
-          <span><strong>Current Location:</strong> {{ teacher.location || '—' }}</span>
+      </div>
+    </div>
+
+    <!-- Right: Contact Info Card -->
+    <div class="col-12 col-lg-5">
+      <div class="card shadow-sm p-4 h-100">
+        <h5 class="fw-bold mb-3">Contact Information</h5>
+
+        <!-- Locked view -->
+        <div *ngIf="teacher.phone === 'Hidden' && teacher.contactEmail === 'Hidden'">
+          <p class="text-muted">Unlock to view this teacher’s contact details.</p>
+          <button class="btn btn-outline-brand" disabled>
+            <i class="bi bi-lock me-1"></i> Unlock to Contact
+          </button>
         </div>
-        <div class="d-flex align-items-center">
-          <i class="bi bi-calendar3 me-2 text-secondary"></i>
-          <span><strong>Age:</strong> {{ teacher.age || '—' }}</span>
+
+        <!-- Unlocked view -->
+        <div *ngIf="teacher.phone !== 'Hidden' || teacher.contactEmail !== 'Hidden'"
+          class="d-flex flex-column gap-2 small">
+          <div class="d-flex align-items-center">
+            <i class="bi bi-telephone me-2 text-secondary"></i>
+            <span><strong>Phone:</strong> {{ teacher.phone || '—' }}</span>
+          </div>
+          <div class="d-flex align-items-center">
+            <i class="bi bi-envelope me-2 text-secondary"></i>
+            <span><strong>Email:</strong> {{ teacher.contactEmail || '—' }}</span>
+          </div>
         </div>
       </div>
     </div>
   </div>
+
+
+
 
   <!-- Professional Summary -->
   <div class="card shadow-sm mb-4">

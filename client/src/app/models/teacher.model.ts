@@ -12,6 +12,10 @@ export interface Teacher {
   location: string;         // current location
   headline: string;        // new field for brief professional headline
 
+  // Contact Info - may be masked
+  phone?: string;          
+  contactEmail?: string;   
+
   // 2. Professional Summary
   bio?: string;
   introVideo?: string;

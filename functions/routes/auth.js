@@ -8,7 +8,7 @@ const Employer = require("../models/Employer");
 // Secrets
 const { defineSecret } = require("firebase-functions/params");
 const JWT_SECRET = defineSecret("JWT_SECRET");
-const { authenticate} = require("../middleware/auth")
+const { authenticate } = require("../middleware/auth")
 
 // Router
 const router = express.Router();
@@ -22,7 +22,10 @@ router.post("/register", async (req, res) => {
 
     // Set up profiles depending on user role
     if (role === "teacher") {
-      const teacher = new Teacher({ user: user._id });
+      const teacher = new Teacher({
+        user: user._id,
+        contactEmail: email // 👈 default contact email = registration email
+      }); 
       await teacher.save();
     } else if (role === "employer") {
       const employer = new Employer({ user: user._id });
@@ -42,7 +45,7 @@ router.post("/login", async (req, res) => {
   if (!user || !(await user.comparePassword(password))) {
     return res.status(401).json({ error: "Invalid credentials" });
   }
-  
+
   // ✅ Hybrid secret: Firebase Secrets Manager in prod, .env.local in dev
   const secret =
     (JWT_SECRET.value && JWT_SECRET.value()) || process.env.JWT_SECRET;
