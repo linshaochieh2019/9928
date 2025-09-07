@@ -70,18 +70,32 @@
     <h5 class="fw-bold mb-3">Contact Information</h5>
 
     <div class="row g-3">
+      <!-- Registration Email (read-only) -->
+      <div class="col-md-12">
+        <label for="email" class="form-label">
+          Email
+          <i class="bi bi-info-circle text-muted"
+            title="This is your registration/login email. Not public to any users"></i>
+        </label>
+        <input id="email" type="email" class="form-control" [value]="teacher.user?.email" disabled required>
+      </div>
+
+      <!-- Contact Email (required, with tooltip) -->
+      <div class="col-md-12">
+        <label for="contactEmail" class="form-label">
+          Contact Email
+          <i class="bi bi-info-circle text-muted"
+            title="This email will be displayed to employers after they unlock your contact information"></i>
+        </label>
+        <input id="contactEmail" type="email" class="form-control" [(ngModel)]="teacher.contactEmail"
+          name="contactEmail" placeholder="Enter contact email" required>
+      </div>
+
       <!-- Phone -->
       <div class="col-md-12">
         <label for="phone" class="form-label">Phone</label>
         <input id="phone" type="text" class="form-control" [(ngModel)]="teacher.phone" name="phone"
           placeholder="Enter phone number">
-      </div>
-
-      <!-- Contact Email -->
-      <div class="col-md-12">
-        <label for="contactEmail" class="form-label">Contact Email</label>
-        <input id="contactEmail" type="email" class="form-control" [(ngModel)]="teacher.contactEmail"
-          name="contactEmail" placeholder="Enter contact email">
       </div>
     </div>
 

@@ -41,7 +41,7 @@ router.get("/", async (req, res) => {
 // Private: Get my profile (unmasked)
 router.get("/me", authenticate, authorize("teacher"), async (req, res) => {
   try {
-    const teacher = await Teacher.findOne({ user: req.user.userId });
+    const teacher = await Teacher.findOne({ user: req.user.userId }).populate("user", "email");
     if (!teacher) return res.status(404).json({ error: "Profile not found" });
 
     res.json(teacher); // full profile, no masking
@@ -57,12 +57,8 @@ router.get("/:id", async (req, res) => {
     const teacher = await Teacher.findById(req.params.id);
     if (!teacher) return res.status(404).json({ error: "Not found" });
 
-    // If logged in as the owner → return full
-    if (req.user && req.user.userId === teacher.user._id.toString()) {
-      return res.json(teacher);
-    }
-
     // Mask contact info
+    // (assume not unlocked, not owner), the unlocked logic will be handled in future
     const safeTeacher = maskContact(teacher);
     res.json(safeTeacher);
 

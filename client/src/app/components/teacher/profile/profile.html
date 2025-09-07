@@ -50,7 +50,8 @@
         <h5 class="fw-bold mb-3">Contact Information</h5>
 
         <!-- Locked view -->
-        <div *ngIf="teacher.phone === 'Hidden' && teacher.contactEmail === 'Hidden'">
+        <!-- <div *ngIf="teacher.phone === 'Hidden' && teacher.contactEmail === 'Hidden'"> -->
+        <div *ngIf="teacher.locked">
           <p class="text-muted">Unlock to view this teacher’s contact details.</p>
           <button class="btn btn-outline-brand" disabled>
             <i class="bi bi-lock me-1"></i> Unlock to Contact
@@ -58,15 +59,15 @@
         </div>
 
         <!-- Unlocked view -->
-        <div *ngIf="teacher.phone !== 'Hidden' || teacher.contactEmail !== 'Hidden'"
-          class="d-flex flex-column gap-2 small">
-          <div class="d-flex align-items-center">
-            <i class="bi bi-telephone me-2 text-secondary"></i>
-            <span><strong>Phone:</strong> {{ teacher.phone || '—' }}</span>
-          </div>
+        <!-- <div *ngIf="teacher.phone !== 'Hidden' || teacher.contactEmail !== 'Hidden'" -->
+        <div *ngIf="!teacher.locked" class="d-flex flex-column gap-2 small">
           <div class="d-flex align-items-center">
             <i class="bi bi-envelope me-2 text-secondary"></i>
             <span><strong>Email:</strong> {{ teacher.contactEmail || '—' }}</span>
+          </div>
+          <div class="d-flex align-items-center">
+            <i class="bi bi-telephone me-2 text-secondary"></i>
+            <span><strong>Phone:</strong> {{ teacher.phone || '—' }}</span>
           </div>
         </div>
       </div>

@@ -18,6 +18,7 @@ export class TeacherProfileComponent implements OnInit {
     displayName: '',
     phone: '',
     contactEmail: '',
+    locked: true,
     profilePhoto: '',
     nationality: '',
     location: '',
@@ -52,8 +53,18 @@ export class TeacherProfileComponent implements OnInit {
   ) { }
 
   ngOnInit(): void {
-    const id = this.route.snapshot.paramMap.get('id');
-    if (id) {
+    // Subscribe to route params to get teacher ID
+    this.route.paramMap.subscribe(params => {
+      const id = params.get('id');
+
+      if (!id) {
+        this.loading = false;
+        return;
+      }
+
+      this.loading = true;
+
+      // Fetch teacher profile by ID 
       this.teacherService.getTeacherById(id).subscribe({
         next: (data) => {
           console.log('Loaded teacher profile:', data); // 👈 Debug log
@@ -68,10 +79,9 @@ export class TeacherProfileComponent implements OnInit {
           this.loading = false;
         },
       });
-    } else {
-      this.loading = false;
-    }
+    });
   }
+
 
   getYoutubeEmbedUrl(url: string): SafeResourceUrl {
     const videoId = this.extractVideoId(url);

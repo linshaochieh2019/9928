@@ -14,7 +14,8 @@ export interface Teacher {
 
   // Contact Info - may be masked
   phone?: string;          
-  contactEmail?: string;   
+  contactEmail?: string;
+  locked?: boolean;   
 
   // 2. Professional Summary
   bio?: string;
