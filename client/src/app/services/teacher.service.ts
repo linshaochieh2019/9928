@@ -31,14 +31,7 @@ export class TeacherService {
     return this.http.post<Teacher>(`${this.apiUrl}/profile`, profile);
   }
 
-  // New helper: get current logged-in teacher profile
-  getMyProfile(): Observable<Teacher> {
-    return this.http.get<{ teacherId: string }>('/api/auth/me').pipe(
-      switchMap((me) => this.getTeacherById(me.teacherId))
-    );
-  }
-
-  // 
+  // Upload profile photo
   async uploadProfilePhoto(file: File, userId: string) {
     const storage = getStorage();
     const path = `teachers/${userId}/profile-photo.jpg`;

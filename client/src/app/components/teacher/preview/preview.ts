@@ -13,7 +13,7 @@ export class TeacherPreviewComponent implements OnInit {
   constructor(private teacherService: TeacherService) {}
 
   ngOnInit(): void {
-    this.teacherService.getMyProfile().subscribe({
+    this.teacherService.getMyTeacherProfile().subscribe({
       next: (data) => {
         this.teacher = { ...data }; // pull my profile only
         this.loading = false;
