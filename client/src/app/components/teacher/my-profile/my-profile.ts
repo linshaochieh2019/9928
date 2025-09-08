@@ -266,7 +266,7 @@ export class MyProfileComponent implements OnInit {
           try {
             const uploaded: any = await this.teacherService.uploadProfilePhoto(
               this.selectedFile,
-              this.authService.getUserId()
+              this.authService.getUserId()!
             );
             this.teacher.profilePhoto = uploaded.profilePhoto;
             this.selectedFile = null;

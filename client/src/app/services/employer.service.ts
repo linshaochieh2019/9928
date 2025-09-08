@@ -26,12 +26,11 @@ export class EmployerService {
     return this.http.get<Employer[]>(this.apiUrl);
   }
 
-  // ✅ New helper: get current logged-in employer profile
+  // ✅ Directly fetch current logged-in employer profile
   getMyProfile(): Observable<Employer> {
-    return this.http.get<{ employerId: string }>('/api/auth/me').pipe(
-      switchMap((me) => this.getEmployerById(me.employerId))
-    );
+    return this.http.get<Employer>('/api/employers/me');
   }
+
 
   // Upload new image
   async uploadImage(file: File, userId: string) {
