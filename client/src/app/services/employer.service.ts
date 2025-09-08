@@ -28,9 +28,8 @@ export class EmployerService {
 
   // ✅ Directly fetch current logged-in employer profile
   getMyProfile(): Observable<Employer> {
-    return this.http.get<Employer>('/api/employers/me');
+    return this.http.get<Employer>(`${this.apiUrl}/me`);
   }
-
 
   // Upload new image
   async uploadImage(file: File, userId: string) {
@@ -48,4 +47,6 @@ export class EmployerService {
   setCoverImage(imageUrl: string) {
     return this.http.put('/api/employers/me/cover-image', { imageUrl });
   }
+
+
 }

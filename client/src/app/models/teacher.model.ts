@@ -16,6 +16,11 @@ export interface Teacher {
   phone?: string;          
   contactEmail?: string;
   locked?: boolean;   
+  meta?: {
+    // Contact meta information
+    hasPhone: boolean;
+    hasEmail: boolean;
+  };
 
   // 2. Professional Summary
   bio?: string;

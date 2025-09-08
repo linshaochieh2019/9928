@@ -50,4 +50,9 @@ export class TeacherService {
     return this.http.patch(`/api/teachers/me/${section}`, data);
   }
 
+  // unlock teacher
+  unlockTeacher(teacherId: string): Observable<any> {
+    return this.http.post(`${this.apiUrl}/unlock`, { teacherId });
+  }
+
 }

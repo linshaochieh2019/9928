@@ -4,6 +4,10 @@ export interface Employer {
   _id?: string;
   user?: User;
 
+  // Unlock logic
+  points?: number;
+  unlockedTeachers?: string[]; // optional convenience
+
   // 1. Basic Identity
   name: string;
   logoUrl?: string;
