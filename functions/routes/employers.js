@@ -1,5 +1,6 @@
 const express = require("express");
 const Employer = require("../models/Employer");
+const UnlockLog = require("../models/UnlockLog");
 const { authenticate, authorize } = require("../middleware/auth");
 const router = express.Router();
 
@@ -130,6 +131,24 @@ router.put("/points", authenticate, async (req, res) => {
     await employer.save();
 
     res.json({ employerId: employer._id, points: employer.points });
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+});
+
+// ✅ Get my unlock history
+router.get("/me/unlocks", authenticate, authorize("employer"), async (req, res) => {
+  try {
+    // find employer from logged-in user
+    const employer = await Employer.findOne({ user: req.user.userId });
+    if (!employer) return res.status(404).json({ error: "Employer not found" });
+
+    // fetch logs
+    const logs = await UnlockLog.find({ employer: employer._id })
+      .populate("teacher", "user contactEmail phone") // show teacher basic info
+      .sort({ createdAt: -1 });
+
+    res.json(logs);
   } catch (err) {
     res.status(500).json({ error: err.message });
   }

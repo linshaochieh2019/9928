@@ -1,12 +1,15 @@
 // functions/middleware/auth.js
 const jwt = require("jsonwebtoken");
 
+// helper to read secret
+const getSecret = () => process.env.JWT_SECRET;
+
 const authenticate = (req, res, next) => {
   const token = req.headers["authorization"]?.split(" ")[1];
   if (!token) return res.status(401).json({ error: "No token provided" });
 
   try {
-    const decoded = jwt.verify(token, process.env.JWT_SECRET);
+    const decoded = jwt.verify(token, getSecret());
     req.user = decoded;
     next();
   } catch {
@@ -23,4 +26,17 @@ const authorize = (...roles) => {
   };
 };
 
-module.exports = { authenticate, authorize };
+const optionalAuth = (req, res, next) => {
+  const token = req.headers["authorization"]?.split(" ")[1];
+  if (token) {
+    try {
+      const decoded = jwt.verify(token, getSecret());
+      req.user = decoded;
+    } catch {
+      // ignore invalid token
+    }
+  }
+  next();
+};
+
+module.exports = { authenticate, authorize, optionalAuth };

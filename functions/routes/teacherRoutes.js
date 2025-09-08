@@ -1,6 +1,8 @@
 const express = require("express");
 const Teacher = require("../models/Teacher");
-const { authenticate, authorize } = require("../middleware/auth");
+const Employer = require("../models/Employer");
+const UnlockLog = require("../models/UnlockLog");
+const { authenticate, authorize, optionalAuth } = require("../middleware/auth");
 const { mongo, default: mongoose } = require("mongoose");
 const router = express.Router();
 const { maskContact } = require("../utils/maskContact");
@@ -50,22 +52,90 @@ router.get("/me", authenticate, authorize("teacher"), async (req, res) => {
   }
 });
 
-// Public: Get teacher by id
-router.get("/:id", async (req, res) => {
+// // Public: Get teacher by id
+// router.get("/:id", async (req, res) => {
+//   try {
+//     // const teacher = await Teacher.findById(req.params.id).populate("user", "email");        
+//     const teacher = await Teacher.findById(req.params.id);
+//     if (!teacher) return res.status(404).json({ error: "Not found" });
+
+//     // Mask contact info
+//     // (assume not unlocked, not owner), the unlocked logic will be handled in future
+//     const safeTeacher = maskContact(teacher);
+//     res.json(safeTeacher);
+
+//   } catch (err) {
+//     res.status(500).json({ error: err.message });
+//   }
+// });
+
+
+// Public: Get teacher by id (with unlock logic)
+router.get("/:id", optionalAuth, async (req, res) => {
+  const teacher = await Teacher.findById(req.params.id).populate("user", "email name").lean();
+  if (!teacher) return res.status(404).json({ error: "Not found" });
+
+  let unlocked = false;
+  let isOwner = false;
+
+  if (req.user?.role === "employer") {
+    const employer = await Employer.findOne({ user: req.user.userId }).select("_id");
+    if (employer) {
+      unlocked = !!(await UnlockLog.exists({ employer: employer._id, teacher: teacher._id }));
+    }
+  } else if (req.user?.role === "teacher" && teacher.user._id.toString() === req.user.userId) {
+    isOwner = true;
+  }
+
+  res.json(maskContact(teacher, { unlocked, isOwner }));
+});
+
+
+// ✅ Employer unlock teacher contact
+router.post("/unlock", authenticate, authorize("employer"), async (req, res) => {
   try {
-    // const teacher = await Teacher.findById(req.params.id).populate("user", "email");        
-    const teacher = await Teacher.findById(req.params.id);
-    if (!teacher) return res.status(404).json({ error: "Not found" });
+    const { teacherId } = req.body;
+    if (!teacherId) return res.status(400).json({ error: "teacherId required" });
 
-    // Mask contact info
-    // (assume not unlocked, not owner), the unlocked logic will be handled in future
-    const safeTeacher = maskContact(teacher);
-    res.json(safeTeacher);
+    const teacher = await Teacher.findById(teacherId);
+    if (!teacher) return res.status(404).json({ error: "Teacher not found" });
 
+    const employer = await Employer.findOne({ user: req.user.userId });
+    if (!employer) return res.status(404).json({ error: "Employer not found" });
+
+
+    // 1. Check if already unlocked
+    const alreadyUnlocked = await UnlockLog.exists({
+      employer: employer._id,
+      teacher: teacher._id
+    });
+    if (alreadyUnlocked) {
+      return res.status(400).json({ error: "Teacher already unlocked" });
+    }
+
+    // 3. Ensure points are available
+    if (employer.points < 1) {
+      return res.status(400).json({ error: "Not enough points" });
+    }
+
+    // 4. Deduct points
+    employer.points -= 1;
+    await employer.save();
+
+    // 5. Record unlock in log
+    await UnlockLog.create({
+      employer: employer._id,
+      teacher: teacher._id,
+      pointsSpent: 1
+    });
+
+    // 6. Return teacher with real contact info
+    res.json(maskContact(teacher, { unlocked: true }));
   } catch (err) {
     res.status(500).json({ error: err.message });
   }
 });
+
 
 // Update teacher profile photo
 router.put("/me/profile-photo", authenticate, authorize("teacher"), async (req, res) => {

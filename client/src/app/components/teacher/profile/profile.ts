@@ -104,8 +104,6 @@ export class TeacherProfileComponent implements OnInit {
 
     const authUserId = this.authService.getUserId();
 
-    console.log('Comparing teacher user ID', teacherUserId, 'with auth user ID', authUserId);
-
     return teacherUserId === authUserId;
   }
 
