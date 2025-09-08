@@ -3,8 +3,9 @@ function maskContact(teacherDoc, { unlocked = false, isOwner = false } = {}) {
 
   const teacher = teacherDoc.toObject ? teacherDoc.toObject() : teacherDoc;
 
-  // const showReal = unlocked || isOwner;
-  const showReal = true; // for now, always show
+  const showReal = unlocked || isOwner;
+  console.log("maskContact - unlocked:", unlocked, "isOwner:", isOwner, "showReal:", showReal);
+  // const showReal = true; // for now, always show
 
   return {
     ...teacher,
@@ -14,10 +15,10 @@ function maskContact(teacherDoc, { unlocked = false, isOwner = false } = {}) {
     contactEmail: teacher.contactEmail
       ? (showReal ? teacher.contactEmail : "Hidden")
       : "Not provided",
-    // locked: !(showReal), // 👈 frontend can check this
+    locked: !(showReal), // 👈 frontend can check this
 
     // for dev
-    locked: false,
+    // locked: false,
   };
 }
 
