@@ -8,6 +8,7 @@ import { MyProfileComponent } from './components/teacher/my-profile/my-profile';
 import { EmployerListComponent } from './components/employer/list/list';
 import { EmployerDetailComponent } from './components/employer/employer-detail/employer-detail';
 import { MyEmployerProfileComponent } from './components/employer/my-employer-profile/my-employer-profile';
+import { UnlockedTeachersComponent } from './components/teacher/unlocked-teachers/unlocked-teachers';
 
 export const routes: Routes = [
   { path: '', component: LandingComponent },          // landing page
@@ -18,6 +19,7 @@ export const routes: Routes = [
   { path: 'teachers/:id', component: TeacherProfileComponent }, // teacher profile
   { path: 'employers', component: EmployerListComponent }, // employer list
   { path: 'employers/my-employer-profile', component: MyEmployerProfileComponent }, // my employer profile
+  { path: 'employers/unlocked-teachers', component: UnlockedTeachersComponent }, // unlocked teachers
   { path: 'employers/:id', component: EmployerDetailComponent }, // employer detail
   { path: '**', redirectTo: '' }                      // fallback → landing
 ];

@@ -21,6 +21,7 @@ export interface Teacher {
     hasPhone: boolean;
     hasEmail: boolean;
   };
+  unlockedAt?: string; // timestamp when employer unlocked contact info
 
   // 2. Professional Summary
   bio?: string;

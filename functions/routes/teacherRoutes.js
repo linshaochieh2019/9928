@@ -77,17 +77,25 @@ router.get("/:id", optionalAuth, async (req, res) => {
 
   let unlocked = false;
   let isOwner = false;
+  let unlockedAt = null;
 
   if (req.user?.role === "employer") {
     const employer = await Employer.findOne({ user: req.user.userId }).select("_id");
     if (employer) {
-      unlocked = !!(await UnlockLog.exists({ employer: employer._id, teacher: teacher._id }));
+      const log = await UnlockLog.findOne({ employer: employer._id, teacher: teacher._id }).select("createdAt");
+      if (log) {
+        unlocked = true;
+        unlockedAt = log.createdAt;
+      }
     }
   } else if (req.user?.role === "teacher" && teacher.user._id.toString() === req.user.userId) {
     isOwner = true;
   }
 
-  res.json(maskContact(teacher, { unlocked, isOwner }));
+  res.json({
+    ...maskContact(teacher, { unlocked, isOwner }),
+    unlockedAt,
+  });
 });
 
 

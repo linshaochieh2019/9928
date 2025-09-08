@@ -40,8 +40,18 @@
             {{ authService.getUserName() }}
           </a>
           <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="userDropdown">
-            <li><a (click)="goToMyProfile()" class="nav-link">My Profile</a>
+            <li><a (click)="goToMyProfile()" class="dropdown-item">My Profile</a>
             </li>
+
+            <!-- Employer only: Unlocked Teachers -->
+            @if (authService.getRole() === 'employer') {
+            <li>
+              <a routerLink="/employers/unlocked-teachers" class="dropdown-item">
+                Unlocked Teachers
+              </a>
+            </li>
+            }
+
             <li>
               <hr class="dropdown-divider">
             </li>

@@ -39,13 +39,10 @@
           <p class="mb-3"><strong>Experience:</strong> {{ teacher.yearsExperience }}+ years teaching</p>
 
           <!-- Push buttons to bottom -->
-          <div class="mt-auto d-flex gap-2">
-            <a [routerLink]="['/teachers', teacher._id]" class="btn btn-outline-brand btn-sm flex-fill">
+          <div class="mt-auto">
+            <a [routerLink]="['/teachers', teacher._id]" class="btn btn-outline-brand btn-sm w-100">
               View Profile
             </a>
-            <button class="btn btn-secondary btn-sm flex-fill" (click)="contactTeacher(teacher)">
-              Contact
-            </button>
           </div>
         </div>
       </div>
@@ -82,3 +79,4 @@
   <div class="alert alert-info">No teachers found.</div>
   }
 </div>
+

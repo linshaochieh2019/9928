@@ -54,6 +54,27 @@ router.get("/me", authenticate, async (req, res) => {
   }
 });
 
+// ✅ Private: Get all unlocked teachers for the logged-in employer
+router.get("/me/unlocks", authenticate, authorize("employer"), async (req, res) => {
+  try {
+    const employer = await Employer.findOne({ user: req.user.userId });
+    if (!employer) return res.status(404).json({ error: "Employer not found" });
+
+    const logs = await UnlockLog.find({ employer: employer._id })
+      .populate({
+        path: "teacher",
+        select: "displayName headline profilePhoto nationality location yearsExperience user",
+        populate: { path: "user", select: "email" }
+      })
+      .sort({ createdAt: -1 });
+
+    res.json(logs);
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+});
+
+
 // ✅ Public: Get employer by id
 router.get("/:id", async (req, res) => {
   try {
@@ -136,22 +157,6 @@ router.put("/points", authenticate, async (req, res) => {
   }
 });
 
-// ✅ Get my unlock history
-router.get("/me/unlocks", authenticate, authorize("employer"), async (req, res) => {
-  try {
-    // find employer from logged-in user
-    const employer = await Employer.findOne({ user: req.user.userId });
-    if (!employer) return res.status(404).json({ error: "Employer not found" });
 
-    // fetch logs
-    const logs = await UnlockLog.find({ employer: employer._id })
-      .populate("teacher", "user contactEmail phone") // show teacher basic info
-      .sort({ createdAt: -1 });
-
-    res.json(logs);
-  } catch (err) {
-    res.status(500).json({ error: err.message });
-  }
-});
 
 module.exports = router;

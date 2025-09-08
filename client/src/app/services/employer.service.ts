@@ -2,6 +2,7 @@ import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable, switchMap } from 'rxjs';
 import { Employer } from '../models/employer.model';
+import { UnlockLog } from '../models/unlocklog.model';
 import { getStorage, ref, uploadBytes, getDownloadURL } from 'firebase/storage';
 
 
@@ -48,5 +49,9 @@ export class EmployerService {
     return this.http.put('/api/employers/me/cover-image', { imageUrl });
   }
 
+  // Get all unlocked teachers for the logged-in employer
+  getMyUnlocks(): Observable<UnlockLog[]> {
+    return this.http.get<UnlockLog[]>(`${this.apiUrl}/me/unlocks`);
+  }
 
 }

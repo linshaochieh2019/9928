@@ -116,4 +116,13 @@ export class TeacherProfileComponent implements OnInit {
   goEdit() {
     this.router.navigate(['teacher/my-profile']);
   }
+
+  get hasEnoughPoints(): boolean {
+    return this.employerPoints >= 1;
+  }
+
+  buyPoints() {
+    // TODO: implement later (redirect to payment / open modal)
+    console.log("Redirecting to buy points...");
+  }
 }
