@@ -26,5 +26,7 @@ export class NavbarComponent {
 
   logout() {
     this.authService.logout();
+    // direct back to home page after logout
+    this.router.navigate(['/']);
   }
 }

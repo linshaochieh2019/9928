@@ -1,125 +1,194 @@
-<h2>My Employer Profile</h2>
+<div class="container my-4">
+  <h2 class="mb-4">My Employer Profile</h2>
 
-@if (loading) {
-<p>Loading...</p>
-} @else {
-<!-- 1. Basic Identity -->
-<section>
-  <h3>Basic Identity</h3>
-  <label>School/Employer Name:
-    <input [(ngModel)]="employer.name" name="name" />
-  </label>
-  <label>Logo URL:
-    <input [(ngModel)]="employer.logoUrl" name="logoUrl" />
-  </label>
-  <label>Type:
-    <select [(ngModel)]="employer.type" name="type">
-      @for (t of typeOptions; track t) {
-      <option [value]="t">{{ t }}</option>
-      }
-    </select>
-  </label>
-  <label>Website:
-    <input [(ngModel)]="employer.website" name="website" />
-  </label>
-</section>
+  @if (loading) {
+  <p>Loading...</p>
+  } @else {
 
-<!-- Images -->
-<h3>Employer Images</h3>
-<input type="file" (change)="onFileSelected($event)" accept="image/*" />
-<button (click)="uploadImage()" [disabled]="!selectedFile">Upload</button>
-
-<!-- Preview before upload -->
-<div *ngIf="previewUrl">
-  <p>Preview:</p>
-  <img [src]="previewUrl" width="200" />
-</div>
-
-<!-- Existing images -->
-<div *ngIf="employer?.images?.length">
-  <h4>Uploaded Images</h4>
-  <div *ngFor="let img of employer.images">
-    <img [src]="img" width="200" />
-    <button (click)="setCover(img)">
-      {{ employer.coverImage === img ? "✅ Cover" : "Set as Cover" }}
-    </button>
+  <!-- 1. Basic Identity -->
+  <div class="card shadow-sm mb-4">
+    <div class="card-body">
+      <h5 class="fw-bold mb-3">Basic Identity</h5>
+      <div class="row g-3">
+        <div class="col-md-6">
+          <label class="form-label">School/Employer Name</label>
+          <input [(ngModel)]="employer.name" name="name" class="form-control" />
+        </div>
+        <div class="col-md-6">
+          <label class="form-label">Type</label>
+          <select [(ngModel)]="employer.type" name="type" class="form-select">
+            @for (t of typeOptions; track t) {
+            <option [value]="t">{{ t }}</option>
+            }
+          </select>
+        </div>
+        <div class="col-12">
+          <label class="form-label">Website</label>
+          <input [(ngModel)]="employer.website" name="website" class="form-control" />
+        </div>
+      </div>
+    </div>
   </div>
-</div>
 
+  <!-- 2. Images -->
+  <div class="card shadow-sm mb-4">
+    <div class="card-body">
+      <h5 class="fw-bold mb-3">Images</h5>
 
-<!-- 2. Location -->
-<section>
-  <h3>Location</h3>
-  <label>Main Address:
-    <input [(ngModel)]="employer.location.mainAddress" name="mainAddress" />
-  </label>
+      <!-- Upload (disabled if 4 images already uploaded) -->
+      <div class="mb-3">
+        <input type="file" (change)="onFileSelected($event)" accept="image/*" class="form-control"
+          [disabled]="employer.images.length >= 4" />
+        <button (click)="uploadImage()" [disabled]="!selectedFile || (employer.images.length >= 4)"
+          class="btn btn-primary mt-2">
+          Upload
+        </button>
+        <div *ngIf="employer.images.length >= 4" class="text-danger small mt-1">
+          Maximum of 4 images allowed.
+        </div>
+      </div>
 
-  <label>Online Only:
-    <input type="checkbox" [(ngModel)]="employer.location.onlineOnly" name="onlineOnly" />
-  </label>
+      <!-- Preview before upload -->
+      <div *ngIf="previewUrl" class="mb-3">
+        <p class="mb-1">Preview:</p>
+        <img [src]="previewUrl" class="img-thumbnail" style="max-width:200px;" />
+      </div>
 
-  <h4>Branch Locations</h4>
-  @for (branch of employer.location.branches; track $index) {
-  <div>
-    <input [(ngModel)]="employer.location.branches[$index]" name="branch{{$index}}" />
+      <!-- Existing images -->
+      <div *ngIf="employer.images.length">
+        <h6 class="fw-semibold mb-2">Uploaded Images</h6>
+        <div class="d-flex flex-wrap gap-3">
+          <div *ngFor="let img of employer.images" class="position-relative" style="width:200px;">
+            <img [src]="img" class="img-thumbnail w-100" style="height:140px; object-fit:cover;">
+
+            <!-- Buttons -->
+            <div class="d-flex justify-content-between mt-2">
+              <button (click)="setCover(img)" class="btn btn-sm flex-grow-1 me-1"
+                [ngClass]="employer.coverImage === img ? 'btn-success' : 'btn-outline-secondary'">
+                {{ employer.coverImage === img ? "✅ Cover" : "Set as Cover" }}
+              </button>
+              <button (click)="removeImage(img)" class="btn btn-sm btn-outline-danger">
+                ✖
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
   </div>
+
+
+  <!-- 3. Location -->
+  <div class="card shadow-sm mb-4">
+    <div class="card-body">
+      <h5 class="fw-bold mb-3">Location</h5>
+      <div class="mb-3">
+        <label class="form-label">Main Address</label>
+        <input [(ngModel)]="employer.location.mainAddress" name="mainAddress" class="form-control" />
+      </div>
+      <div class="form-check mb-3">
+        <input type="checkbox" [(ngModel)]="employer.location.onlineOnly" name="onlineOnly" class="form-check-input"
+          id="onlineOnly">
+        <label for="onlineOnly" class="form-check-label">Online Only</label>
+      </div>
+
+
+    </div>
+  </div>
+
+  <!-- 4. Contact -->
+  <div class="card shadow-sm mb-4">
+    <div class="card-body">
+      <h5 class="fw-bold mb-3">Contact</h5>
+      <div class="row g-3">
+        <div class="col-md-6">
+          <label class="form-label">Contact Person</label>
+          <input [(ngModel)]="employer.contact.personName" name="personName" class="form-control" />
+        </div>
+        <div class="col-md-6">
+          <label class="form-label">Position</label>
+          <input [(ngModel)]="employer.contact.position" name="position" class="form-control" />
+        </div>
+        <div class="col-md-6">
+          <label class="form-label">Email</label>
+          <input [(ngModel)]="employer.contact.email" name="email" type="email" class="form-control" />
+        </div>
+        <div class="col-md-6">
+          <label class="form-label">Phone</label>
+          <input [(ngModel)]="employer.contact.phone" name="phone" class="form-control" />
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 5. About -->
+  <div class="card shadow-sm mb-4">
+    <div class="card-body">
+      <h5 class="fw-bold mb-3">About the Organization</h5>
+      <div class="mb-3">
+        <textarea [(ngModel)]="employer.about.description" name="description" class="form-control" rows="3"
+          placeholder="Short description"></textarea>
+      </div>
+      <div class="row g-3">
+        <div class="col-md-4">
+          <label class="form-label">Year Established</label>
+          <input type="number" [(ngModel)]="employer.about.yearEstablished" name="yearEstablished"
+            class="form-control" />
+        </div>
+        <div class="col-md-4">
+          <label class="form-label">Number of Students</label>
+          <input type="number" [(ngModel)]="employer.about.numberOfStudents" name="numberOfStudents"
+            class="form-control" />
+        </div>
+        <div class="col-md-4">
+          <label class="form-label">Number of Foreign Teachers</label>
+          <input type="number" [(ngModel)]="employer.about.numberOfForeignTeachers" name="numberOfForeignTeachers"
+            class="form-control" />
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 6. Hiring Preferences -->
+  <div class="card shadow-sm mb-4">
+    <div class="card-body">
+      <h5 class="fw-bold mb-3">Hiring Preferences</h5>
+
+      <div class="mb-3 py-1">
+        <label class="form-label">Typical Subjects (comma-separated)</label>
+        <input [(ngModel)]="employer.hiringPreferences.typicalSubjects" name="typicalSubjects" class="form-control" />
+      </div>
+
+      <div class="mb-3 py-1">
+        <h6 class="fw-semibold">Employment Types</h6>
+        <div class="d-flex flex-wrap gap-3">
+          @for (option of employmentTypeOptions; track option) {
+          <div class="form-check">
+            <input type="checkbox" [checked]="employer.hiringPreferences.employmentTypes.includes(option)"
+              (change)="toggleEmploymentType(option)" class="form-check-input" id="empType{{option}}">
+            <label [for]="'empType' + option" class="form-check-label">{{ option }}</label>
+          </div>
+          }
+        </div>
+      </div>
+
+      <!-- Visa Sponsorship -->
+      <div class="mb-3 py-1">
+        <h6 class="fw-semibold">Visa Sponsorship</h6>
+        <div class="form-check">
+          <input type="checkbox" [(ngModel)]="employer.hiringPreferences.visaSponsorship" name="visaSponsorship"
+            class="form-check-input" id="visaSponsorship">
+          <label for="visaSponsorship" class="form-check-label">Provides Visa Sponsorship</label>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Save / Cancel -->
+  <div class="d-flex justify-content-start gap-2 mt-3">
+    <button type="button" class="btn btn-primary px-4" (click)="saveProfile()">Save Profile</button>
+    <button type="button" class="btn btn-outline-secondary px-4" (click)="cancel()">Cancel</button>
+  </div>
+
   }
-  <button type="button" (click)="addBranch()">+ Add Branch</button>
-</section>
-
-<!-- 3. Contact -->
-<section>
-  <h3>Contact</h3>
-  <label>Contact Person:
-    <input [(ngModel)]="employer.contact.personName" name="personName" />
-  </label>
-  <label>Position:
-    <input [(ngModel)]="employer.contact.position" name="position" />
-  </label>
-  <label>Email:
-    <input [(ngModel)]="employer.contact.email" name="email" />
-  </label>
-  <label>Phone:
-    <input [(ngModel)]="employer.contact.phone" name="phone" />
-  </label>
-</section>
-
-<!-- 4. About -->
-<section>
-  <h3>About the Organization</h3>
-  <textarea [(ngModel)]="employer.about.description" name="description" placeholder="Short description"></textarea>
-  <label>Year Established:
-    <input type="number" [(ngModel)]="employer.about.yearEstablished" name="yearEstablished" />
-  </label>
-  <label>Number of Students:
-    <input type="number" [(ngModel)]="employer.about.numberOfStudents" name="numberOfStudents" />
-  </label>
-  <label>Number of Foreign Teachers:
-    <input type="number" [(ngModel)]="employer.about.numberOfForeignTeachers" name="numberOfForeignTeachers" />
-  </label>
-</section>
-
-<!-- 5. Hiring Preferences -->
-<section>
-  <h3>Hiring Preferences</h3>
-  <label>Typical Subjects (comma-separated):
-    <input [(ngModel)]="employer.hiringPreferences.typicalSubjects" name="typicalSubjects" />
-  </label>
-
-  <h4>Employment Types</h4>
-  @for (option of employmentTypeOptions; track option) {
-  <label>
-    <input type="checkbox" [checked]="employer.hiringPreferences.employmentTypes.includes(option)"
-      (change)="toggleEmploymentType(option)" />
-    {{ option }}
-  </label>
-  }
-
-  <label>
-    Visa Sponsorship:
-    <input type="checkbox" [(ngModel)]="employer.hiringPreferences.visaSponsorship" name="visaSponsorship" />
-  </label>
-</section>
-
-<button type="button" (click)="saveProfile()">Save Profile</button>
-}
+</div>
