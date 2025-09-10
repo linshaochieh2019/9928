@@ -1,18 +1,18 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 
-import { MyProfileWrapper } from './my-profile-wrapper';
+import { UnlockModal } from './unlock-modal';
 
-describe('MyProfileWrapper', () => {
-  let component: MyProfileWrapper;
-  let fixture: ComponentFixture<MyProfileWrapper>;
+describe('UnlockModal', () => {
+  let component: UnlockModal;
+  let fixture: ComponentFixture<UnlockModal>;
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      imports: [MyProfileWrapper]
+      imports: [UnlockModal]
     })
     .compileComponents();
 
-    fixture = TestBed.createComponent(MyProfileWrapper);
+    fixture = TestBed.createComponent(UnlockModal);
     component = fixture.componentInstance;
     fixture.detectChanges();
   });

@@ -20,7 +20,7 @@ export class LoginComponent {
 
   onLogin() {
     this.auth.login(this.email, this.password).subscribe({
-      next: () => this.router.navigate(['/dashboard']),
+      next: () => this.router.navigate(['/']),
       error: err => this.error = err.error.error
     });
   }

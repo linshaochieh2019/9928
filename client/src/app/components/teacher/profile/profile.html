@@ -1,30 +1,84 @@
 <div class="container my-4">
 
-  <!-- Combined Hero + Basic Info -->
-  <div class="card shadow-sm p-4 d-flex flex-row align-items-center mb-4">
-    <!-- Profile Photo -->
-    <img [src]="teacher.profilePhoto || 'assets/default-avatar.png'" alt="Profile Photo"
-      class="rounded-circle border me-4" style="width:180px; height:180px; object-fit:cover;">
+  <!-- ✅ Edit Profile Button ABOVE the card -->
+  @if (isOwner()) {
+  <div class="d-flex justify-content-end mb-2">
+    <button (click)="goEdit()" class="btn btn-outline-brand">
+      Edit Profile 🖊️
+    </button>
+  </div>
+  }
 
-    <!-- Info -->
-    <div class="flex-grow-1 mx-3">
-      <!-- Name + Headline -->
-      <h1 class="h4 fw-bold mb-1 text-dark">{{ teacher.displayName }}</h1>
-      <p class="fs-6 text-muted mb-3">{{ teacher.headline }}</p>
+  <!-- Profile Header Row -->
+  <div class="row g-4 mb-4">
+    <!-- Left: Basic Info Card -->
+    <div class="col-12 col-lg-7">
+      <div class="card shadow-sm p-4 h-100">
+        <div class="d-flex">
+          <!-- Profile Photo -->
+          <img [src]="teacher?.profilePhoto || 'assets/default-avatar.png'" alt="Profile Photo"
+            class="rounded-circle border me-4" style="width:160px; height:160px; object-fit:cover;">
 
-      <!-- Identity Details (Vertical Layout) -->
-      <div class="d-flex flex-column gap-2 text-muted small">
-        <div class="d-flex align-items-center">
-          <i class="bi bi-flag me-2 text-secondary"></i>
-          <span><strong>Nationality:</strong> {{ teacher.nationality || '—' }}</span>
+          <!-- Info -->
+          <div class="flex-grow-1">
+            <h1 class="h4 fw-bold mb-1 text-dark">{{ teacher?.displayName || '—' }}</h1>
+            <p class="fs-6 text-muted mb-3">{{ teacher?.headline || '' }}</p>
+
+            <div class="d-flex flex-column gap-2 text-muted small">
+              <div class="d-flex align-items-center">
+                <i class="bi bi-flag me-2 text-secondary"></i>
+                <span><strong>Nationality:</strong> {{ teacher?.nationality || '—' }}</span>
+              </div>
+              <div class="d-flex align-items-center">
+                <i class="bi bi-geo-alt me-2 text-secondary"></i>
+                <span><strong>Current Location:</strong> {{ teacher?.location || '—' }}</span>
+              </div>
+              <div class="d-flex align-items-center">
+                <i class="bi bi-calendar3 me-2 text-secondary"></i>
+                <span><strong>Age:</strong> {{ teacher?.age || '—' }}</span>
+              </div>
+            </div>
+          </div>
         </div>
-        <div class="d-flex align-items-center">
-          <i class="bi bi-geo-alt me-2 text-secondary"></i>
-          <span><strong>Current Location:</strong> {{ teacher.location || '—' }}</span>
+      </div>
+    </div>
+
+    <!-- Right: Contact Info Card -->
+    <div class="col-12 col-lg-5">
+      <div class="card shadow-sm p-4 h-100">
+        <h5 class="fw-bold mb-3">Contact Information</h5>
+
+        <!-- Locked view -->
+        <div *ngIf="teacher?.locked">
+          <p class="text-muted">Unlock to view this teacher’s contact details.</p>
+
+          <!-- Unlock button (modal trigger) -->
+          <button *ngIf="isEmployer" class="btn btn-outline-brand" data-bs-toggle="modal"
+            data-bs-target="#unlockConfirmModal">
+            <i class="bi bi-unlock me-1"></i> Unlock to Contact
+          </button>
+
+          <!-- Non-employer just sees disabled -->
+          <button *ngIf="!isEmployer" class="btn btn-outline-secondary" disabled>
+            <i class="bi bi-lock me-1"></i> Unlock to Contact
+          </button>
+
+          <p *ngIf="errorMsg" class="text-danger small mt-2">{{ errorMsg }}</p>
         </div>
-        <div class="d-flex align-items-center">
-          <i class="bi bi-calendar3 me-2 text-secondary"></i>
-          <span><strong>Age:</strong> {{ teacher.age || '—' }}</span>
+
+        <!-- Unlocked view -->
+        <div *ngIf="!teacher?.locked" class="d-flex flex-column gap-2 small">
+          <div class="d-flex align-items-center">
+            <i class="bi bi-envelope me-2 text-secondary"></i>
+            <span><strong>Email:</strong> {{ teacher?.contactEmail || '—' }}</span>
+          </div>
+          <div class="d-flex align-items-center">
+            <i class="bi bi-telephone me-2 text-secondary"></i>
+            <span><strong>Phone:</strong> {{ teacher?.phone || '—' }}</span>
+          </div>
+          <div *ngIf="teacher?.unlockedAt" class="text-muted  mt-2">
+            <small>Unlocked on {{ teacher?.unlockedAt | date: 'mediumDate' }}</small>
+          </div>
         </div>
       </div>
     </div>
@@ -35,51 +89,45 @@
     <div class="card-body">
       <h2 class="h5 fw-bold mb-3 text-dark">Professional Summary</h2>
 
-      <!-- Bio -->
       <h6 class="fw-semibold text-secondary mb-2">Bio</h6>
       <p class="mb-3 text-secondary" style="line-height: 1.6;">
-        {{ teacher.bio || 'No professional summary provided.' }}
+        {{ teacher?.bio || 'No professional summary provided.' }}
       </p>
 
       <!-- Intro Video -->
-      <div *ngIf="teacher.introVideo" class="mt-3">
+      <div *ngIf="teacher?.introVideo" class="mt-3">
         <h6 class="fw-semibold text-secondary mb-2">Intro Video</h6>
-
         <div class="d-flex justify-content-left mt-3">
           <div class="ratio ratio-16x9 border rounded shadow-sm" style="max-width: 600px; width: 100%;">
-            <iframe [src]="getYoutubeEmbedUrl(teacher.introVideo)" title="Intro Video" allowfullscreen></iframe>
+            <iframe [src]="getYoutubeEmbedUrl(teacher?.introVideo)" title="Intro Video" allowfullscreen></iframe>
           </div>
         </div>
       </div>
     </div>
   </div>
 
-
   <!-- Qualifications -->
   <div class="card shadow-sm mb-4">
     <div class="card-body">
       <h2 class="h5 fw-bold mb-3 text-dark">Qualifications</h2>
 
-      <!-- Education -->
       <h6 class="fw-semibold text-secondary">Education</h6>
       <ul class="list-unstyled mb-3">
-        <li *ngFor="let edu of teacher.education" class="mb-1">
+        <li *ngFor="let edu of teacher?.education" class="mb-1">
           🎓 {{ edu.degree }} in {{ edu.major }} — {{ edu.institution }} ({{ edu.year }})
         </li>
       </ul>
 
-      <!-- Teaching Certifications -->
       <h6 class="fw-semibold text-secondary">Teaching Certifications</h6>
       <ul class="list-unstyled mb-3">
-        <li *ngFor="let cert of teacher.teachingCertifications" class="mb-1">
+        <li *ngFor="let cert of teacher?.teachingCertifications" class="mb-1">
           📜 {{ cert.name }} ({{ cert.year }})
         </li>
       </ul>
 
-      <!-- Other Certificates -->
       <h6 class="fw-semibold text-secondary">Other Certificates</h6>
       <ul class="list-unstyled mb-0">
-        <li *ngFor="let cert of teacher.otherCertificates" class="mb-1">
+        <li *ngFor="let cert of teacher?.otherCertificates" class="mb-1">
           📄 {{ cert.name }} ({{ cert.year }})
         </li>
       </ul>
@@ -90,9 +138,9 @@
   <div class="card shadow-sm mb-4">
     <div class="card-body">
       <h2 class="h5 fw-bold mb-3 text-dark">Experience</h2>
-      <p><strong>Years of Experience:</strong> {{ teacher.yearsExperience || '—' }}</p>
+      <p><strong>Years of Experience:</strong> {{ teacher?.yearsExperience || '—' }}</p>
       <ul class="list-unstyled mb-0">
-        <li *ngFor="let job of teacher.workHistory" class="mb-2">
+        <li *ngFor="let job of teacher?.workHistory" class="mb-2">
           💼 <strong>{{ job.role }}</strong> at {{ job.school }} ({{ job.country }})
           <br />
           <small class="text-muted">
@@ -110,7 +158,7 @@
 
       <h6 class="fw-semibold text-secondary">Age Groups</h6>
       <div class="mb-3">
-        <span *ngFor="let group of teacher.ageGroups" class="badge me-1 mb-1"
+        <span *ngFor="let group of teacher?.ageGroups" class="badge me-1 mb-1"
           [ngStyle]="{'background-color': 'var(--brand-secondary)', 'color': 'white'}">
           {{ group }}
         </span>
@@ -118,12 +166,12 @@
 
       <h6 class="fw-semibold text-secondary">Subjects</h6>
       <p class="mb-3 text-secondary" style="line-height: 1.6;">
-        {{ teacher.subjects || 'No subjects provided.' }}
+        {{ teacher?.subjects || 'No subjects provided.' }}
       </p>
 
       <h6 class="fw-semibold text-secondary">Language Skills</h6>
       <ul class="list-unstyled mb-0">
-        <li *ngFor="let skill of teacher.languageSkills" class="mb-1">
+        <li *ngFor="let skill of teacher?.languageSkills" class="mb-1">
           🌐 {{ skill.language }} — {{ skill.level }}
         </li>
       </ul>
@@ -137,7 +185,7 @@
 
       <p>
         <strong>Employment Type: </strong>
-        <span *ngFor="let type of teacher.employmentType" class="badge me-1"
+        <span *ngFor="let type of teacher?.employmentType" class="badge me-1"
           [ngStyle]="{'background-color': 'var(--brand-secondary)', 'color': 'white'}">
           {{ type }}
         </span>
@@ -145,21 +193,24 @@
 
       <p>
         <strong>Preferred Locations: </strong>
-        <span *ngFor="let loc of teacher.preferredLocations" class="badge me-1"
+        <span *ngFor="let loc of teacher?.preferredLocations" class="badge me-1"
           [ngStyle]="{'background-color': 'var(--brand-secondary)', 'color': 'white'}">
           {{ loc }}
         </span>
-        <span *ngIf="teacher.preferredLocationOther" class="badge me-1"
+        <span *ngIf="teacher?.preferredLocationOther" class="badge me-1"
           [ngStyle]="{'background-color': 'var(--brand-secondary)', 'color': 'white'}">
-          {{ teacher.preferredLocationOther }}
+          {{ teacher?.preferredLocationOther }}
         </span>
       </p>
 
-      <p><strong>Work Visa Status:</strong> {{ teacher.workVisaStatus || '—' }}</p>
+      <p><strong>Work Visa Status:</strong> {{ teacher?.workVisaStatus || '—' }}</p>
+
       <p><strong>Available From:</strong>
-        {{ teacher.availableFrom === 'immediately'
-        ? 'Immediately'
-        : (teacher.availableFrom | date:'yyyy/MM/dd') }}
+        <span *ngIf="teacher?.availableFrom === 'Immediately'">Immediately</span>
+        <span *ngIf="teacher?.availableFrom && teacher?.availableFrom !== 'Immediately'">
+          {{ teacher?.availableFrom | date:'yyyy/MM/dd' }}
+        </span>
+        <span *ngIf="!teacher?.availableFrom">Not provided</span>
       </p>
     </div>
   </div>
@@ -168,8 +219,45 @@
   <div class="card shadow-sm mb-4">
     <div class="card-body">
       <h2 class="h5 fw-bold mb-3 text-dark">Compensation</h2>
-      <p class="mb-0"><strong>Expected Rate/Salary:</strong> {{ teacher.expectedRate || 'Negotiable' }}</p>
+      <p class="mb-0"><strong>Expected Rate/Salary:</strong> {{ teacher?.expectedRate || 'Negotiable' }}</p>
     </div>
   </div>
+</div>
 
+<!-- Unlock Confirmation Modal -->
+<div class="modal fade" id="unlockConfirmModal" tabindex="-1" aria-labelledby="unlockConfirmLabel" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="unlockConfirmLabel">Confirm Unlock</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+        <p><strong>Your balance:</strong> {{ employerPoints }} point(s)</p>
+        <p>Unlocking will <strong>deduct 1 point</strong> from your balance.</p>
+
+        <p class="mb-1"><strong>Teacher provides:</strong></p>
+        <ul>
+          <li *ngIf="teacher?.meta?.hasEmail">Email address</li>
+          <li *ngIf="teacher?.meta?.hasPhone">Phone number</li>
+          <li *ngIf="!teacher?.meta?.hasEmail && !teacher?.meta?.hasPhone" class="text-muted">
+            No contact details available
+          </li>
+        </ul>
+
+        <p *ngIf="errorMsg" class="text-danger small">{{ errorMsg }}</p>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+        <button *ngIf="hasEnoughPoints" type="button" class="btn btn-primary" (click)="confirmUnlock()"
+          [disabled]="!teacher?.meta?.hasEmail && !teacher?.meta?.hasPhone" data-bs-dismiss="modal">
+          Confirm Unlock
+        </button>
+        <!-- If not enough points: show Buy Points -->
+        <button *ngIf="!hasEnoughPoints" type="button" class="btn btn-warning" (click)="buyPoints()">
+          Buy Points
+        </button>
+      </div>
+    </div>
+  </div>
 </div>

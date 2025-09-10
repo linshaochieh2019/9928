@@ -19,9 +19,10 @@ export class TeacherListComponent implements OnInit {
   pageSize = 6;          // teachers per page
   searchTerm = '';
 
-  constructor(private teacherService: TeacherService) { }
+  constructor(private teacherService: TeacherService ) { }
 
   ngOnInit(): void {
+
     this.teacherService.getTeachers().subscribe({
       next: (data) => {
         this.teachers = this.shuffleArray(data);
@@ -42,11 +43,6 @@ export class TeacherListComponent implements OnInit {
       [shuffled[i], shuffled[j]] = [shuffled[j], shuffled[i]];
     }
     return shuffled;
-  }
-
-  contactTeacher(teacher: any) {
-    console.log('Contact teacher clicked:', teacher);
-    // TODO: open modal / redirect to login / trigger contact flow
   }
 
   // Filtering logic
@@ -83,4 +79,5 @@ export class TeacherListComponent implements OnInit {
       this.page = newPage;
     }
   }
+
 }

@@ -1,0 +1,38 @@
+<div class="modal fade" id="unlockConfirmModal" tabindex="-1" aria-labelledby="unlockConfirmLabel" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="unlockConfirmLabel">Confirm Unlock</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+        <p><strong>Your balance:</strong> {{ employerPoints }} point(s)</p>
+        <p>Unlocking will <strong>deduct 1 point</strong> from your balance.</p>
+
+        <p class="mb-1"><strong>Teacher provides:</strong></p>
+        <ul>
+          <li *ngIf="teacher?.meta?.hasEmail">Email address</li>
+          <li *ngIf="teacher?.meta?.hasPhone">Phone number</li>
+          <li *ngIf="!teacher?.meta?.hasEmail && !teacher?.meta?.hasPhone" class="text-muted">
+            No contact details available
+          </li>
+        </ul>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+
+        <button *ngIf="hasEnoughPoints" type="button" class="btn btn-primary"
+                (click)="confirmUnlock.emit()"
+                [disabled]="!teacher?.meta?.hasEmail && !teacher?.meta?.hasPhone"
+                data-bs-dismiss="modal">
+          Confirm Unlock
+        </button>
+
+        <button *ngIf="!hasEnoughPoints" type="button" class="btn btn-warning"
+                (click)="buyPoints.emit()">
+          Buy Points
+        </button>
+      </div>
+    </div>
+  </div>
+</div>

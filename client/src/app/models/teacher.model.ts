@@ -12,6 +12,17 @@ export interface Teacher {
   location: string;         // current location
   headline: string;        // new field for brief professional headline
 
+  // Contact Info - may be masked
+  phone?: string;          
+  contactEmail?: string;
+  locked?: boolean;   
+  meta?: {
+    // Contact meta information
+    hasPhone: boolean;
+    hasEmail: boolean;
+  };
+  unlockedAt?: string; // timestamp when employer unlocked contact info
+
   // 2. Professional Summary
   bio?: string;
   introVideo?: string;

@@ -1,5 +1,6 @@
 const express = require("express");
 const Employer = require("../models/Employer");
+const UnlockLog = require("../models/UnlockLog");
 const { authenticate, authorize } = require("../middleware/auth");
 const router = express.Router();
 
@@ -31,6 +32,48 @@ router.get("/", async (req, res) => {
     res.status(500).json({ error: err.message });
   }
 });
+
+// ✅ Private: Get logged-in employer profile
+router.get("/me", authenticate, async (req, res) => {
+  try {
+    if (req.user.role !== "employer") {
+      return res.status(403).json({ error: "Only employers can access this" });
+    }
+
+    const employer = await Employer.findOne({ user: req.user.userId })
+      .populate("user", "email name role")
+      .select("companyName location points");
+
+    if (!employer) {
+      return res.status(404).json({ error: "Employer not found" });
+    }
+
+    res.json(employer);
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+});
+
+// ✅ Private: Get all unlocked teachers for the logged-in employer
+router.get("/me/unlocks", authenticate, authorize("employer"), async (req, res) => {
+  try {
+    const employer = await Employer.findOne({ user: req.user.userId });
+    if (!employer) return res.status(404).json({ error: "Employer not found" });
+
+    const logs = await UnlockLog.find({ employer: employer._id })
+      .populate({
+        path: "teacher",
+        select: "displayName headline profilePhoto nationality location yearsExperience user",
+        populate: { path: "user", select: "email" }
+      })
+      .sort({ createdAt: -1 });
+
+    res.json(logs);
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+});
+
 
 // ✅ Public: Get employer by id
 router.get("/:id", async (req, res) => {
@@ -84,6 +127,33 @@ router.put("/me/cover-image", authenticate, authorize("employer"), async (req, r
     res.json(employer);
   } catch (err) {
     res.status(500).json({ error: "Failed to set cover image", details: err.message });
+  }
+});
+
+// ✅ Update employer points (admin or employer themselves)
+router.put("/points", authenticate, async (req, res) => {
+  try {
+    const { employerId, amount } = req.body; // 👈 read both from body
+
+    if (!employerId || typeof amount !== "number") {
+      return res.status(400).json({ error: "employerId and amount are required" });
+    }
+
+    const employer = await Employer.findById(employerId);
+    if (!employer) return res.status(404).json({ error: "Employer not found" });
+
+    // Option A: Replace balance
+    // employer.points = amount;
+
+    // Option B: Increment balance (usually better)
+    employer.points += amount;
+
+    if (employer.points < 0) employer.points = 0; // safety check
+    await employer.save();
+
+    res.json({ employerId: employer._id, points: employer.points });
+  } catch (err) {
+    res.status(500).json({ error: err.message });
   }
 });
 

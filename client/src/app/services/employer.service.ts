@@ -2,6 +2,7 @@ import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable, switchMap } from 'rxjs';
 import { Employer } from '../models/employer.model';
+import { UnlockLog } from '../models/unlocklog.model';
 import { getStorage, ref, uploadBytes, getDownloadURL } from 'firebase/storage';
 
 
@@ -26,11 +27,9 @@ export class EmployerService {
     return this.http.get<Employer[]>(this.apiUrl);
   }
 
-  // ✅ New helper: get current logged-in employer profile
+  // ✅ Directly fetch current logged-in employer profile
   getMyProfile(): Observable<Employer> {
-    return this.http.get<{ employerId: string }>('/api/auth/me').pipe(
-      switchMap((me) => this.getEmployerById(me.employerId))
-    );
+    return this.http.get<Employer>(`${this.apiUrl}/me`);
   }
 
   // Upload new image
@@ -49,4 +48,10 @@ export class EmployerService {
   setCoverImage(imageUrl: string) {
     return this.http.put('/api/employers/me/cover-image', { imageUrl });
   }
+
+  // Get all unlocked teachers for the logged-in employer
+  getMyUnlocks(): Observable<UnlockLog[]> {
+    return this.http.get<UnlockLog[]>(`${this.apiUrl}/me/unlocks`);
+  }
+
 }

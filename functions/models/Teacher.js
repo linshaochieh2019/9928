@@ -12,6 +12,9 @@ const teacherSchema = new mongoose.Schema({
   location: { type: String },   // shown as "Current Location" in UI
   headline: { type: String },
 
+  // Contact: Masked unless unlocked by employer
+  phone: { type: String },
+  contactEmail: { type: String, lowercase: true, trim: true }, // can be different from user.email
 
   // 2. Professional Summary
   bio: { type: String },

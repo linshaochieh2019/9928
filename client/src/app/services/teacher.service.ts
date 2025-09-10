@@ -16,6 +16,12 @@ export class TeacherService {
     return this.http.get<Teacher[]>(this.apiUrl);
   }
 
+  // ✅ Get current logged-in teacher profile
+  getMyTeacherProfile(): Observable<Teacher> {
+    return this.http.get<Teacher>(`${this.apiUrl}/me`);
+  }
+
+  // ✅ Get teacher by ID
   getTeacherById(id: string): Observable<Teacher> {
     return this.http.get<Teacher>(`${this.apiUrl}/${id}`);
   }
@@ -25,14 +31,7 @@ export class TeacherService {
     return this.http.post<Teacher>(`${this.apiUrl}/profile`, profile);
   }
 
-  // New helper: get current logged-in teacher profile
-  getMyProfile(): Observable<Teacher> {
-    return this.http.get<{ teacherId: string }>('/api/auth/me').pipe(
-      switchMap((me) => this.getTeacherById(me.teacherId))
-    );
-  }
-
-  // 
+  // Upload profile photo
   async uploadProfilePhoto(file: File, userId: string) {
     const storage = getStorage();
     const path = `teachers/${userId}/profile-photo.jpg`;
@@ -49,6 +48,11 @@ export class TeacherService {
   // Update specific section of the profile
   updateSection(section: string, data: any) {
     return this.http.patch(`/api/teachers/me/${section}`, data);
+  }
+
+  // unlock teacher
+  unlockTeacher(teacherId: string): Observable<any> {
+    return this.http.post(`${this.apiUrl}/unlock`, { teacherId });
   }
 
 }
