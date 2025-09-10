@@ -9,6 +9,7 @@ const Employer = require("../models/Employer");
 const { defineSecret } = require("firebase-functions/params");
 const JWT_SECRET = defineSecret("JWT_SECRET");
 const { authenticate } = require("../middleware/auth")
+const { signJwt } = require("../utils/jwt");
 
 // Router
 const router = express.Router();
@@ -47,14 +48,7 @@ router.post("/login", async (req, res) => {
   }
 
   // ✅ Hybrid secret: Firebase Secrets Manager in prod, .env.local in dev
-  const secret =
-    (JWT_SECRET.value && JWT_SECRET.value()) || process.env.JWT_SECRET;
-
-  const token = jwt.sign(
-    { userId: user._id, role: user.role, name: user.name },
-    secret,
-    { expiresIn: "7d" }
-  );
+  const token = signJwt({ userId: user._id, role: user.role });
 
   res.json({ token }); // return token only and rely on /me for consistency
 });

@@ -1,5 +1,5 @@
-// functions/middleware/auth.js
 const jwt = require("jsonwebtoken");
+const { verifyJwt } = require("../utils/jwt");
 
 // helper to read secret
 const getSecret = () => process.env.JWT_SECRET;
@@ -9,8 +9,7 @@ const authenticate = (req, res, next) => {
   if (!token) return res.status(401).json({ error: "No token provided" });
 
   try {
-    const decoded = jwt.verify(token, getSecret());
-    req.user = decoded;
+    req.user = verifyJwt(token);
     next();
   } catch {
     res.status(401).json({ error: "Invalid token" });

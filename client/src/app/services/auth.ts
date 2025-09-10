@@ -13,7 +13,17 @@ export class AuthService {
   currentUser$ = this.currentUserSubject.asObservable(); // 👈 expose observable
 
 
-  constructor(private http: HttpClient) { }
+  constructor(private http: HttpClient) {
+    const token = this.getToken();
+    if (token) {
+      this.fetchMe().subscribe({
+        error: () => {
+          // If token is invalid, clear it
+          this.logout();
+        }
+      });
+    }
+  }
 
   login(email: string, password: string) {
     return this.http.post<{ token: string }>(
@@ -29,13 +39,18 @@ export class AuthService {
     );
   }
 
+  getToken(): string | null {
+    return localStorage.getItem('token');
+  }
+
   register(name: string, email: string, password: string, role: string) {
     return this.http.post(`${this.apiUrl}/register`, { name, email, password, role });
   }
 
   logout() {
     localStorage.clear();
-    // this.currentUser = null;
+    localStorage.removeItem('token');
+    localStorage.removeItem('user');
     this.currentUserSubject.next(null);
   }
 
@@ -95,6 +110,7 @@ export class AuthService {
   // }
 
   // Still keep sync accessors for convenience
+
   getUser() {
     return this.currentUserSubject.value || JSON.parse(localStorage.getItem('user') || '{}');
   }
