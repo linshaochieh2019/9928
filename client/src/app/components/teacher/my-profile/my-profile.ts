@@ -63,9 +63,16 @@ export class MyProfileComponent implements OnInit {
   preferredLocations = '';
   availableFromChoice: string = ''; // 'immediately' | 'date'
 
-
   // loading state
   loading = true;
+
+  // Success and error messages
+  successMessage: string | null = null;
+  errorMessage: string | null = null;
+  toastMessage: string | null = null;
+  toastType: 'success' | 'danger' = 'success';
+
+
 
   // age group options
   ageGroupOptions = [
@@ -140,8 +147,8 @@ export class MyProfileComponent implements OnInit {
     });
   }
 
-  // Router for preview
-  goToPreview() {
+  // Router for viewing public profile
+  goToViewProfile() {
     const teacherId = this.authService.getTeacherId();
     if (teacherId) {
       this.router.navigate(['/teachers', teacherId]);
@@ -343,9 +350,18 @@ export class MyProfileComponent implements OnInit {
     }
 
     this.teacherService.updateSection(section, data).subscribe({
-      next: () => alert(`${section} saved!`),
-      error: (err) => alert(`Error saving ${section}: ${err.message}`)
+      next: () => {
+        this.toastMessage = `${section} saved successfully!`;
+        this.toastType = 'success';
+        setTimeout(() => this.toastMessage = null, 3000); // auto-dismiss after 3s
+      },
+      error: (err) => {
+        this.toastMessage = `Error saving ${section}: ${err.message}`;
+        this.toastType = 'danger';
+        setTimeout(() => this.toastMessage = null, 4000); // dismiss after 4s
+      }
     });
+
   }
 
 }
