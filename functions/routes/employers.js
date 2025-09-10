@@ -26,7 +26,9 @@ router.get("/", async (req, res) => {
   try {
     const employers = await Employer.find()
       .populate("user", "name") // only show safe user fields
-      .select("-__v"); // remove Mongoose version key
+      .select("-__v") // remove Mongoose version key
+      .sort({ updatedAt: -1 });  // 👈 ascending order
+
     res.json(employers);
   } catch (err) {
     res.status(500).json({ error: err.message });
@@ -41,8 +43,7 @@ router.get("/me", authenticate, async (req, res) => {
     }
 
     const employer = await Employer.findOne({ user: req.user.userId })
-      .populate("user", "email name role")
-      .select("companyName location points");
+      .populate("user", "email name role");
 
     if (!employer) {
       return res.status(404).json({ error: "Employer not found" });
@@ -105,6 +106,36 @@ router.put("/me/images", authenticate, authorize("employer"), async (req, res) =
     res.json(employer);
   } catch (err) {
     res.status(500).json({ error: "Failed to add image", details: err.message });
+  }
+});
+
+// ✅ Remove image
+router.post("/remove-image", authenticate, async (req, res) => {
+  try {
+    const { imageUrl } = req.body;
+
+    if (!imageUrl) {
+      return res.status(400).json({ error: "Image URL is required" });
+    }
+
+    const employer = await Employer.findOne({ user: req.user.userId });
+    if (!employer) {
+      return res.status(404).json({ error: "Employer not found" });
+    }
+
+    // Remove from images array
+    employer.images = employer.images.filter((img) => img !== imageUrl);
+
+    // Reset cover if it was the deleted image
+    if (employer.coverImage === imageUrl) {
+      employer.coverImage = employer.images.length > 0 ? employer.images[0] : "";
+    }
+
+    await employer.save();
+    res.json(employer);
+  } catch (err) {
+    console.error("Error removing image", err);
+    res.status(500).json({ error: err.message });
   }
 });
 

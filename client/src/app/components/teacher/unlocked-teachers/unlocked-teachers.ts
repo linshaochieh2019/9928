@@ -17,7 +17,7 @@ export class UnlockedTeachersComponent implements OnInit {
 
   // pagination
   page = 1;
-  pageSize = 3; // show 6 teachers per page
+  pageSize = 12; // show 12 teachers per page
   pages: number[] = [];
   totalPages = 1;
 

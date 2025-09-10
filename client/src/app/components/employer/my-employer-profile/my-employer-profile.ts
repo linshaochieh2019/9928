@@ -4,6 +4,7 @@ import { FormsModule } from '@angular/forms';
 import { Employer } from '../../../models/employer.model';
 import { EmployerService } from '../../../services/employer.service';
 import { AuthService } from '../../../services/auth';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-my-employer-profile',
@@ -15,10 +16,11 @@ export class MyEmployerProfileComponent implements OnInit {
   // ✅ initialize employer with strong defaults
   employer: Employer = {
     name: '',
-    logoUrl: '',
     type: 'Cram School',
     website: '',
-    location: { mainAddress: '', branches: [], onlineOnly: false },
+    images: [],              // 👈 always defined
+    coverImage: '',
+    location: { mainAddress: '', onlineOnly: false },
     contact: { personName: '', position: '', email: '', phone: '', verified: false },
     about: { description: '', yearEstablished: 0, numberOfStudents: 0, numberOfForeignTeachers: 0 },
     hiringPreferences: { typicalSubjects: [], employmentTypes: [], visaSponsorship: false },
@@ -43,7 +45,7 @@ export class MyEmployerProfileComponent implements OnInit {
     "Online"
   ];
 
-  constructor(private employerService: EmployerService, private authService: AuthService) { }
+  constructor(private employerService: EmployerService, private authService: AuthService, private router: Router) { }
 
   ngOnInit(): void {
     this.employerService.getMyProfile().subscribe({
@@ -77,11 +79,27 @@ export class MyEmployerProfileComponent implements OnInit {
     });
   }
 
+  goToMyProfile() {
+    const employerId = this.authService.getEmployerId();
+    if (employerId) {
+      this.router.navigate(['/employers', employerId]);
+    } else {
+      console.warn('No profile found for this user');
+    }
+  }
+
   saveProfile(): void {
     this.employerService.createOrUpdate(this.employer).subscribe({
-      next: () => alert('Employer profile saved!'),
+      next: () => {
+        alert('Employer profile saved!');
+        this.goToMyProfile(); // ✅ redirect with profile-specific logic
+      },
       error: (err) => alert('Error saving profile: ' + err.message),
     });
+  }
+
+  cancel(): void {
+    this.goToMyProfile(); // ✅ redirect with profile-specific logic
   }
 
   toggleEmploymentType(option: string): void {
@@ -93,14 +111,6 @@ export class MyEmployerProfileComponent implements OnInit {
     } else {
       list.push(option as "Full-time" | "Part-time" | "Hourly" | "Online");
     }
-  }
-
-  addBranch(): void {
-    this.employer.location.branches.push('');
-  }
-
-  removeBranch(index: number): void {
-    this.employer.location.branches.splice(index, 1);
   }
 
   // Image handling
@@ -121,6 +131,14 @@ export class MyEmployerProfileComponent implements OnInit {
 
   async uploadImage() {
     if (!this.selectedFile) return;
+
+    // ✅ prevent exceeding 4 images
+    if (this.employer.images && this.employer.images.length >= 4) {
+      alert('You can only upload up to 4 images.');
+      return;
+    }
+
+    // Get user ID from AuthService
     const userId = this.authService.getUserId();
     if (!userId) return;
 
@@ -133,6 +151,19 @@ export class MyEmployerProfileComponent implements OnInit {
   setCover(imageUrl: string) {
     this.employerService.setCoverImage(imageUrl).subscribe((updated: any) => {
       this.employer = updated;
+    });
+  }
+
+  removeImage(imgUrl: string) {
+    if (!confirm('Are you sure you want to remove this image?')) return;
+
+    this.employerService.removeImage(imgUrl).subscribe({
+      next: (updated: any) => {
+        this.employer = updated;
+      },
+      error: (err) => {
+        alert('Error removing image: ' + err.message);
+      }
     });
   }
 

@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { ActivatedRoute, RouterModule } from '@angular/router';
+import { ActivatedRoute, Router, RouterModule } from '@angular/router';
 import { CommonModule } from '@angular/common';
 import { AuthService } from '../../../services/auth';
 import { EmployerService } from '../../../services/employer.service';
@@ -15,10 +15,13 @@ export class EmployerDetailComponent implements OnInit {
   employer?: Employer;
   loading = true;
   error: string | null = null;
-  isMyProfile = false; // to toggle edit options if needed
+  isMyProfile = false;
+  selectedImage?: string;
+
 
   constructor(
     private route: ActivatedRoute,
+    private router: Router,
     private employerService: EmployerService,
     public authService: AuthService
   ) { }
@@ -49,6 +52,13 @@ export class EmployerDetailComponent implements OnInit {
       next: (data) => {
         this.employer = data;
         this.loading = false;
+
+        // Default main image = coverImage OR first image
+        if (this.employer?.coverImage) {
+          this.selectedImage = this.employer.coverImage;
+        } else if (this.employer?.images?.length) {
+          this.selectedImage = this.employer.images[0];
+        }
       },
       error: () => {
         this.error = 'Failed to load employer profile';
@@ -56,4 +66,25 @@ export class EmployerDetailComponent implements OnInit {
       }
     });
   }
+
+  isOwner(): boolean {
+    return this.isMyProfile;
+  }
+
+  goEdit(): void {
+    if (this.isOwner()) {
+      this.router.navigate(['employers/my-employer-profile']);
+    }
+  }
+
+  get thumbnailImages(): string[] {
+    if (!this.employer?.images) return [];
+    const cover = this.employer.coverImage;
+    if (cover) {
+      // Put cover first, then the rest
+      return [cover, ...this.employer.images.filter(img => img !== cover)];
+    }
+    return this.employer.images;
+  }
+
 }

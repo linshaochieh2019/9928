@@ -44,6 +44,10 @@ export class EmployerService {
     return this.http.put('/api/employers/me/images', { imageUrl: downloadURL }).toPromise();
   }
 
+  removeImage(imageUrl: string): Observable<Employer> {
+    return this.http.post<Employer>(`${this.apiUrl}/remove-image`, { imageUrl });
+  }
+
   // Set cover image
   setCoverImage(imageUrl: string) {
     return this.http.put('/api/employers/me/cover-image', { imageUrl });

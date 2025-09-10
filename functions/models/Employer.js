@@ -4,7 +4,7 @@ const EmployerSchema = new mongoose.Schema({
     user: { type: mongoose.Schema.Types.ObjectId, ref: "User", required: true, unique: true },
     points: { type: Number, default: 0 }, // for unlock teachers' contact info
     name: { type: String },
-    logoUrl: String,
+    // logoUrl: String,
     images: [String],             // all uploaded image URLs
     coverImage: { type: String },  // one selected as cover
     type: {
@@ -15,7 +15,7 @@ const EmployerSchema = new mongoose.Schema({
 
     location: {
         mainAddress: String,
-        branches: [String],
+        // branches: [String],
         onlineOnly: Boolean,
     },
 
