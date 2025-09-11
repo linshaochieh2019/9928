@@ -23,7 +23,10 @@ if (!sendgridKey) {
 export async function sendEmail(to, subject, html, text) {
   const msg = {
     to,
-    from: "support@9928tw.com", // must match your verified domain
+    from: {
+      email: "support@9928tw.com",
+      name: "9928 Support"   // 👈 friendly name
+    }, 
     subject,
     text: text || "",
     html,
