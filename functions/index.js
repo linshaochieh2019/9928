@@ -40,13 +40,15 @@ const { authenticate, authorize } = require("./middleware/auth");
 // === API Routes ===
 const teacherRoutes = require("./routes/teacherRoutes");
 const employerRoutes = require("./routes/employers");
+const emailRoutes = require("./routes/email");
 
-// Mount teacher CRUD under /teachers
+// Use routes
 app.use("/auth", authRoutes);
 app.use("/teachers", teacherRoutes);
 app.use("/employers", employerRoutes);
+app.use("/email", emailRoutes);
 
-// Routes
+// Simple test route
 app.get("/ping", (req, res) => {
   res.json({ message: "pong from Firebase Function" });
 });
