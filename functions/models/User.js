@@ -4,8 +4,9 @@ const bcrypt = require("bcryptjs");
 
 const UserSchema = new mongoose.Schema({
   email: { type: String, required: true, unique: true, lowercase: true },
-  password: { type: String, required: true },
-  role: { type: String, enum: ["admin", "teacher", "employer"], required: true },
+  password: { type: String, required: function () { return !this.googleId; } }, // required if no googleId
+  googleId: { type: String }, // store Google sub claim
+  role: { type: String, enum: ["admin", "teacher", "employer"], required: false }, // role can be null initially
   name: { type: String, required: true },
 
   // Email verification

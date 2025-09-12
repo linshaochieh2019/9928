@@ -3,6 +3,7 @@ import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { tap } from 'rxjs/operators';
 import { BehaviorSubject } from 'rxjs';
+import { switchMap } from 'rxjs/operators';
 
 @Injectable({ providedIn: 'root' })
 export class AuthService {
@@ -34,17 +35,43 @@ export class AuthService {
         localStorage.setItem('token', res.token);
 
         // After login, fetch /me immediately
-        this.fetchMe().subscribe();
+        this.fetchMe().subscribe(user => {
+          if (!user.role) {
+            // 🚀 Redirect to choose-role
+            window.location.href = '/choose-role';
+          }
+        });
       })
     );
   }
+
+  // Google OAuth login
+  googleLogin(idToken: string) {
+    return this.http.post<{ token: string }>(
+      `${this.apiUrl}/google`,
+      { idToken }
+    ).pipe(
+      tap(res => {
+        localStorage.setItem('token', res.token);
+        this.fetchMe().subscribe(
+          user => {
+            if (!user.role) {
+              // 🚀 Redirect to choose-role
+              window.location.href = '/choose-role';
+            }
+          }
+        ); // same as normal login
+      })
+    );
+  }
+
 
   getToken(): string | null {
     return localStorage.getItem('token');
   }
 
-  register(name: string, email: string, password: string, role: string) {
-    return this.http.post(`${this.apiUrl}/register`, { name, email, password, role });
+  register(name: string, email: string, password: string) {
+    return this.http.post(`${this.apiUrl}/register`, { name, email, password });
   }
 
   logout() {
@@ -110,6 +137,22 @@ export class AuthService {
   // Resend verification email
   resendVerification(email: string) {
     return this.http.post(`${this.apiUrl}/resend-verification`, { email });
+  }
+
+
+  // Set role (for users without a role yet)
+  setRole(role: string) {
+    return this.http.post<{ role: string, token: string }>(
+      `${this.apiUrl}/set-role`,
+      { role }
+    ).pipe(
+      tap(res => {
+        if (res.token) {
+          localStorage.setItem('token', res.token);
+        }
+      }),
+      switchMap(() => this.fetchMe())
+    );
   }
 
 }

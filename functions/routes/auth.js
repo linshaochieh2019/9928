@@ -42,8 +42,11 @@ const router = express.Router();
 // Register
 router.post("/register", async (req, res) => {
   try {
-    const { email, password, role, name } = req.body;
-    const user = new User({ email, password, role, name });
+    // const { email, password, role, name } = req.body;
+    // const user = new User({ email, password, role, name });
+
+    const { email, password, name } = req.body;
+    const user = new User({ email, password, name });
 
     // Generate verification token
     const token = crypto.randomBytes(32).toString("hex");
@@ -63,17 +66,17 @@ router.post("/register", async (req, res) => {
     );
 
 
-    // Set up profiles depending on user role
-    if (role === "teacher") {
-      const teacher = new Teacher({
-        user: user._id,
-        contactEmail: email // 👈 default contact email = registration email
-      });
-      await teacher.save();
-    } else if (role === "employer") {
-      const employer = new Employer({ user: user._id });
-      await employer.save();
-    }
+    // // Set up profiles depending on user role
+    // if (role === "teacher") {
+    //   const teacher = new Teacher({
+    //     user: user._id,
+    //     contactEmail: email // 👈 default contact email = registration email
+    //   });
+    //   await teacher.save();
+    // } else if (role === "employer") {
+    //   const employer = new Employer({ user: user._id });
+    //   await employer.save();
+    // }
 
     res.status(201).json({ message: "User registered successfully" });
   } catch (err) {
@@ -250,14 +253,11 @@ router.post("/google", async (req, res) => {
       user = new User({
         email,
         name,
-        role: "teacher", // 👈 default role; you may redirect frontend to let them choose
+        googleId: sub,
+        // role: "teacher", // 👈 default role; you may redirect frontend to let them choose
         isVerified: true, // Google guarantees verified email
       });
       await user.save();
-
-      // Create teacher/employer profile depending on role
-      const teacher = new Teacher({ user: user._id, contactEmail: email });
-      await teacher.save();
     }
 
     // Issue JWT
@@ -266,6 +266,44 @@ router.post("/google", async (req, res) => {
   } catch (err) {
     console.error("Google login error:", err);
     res.status(401).json({ error: "auth/google-failed", message: "Google login failed" });
+  }
+});
+
+
+// User chooses their role afterwards
+router.post("/set-role", authenticate, async (req, res) => {
+  const { role } = req.body;
+  if (!["teacher", "employer"].includes(role)) {
+    return res.status(400).json({ error: "auth/invalid-role", message: "Invalid role" });
+  }
+
+  try {
+    const user = await User.findById(req.user.userId);
+    if (!user) return res.status(404).json({ error: "auth/user-not-found" });
+
+    // If already set, block change
+    if (user.role) {
+      return res.status(400).json({ error: "auth/role-already-set", message: "Role already chosen" });
+    }
+
+    user.role = role;
+    await user.save();
+
+    // Create profile depending on role
+    if (role === "teacher") {
+      const teacher = new Teacher({ user: user._id, contactEmail: user.email });
+      await teacher.save();
+    } else if (role === "employer") {
+      const employer = new Employer({ user: user._id });
+      await employer.save();
+    }
+
+    // Generate JWT
+    const token = signJwt({ userId: user._id, role: user.role, name: user.name });
+
+    res.json({ message: "Role set successfully", role, token });
+  } catch (err) {
+    res.status(500).json({ error: "auth/set-role-failed", message: err.message });
   }
 });
 

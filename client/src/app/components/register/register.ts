@@ -16,13 +16,12 @@ export class RegisterComponent {
   name = '';
   email = '';
   password = '';
-  role = 'teacher';
   error = '';
 
   constructor(private auth: AuthService, private router: Router) {}
 
   onRegister() {
-    this.auth.register(this.name, this.email, this.password, this.role).subscribe({
+    this.auth.register(this.name, this.email, this.password).subscribe({
       next: () => this.router.navigate(['/login']),
       error: err => this.error = err.error.error
     });
