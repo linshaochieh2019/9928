@@ -26,10 +26,13 @@ export async function sendEmail(to, subject, html, text) {
     from: {
       email: "support@9928tw.com",
       name: "9928 Support"   // 👈 friendly name
-    }, 
+    },
     subject,
     text: text || "",
     html,
+    trackingSettings: {
+      clickTracking: { enable: false }
+    }
   };
 
   try {

@@ -12,7 +12,7 @@ export class AuthService {
   private currentUserSubject = new BehaviorSubject<any>(null);
   currentUser$ = this.currentUserSubject.asObservable(); // 👈 expose observable
 
-
+  // Call this once on app startup
   constructor(private http: HttpClient) {
     const token = this.getToken();
     if (token) {
@@ -58,20 +58,16 @@ export class AuthService {
     return !!localStorage.getItem('token');
   }
 
-  // /** ✅ Call this once on app startup */
-  // fetchMe() {
-  //   return this.http.get<any>(`${this.apiUrl}/me`).pipe(
-  //     tap(user => {
-  //       this.currentUser = user;
-  //       localStorage.setItem('userId', user.userId);
-  //       localStorage.setItem('teacherId', user.teacherId ?? '');
-  //       localStorage.setItem('employerId', user.employerId ?? '');
-  //       localStorage.setItem('role', user.role);
-  //       localStorage.setItem('name', user.name);
-  //     })
-  //   );
-  // }
+  // Password reset
+  forgotPassword(email: string) {
+    return this.http.post(`${this.apiUrl}/forgot-password`, { email });
+  }
 
+  resetPassword(token: string, password: string) {
+    return this.http.post(`${this.apiUrl}/reset-password/${token}`, { password });
+  }
+
+  // Fetch current user profile
   fetchMe() {
     return this.http.get<any>(`${this.apiUrl}/me`).pipe(
       tap(user => {
@@ -81,36 +77,7 @@ export class AuthService {
     );
   }
 
-  // // Getters for user info
-  // getUser() {
-  //   if (!this.currentUser) {
-  //     this.currentUser = JSON.parse(localStorage.getItem('user') || '{}');
-  //   }
-  //   return this.currentUser;
-  // }
-
-  // getUserId() {
-  //   return this.currentUser?.userId || localStorage.getItem('userId');
-  // }
-
-  // getTeacherId() {
-  //   return this.currentUser?.teacherId || localStorage.getItem('teacherId');
-  // }
-
-  // getEmployerId() {
-  //   return this.currentUser?.employerId || localStorage.getItem('employerId');
-  // }
-
-  // getRole() {
-  //   return this.currentUser?.role || localStorage.getItem('role');
-  // }
-
-  // getUserName() {
-  //   return this.currentUser?.name || localStorage.getItem('name');
-  // }
-
-  // Still keep sync accessors for convenience
-
+  // Getters
   getUser() {
     return this.currentUserSubject.value || JSON.parse(localStorage.getItem('user') || '{}');
   }
@@ -134,6 +101,7 @@ export class AuthService {
   getUserName(): string | null {
     return this.getUser()?.name || localStorage.getItem('name');
   }
+
 
 
 }

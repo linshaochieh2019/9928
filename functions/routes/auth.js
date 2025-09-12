@@ -1,15 +1,31 @@
-// functions/routes/auth.js
+// Imports
 const express = require("express");
 const jwt = require("jsonwebtoken");
 const User = require("../models/User");
 const Teacher = require("../models/Teacher");
 const Employer = require("../models/Employer");
 
+// Utils
+const crypto = require("crypto");
+const { sendEmail } = require("../utils/email");
+
 // Secrets
 const { defineSecret } = require("firebase-functions/params");
-const JWT_SECRET = defineSecret("JWT_SECRET");
+// const JWT_SECRET = defineSecret("JWT_SECRET"); // moved to utils/jwt.js
 const { authenticate } = require("../middleware/auth")
 const { signJwt } = require("../utils/jwt");
+const FRONTEND_URL = defineSecret("FRONTEND_URL");
+
+// Helper to get frontend URL based on environment
+function getFrontendUrl() {
+  // Hybrid: if running locally, fall back to process.env
+  return (
+    (typeof FRONTEND_URL.value === "function" ? FRONTEND_URL.value() : FRONTEND_URL) ||
+    process.env.FRONTEND_URL ||
+    "http://localhost:4200" // fallback for dev
+  );
+}
+
 
 // Router
 const router = express.Router();
@@ -26,7 +42,7 @@ router.post("/register", async (req, res) => {
       const teacher = new Teacher({
         user: user._id,
         contactEmail: email // 👈 default contact email = registration email
-      }); 
+      });
       await teacher.save();
     } else if (role === "employer") {
       const employer = new Employer({ user: user._id });
@@ -84,6 +100,50 @@ router.get("/me", authenticate, async (req, res) => {
     res.status(500).json({ error: err.message });
   }
 });
+
+// Forgot password
+router.post("/forgot-password", async (req, res) => {
+  const { email } = req.body;
+  const user = await User.findOne({ email });
+  if (!user) return res.status(400).json({ error: "auth/user-not-found", message: "No account with that email" });
+
+  const token = crypto.randomBytes(32).toString("hex");
+  user.resetPasswordToken = token;
+  user.resetPasswordExpires = Date.now() + 3600000;
+  await user.save();
+
+  const resetUrl = `${getFrontendUrl()}/reset-password/${token}`;
+  await sendEmail(
+    user.email,
+    "Reset your password",
+    `<p>Click <a href="${resetUrl}">here</a> to reset your password.</p>`,
+    `Reset your password by visiting: ${resetUrl}`
+  );
+
+  res.json({ message: "Password reset link sent" });
+});
+
+
+// Reset password
+router.post("/reset-password/:token", async (req, res) => {
+  const { token } = req.params;
+  const { password } = req.body;
+
+  const user = await User.findOne({
+    resetPasswordToken: token,
+    resetPasswordExpires: { $gt: Date.now() },
+  });
+
+  if (!user) return res.status(400).json({ error: "auth/invalid-or-expired", message: "Invalid or expired token" });
+
+  user.password = password; // will be hashed by pre-save
+  user.resetPasswordToken = undefined;
+  user.resetPasswordExpires = undefined;
+  await user.save();
+
+  res.json({ message: "Password has been reset successfully" });
+});
+
 
 
 
