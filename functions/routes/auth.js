@@ -35,7 +35,24 @@ router.post("/register", async (req, res) => {
   try {
     const { email, password, role, name } = req.body;
     const user = new User({ email, password, role, name });
+
+    // Generate verification token
+    const token = crypto.randomBytes(32).toString("hex");
+    user.emailVerifyToken = token;
+    user.emailVerifyExpires = Date.now() + 24 * 60 * 60 * 1000; // 24h
+
+    // Save user
     await user.save();
+
+    // Send verification email
+    const verifyUrl = `${getFrontendUrl()}/verify-email/${token}`;
+    await sendEmail(
+      user.email,
+      "Verify your email address",
+      `<p>Welcome to 9928! Please <a href="${verifyUrl}">verify your email</a>.</p>`,
+      `Visit this link to verify: ${verifyUrl}`
+    );
+
 
     // Set up profiles depending on user role
     if (role === "teacher") {
@@ -73,7 +90,7 @@ router.post("/login", async (req, res) => {
 // Get logged-in user info
 router.get("/me", authenticate, async (req, res) => {
   try {
-    const user = await User.findById(req.user.userId).select("name email role");
+    const user = await User.findById(req.user.userId);
     if (!user) return res.status(404).json({ error: "User not found" });
 
     // if teacher, attach teacherId
@@ -95,6 +112,7 @@ router.get("/me", authenticate, async (req, res) => {
       role: user.role,
       teacherId,
       employerId,
+      isVerified: user.isVerified
     });
   } catch (err) {
     res.status(500).json({ error: err.message });
@@ -144,7 +162,58 @@ router.post("/reset-password/:token", async (req, res) => {
   res.json({ message: "Password has been reset successfully" });
 });
 
+// Resend verification email
+router.post("/resend-verification", async (req, res) => {
+  const { email } = req.body;
 
+  const user = await User.findOne({ email });
+  if (!user) {
+    return res.status(400).json({ error: "auth/user-not-found", message: "No account with that email" });
+  }
+
+  if (user.isVerified) {
+    return res.status(400).json({ error: "auth/already-verified", message: "This account is already verified" });
+  }
+
+  // Generate new token
+  const token = crypto.randomBytes(32).toString("hex");
+  user.emailVerifyToken = token;
+  user.emailVerifyExpires = Date.now() + 24 * 60 * 60 * 1000; // 24h
+  await user.save();
+
+  // Send email
+  const verifyUrl = `${getFrontendUrl()}/verify-email/${token}`;
+  await sendEmail(
+    user.email,
+    "Verify your email address",
+    `<p>Please <a href="${verifyUrl}">verify your email</a>.</p>`,
+    `Visit this link to verify: ${verifyUrl}`
+  );
+
+  res.json({ message: "Verification email resent" });
+});
+
+
+// Verify email
+router.get("/verify-email/:token", async (req, res) => {
+  const { token } = req.params;
+
+  const user = await User.findOne({
+    emailVerifyToken: token,
+    emailVerifyExpires: { $gt: Date.now() },
+  });
+
+  if (!user) {
+    return res.status(400).json({ error: "auth/invalid-or-expired", message: "Invalid or expired verification link" });
+  }
+
+  user.isVerified = true;
+  user.emailVerifyToken = undefined;
+  user.emailVerifyExpires = undefined;
+  await user.save();
+
+  res.json({ message: "Email verified successfully" });
+});
 
 
 module.exports = router;

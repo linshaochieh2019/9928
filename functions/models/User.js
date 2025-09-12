@@ -8,6 +8,11 @@ const UserSchema = new mongoose.Schema({
   role: { type: String, enum: ["admin", "teacher", "employer"], required: true },
   name: { type: String, required: true },
 
+  // Email verification
+  isVerified: { type: Boolean, default: false },
+  emailVerifyToken: { type: String },
+  emailVerifyExpires: { type: Date },
+
   // Reset password
   resetPasswordToken: { type: String },
   resetPasswordExpires: { type: Date },

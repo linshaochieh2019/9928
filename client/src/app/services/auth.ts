@@ -102,6 +102,14 @@ export class AuthService {
     return this.getUser()?.name || localStorage.getItem('name');
   }
 
+  // Email verification
+  verifyEmail(token: string) {
+    return this.http.get(`${this.apiUrl}/verify-email/${token}`);
+  }
 
+  // Resend verification email
+  resendVerification(email: string) {
+    return this.http.post(`${this.apiUrl}/resend-verification`, { email });
+  }
 
 }

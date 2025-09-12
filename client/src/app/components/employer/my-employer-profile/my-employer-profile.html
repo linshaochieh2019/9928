@@ -26,6 +26,36 @@
           <label class="form-label">Website</label>
           <input [(ngModel)]="employer.website" name="website" class="form-control" />
         </div>
+
+        <!-- Email & Verification -->
+        <div class="col-md-12">
+          <label for="email" class="form-label">
+            Email
+            <i class="bi bi-info-circle text-muted"
+              title="This is your registration/login email. Not public to any users"></i>
+          </label>
+
+          <div class="input-group">
+            <input id="email" type="email" class="form-control" [value]="email" disabled
+              required>
+
+            <!-- Verified -->
+            <span *ngIf="isVerified === true" class="input-group-text text-success bg-transparent border-0">
+              <i class="bi bi-check-circle-fill"></i>
+              <small class="ms-1">Verified</small>
+            </span>
+
+            <!-- Not verified -->
+            <span *ngIf="isVerified === false" class="input-group-text text-warning bg-transparent border-0">
+              <i class="bi bi-exclamation-triangle-fill"></i>
+              <small class="ms-1">Not verified</small>
+              <button class="btn btn-link btn-sm p-0 ms-2" (click)="resendVerification()">Resend</button>
+            </span>
+          </div>
+
+          <p *ngIf="message" class="text-info mt-1">{{ message }}</p>
+        </div>
+
       </div>
     </div>
   </div>

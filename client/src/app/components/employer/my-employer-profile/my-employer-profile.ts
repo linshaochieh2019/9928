@@ -27,7 +27,13 @@ export class MyEmployerProfileComponent implements OnInit {
     jobPostings: []
   };
 
+  // loading state
   loading = true;
+
+  // verification status
+  email: string | null = null;
+  isVerified: boolean | null = null;
+
 
   typeOptions = [
     'Kindergarten',
@@ -70,6 +76,12 @@ export class MyEmployerProfileComponent implements OnInit {
             ...data.hiringPreferences
           }
         };
+
+        // Get verification status from AuthService
+        const user = this.authService.getUser();
+        this.email = user?.email ?? null;
+        this.isVerified = user?.isVerified ?? null;
+
         this.loading = false;
       },
       error: (err) => {
@@ -164,6 +176,18 @@ export class MyEmployerProfileComponent implements OnInit {
       error: (err) => {
         alert('Error removing image: ' + err.message);
       }
+    });
+  }
+
+  // Resend verification email
+  message: string | null = null;
+  resendVerification() {
+    const email = this.authService.getUser()?.email;
+    if (!email) return;
+
+    this.authService.resendVerification(email).subscribe({
+      next: () => this.message = '📩 A new verification email has been sent.',
+      error: err => this.message = err.error?.message || '❌ Failed to send email.'
     });
   }
 

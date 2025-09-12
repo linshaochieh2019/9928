@@ -72,6 +72,8 @@ export class MyProfileComponent implements OnInit {
   toastMessage: string | null = null;
   toastType: 'success' | 'danger' = 'success';
 
+  // Email verification status
+  isVerified: boolean | null = null;
 
 
   // age group options
@@ -129,6 +131,11 @@ export class MyProfileComponent implements OnInit {
           this.availableFromChoice = 'date';
         }
 
+        // get verification from user object
+        const user = this.authService.getUser();
+        this.isVerified = user?.isVerified ?? null;
+
+        // set loading false
         this.loading = false;
         console.log('Loaded profile', this.teacher._id);
       },
@@ -363,5 +370,18 @@ export class MyProfileComponent implements OnInit {
     });
 
   }
+
+  // Resend verification email
+  message: string | null = null;
+  resendVerification() {
+    const email = this.authService.getUser()?.email;
+    if (!email) return;
+
+    this.authService.resendVerification(email).subscribe({
+      next: () => this.message = '📩 A new verification email has been sent.',
+      error: err => this.message = err.error?.message || '❌ Failed to send verification email.'
+    });
+  }
+
 
 }
