@@ -7,12 +7,7 @@ import { AuthService } from '../../../services/auth';
   standalone: true,
   selector: 'app-verify-email',
   imports: [CommonModule],
-  template: `
-    <h2>Email Verification</h2>
-    <p *ngIf="loading">Verifying your email...</p>
-    <p *ngIf="message">{{ message }}</p>
-    <button *ngIf="success" (click)="goLogin()">Go to Login</button>
-  `
+  templateUrl: './verify-email.html',
 })
 export class VerifyEmailComponent implements OnInit {
   message = '';

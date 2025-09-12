@@ -5,7 +5,7 @@ import { RegisterComponent } from './components/register/register';
 import { ForgotPasswordComponent } from './components/auth/forgot-password/forgot-password';
 import { ResetPasswordComponent } from './components/auth/reset-password/reset-password';
 import { VerifyEmailComponent } from './components/auth/verify-email/verify-email';
-import { ChooseRole } from './components/auth/choose-role/choose-role';
+import { ChooseRoleComponent } from './components/auth/choose-role/choose-role';
 import { TeacherListComponent } from './components/teacher/list/list';
 import { TeacherProfileComponent } from './components/teacher/profile/profile';
 import { MyProfileComponent } from './components/teacher/my-profile/my-profile';
@@ -21,7 +21,7 @@ export const routes: Routes = [
   { path: 'forgot-password', component: ForgotPasswordComponent },
   { path: 'reset-password/:token', component: ResetPasswordComponent },
   { path: 'verify-email/:token', component: VerifyEmailComponent }, // email verification
-  { path: 'choose-role', component: ChooseRole }, // choose role
+  { path: 'choose-role', component: ChooseRoleComponent }, // choose role
   { path: 'teachers', component: TeacherListComponent }, // teacher list
   { path: 'teacher/my-profile', component: MyProfileComponent }, // my profile
   { path: 'teachers/:id', component: TeacherProfileComponent }, // teacher profile

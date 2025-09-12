@@ -3,30 +3,33 @@ import { Component } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { AuthService } from '../../../services/auth';
+import { RouterModule } from '@angular/router';
 
 @Component({
   standalone: true,
   selector: 'app-forgot-password',
-  imports: [CommonModule, FormsModule],
-  template: `
-    <h2>Forgot Password</h2>
-    <form (ngSubmit)="submit()">
-      <input [(ngModel)]="email" name="email" placeholder="Your email" required>
-      <button type="submit">Send Reset Link</button>
-    </form>
-    <p *ngIf="message">{{ message }}</p>
-  `
+  imports: [CommonModule, FormsModule, RouterModule],
+  templateUrl: './forgot-password.html',
 })
 export class ForgotPasswordComponent {
   email = '';
   message = '';
+  success: boolean | null = null;
 
-  constructor(private auth: AuthService) {}
+  constructor(private auth: AuthService) { }
 
   submit() {
     this.auth.forgotPassword(this.email).subscribe({
-      next: () => this.message = 'Check your email for a reset link',
-      error: err => this.message = err.error?.message || 'Error sending reset link'
+      next: () => {
+        this.success = true;
+        this.message = '📩 Check your email for a reset link.';
+        setTimeout(() => (this.message = ''), 4000);
+      },
+      error: (err) => {
+        this.success = false;
+        this.message = err.error?.message || '❌ Error sending reset link.';
+        setTimeout(() => (this.message = ''), 4000);
+      },
     });
   }
 }
