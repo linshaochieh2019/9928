@@ -13,6 +13,13 @@ export class NavbarComponent {
   constructor(public authService: AuthService, private router: Router) { }
 
   goToMyProfile() {
+
+    const user = this.authService.getUser();
+    if (!user?.role) {
+      this.router.navigate(['/choose-role']);
+      return;
+    }
+
     const teacherId = this.authService.getTeacherId();
     const employerId = this.authService.getEmployerId();
     if (teacherId) {

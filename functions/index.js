@@ -11,6 +11,8 @@ require("dotenv").config();
 // ---- Secrets (v2) ----
 const MONGODB_URI = defineSecret("MONGODB_URI");
 const JWT_SECRET = defineSecret("JWT_SECRET");
+const FRONTEND_URL = defineSecret("FRONTEND_URL");
+const GOOGLE_CLIENT_ID = defineSecret("GOOGLE_CLIENT_ID");
 
 // Mongo DB
 const { connectToDatabase } = require("./mongo");
@@ -40,13 +42,15 @@ const { authenticate, authorize } = require("./middleware/auth");
 // === API Routes ===
 const teacherRoutes = require("./routes/teacherRoutes");
 const employerRoutes = require("./routes/employers");
+const emailRoutes = require("./routes/email");
 
-// Mount teacher CRUD under /teachers
+// Use routes
 app.use("/auth", authRoutes);
 app.use("/teachers", teacherRoutes);
 app.use("/employers", employerRoutes);
+app.use("/email", emailRoutes);
 
-// Routes
+// Simple test route
 app.get("/ping", (req, res) => {
   res.json({ message: "pong from Firebase Function" });
 });
@@ -78,7 +82,7 @@ app.use((err, req, res, next) => {
 
 // Export function with secret wired in
 exports.api = onRequest(
-  { secrets: [MONGODB_URI, JWT_SECRET] },
+  { secrets: [MONGODB_URI, JWT_SECRET, FRONTEND_URL, GOOGLE_CLIENT_ID] },
   async (req, res) => {
     try {
       await initDB(); // <-- ensure DB is ready before handling any route

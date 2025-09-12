@@ -24,14 +24,45 @@ router.post("/profile", authenticate, authorize("teacher"), async (req, res) => 
   }
 });
 
-// Public: Get all teachers (list for directory)
+// // Public: Get all teachers (list for directory)
+// router.get("/", async (req, res) => {
+//   try {
+//     const teachers = await Teacher.find()
+//       .populate("user", "name") // only show public-safe fields
+//       .select("-__v"); // remove Mongoose version key
+
+//     // Mask contact info for each teacher
+//     const safeTeachers = teachers.map(maskContact);
+//     res.json(safeTeachers);
+
+//   } catch (err) {
+//     res.status(500).json({ error: err.message });
+//   }
+// });
+
+// ✅ Get teachers in daily random order
 router.get("/", async (req, res) => {
   try {
-    const teachers = await Teacher.find()
-      .populate("user", "name") // only show public-safe fields
-      .select("-__v"); // remove Mongoose version key
+    // daily seed (e.g., 20250911)
+    const today = new Date().toISOString().slice(0, 10).replace(/-/g, "");
+    const seed = parseInt(today, 10);
 
-    // Mask contact info for each teacher
+
+    const teachers = await Teacher.aggregate([
+      {
+        $addFields: {
+          sortKey: {
+            $mod: [
+              { $add: [{ $toLong: { $toDate: "$_id" } }, seed] },
+              1000000
+            ]
+          }
+        }
+      },
+      { $sort: { sortKey: 1 } },
+      { $project: { __v: 0, sortKey: 0 } }
+    ]);
+
     const safeTeachers = teachers.map(maskContact);
     res.json(safeTeachers);
 

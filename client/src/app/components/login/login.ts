@@ -1,14 +1,19 @@
 // client/src/app/components/login/login.component.ts
 import { Component } from '@angular/core';
 import { FormsModule } from '@angular/forms';
-import { Router } from '@angular/router';
+import { Router, RouterModule } from '@angular/router';
 import { CommonModule } from '@angular/common';
 import { AuthService } from '../../services/auth';
+import { environment } from '../../../environments/environment';
+
+/* global google */
+declare const google: any;
+
 
 @Component({
   selector: 'app-login',
   standalone: true,
-  imports: [CommonModule, FormsModule],
+  imports: [CommonModule, FormsModule, RouterModule],
   templateUrl: './login.html',
 })
 export class LoginComponent {
@@ -16,10 +21,30 @@ export class LoginComponent {
   password = '';
   error = '';
 
-  constructor(private auth: AuthService, private router: Router) {}
+  constructor(private authService: AuthService, private router: Router) { }
+
+  ngOnInit() {
+    google.accounts.id.initialize({
+      client_id: environment.googleClientId,
+      callback: (response: any) => this.handleGoogleResponse(response),
+    });
+
+    google.accounts.id.renderButton(
+      document.getElementById("googleBtn"),
+      { theme: "outline", size: "large" }
+    );
+  }
+
+  handleGoogleResponse(response: any) {
+    this.authService.googleLogin(response.credential).subscribe({
+      next: () => this.router.navigate(['/']),
+      error: err => console.error('Google login failed', err)
+    });
+  }
+
 
   onLogin() {
-    this.auth.login(this.email, this.password).subscribe({
+    this.authService.login(this.email, this.password).subscribe({
       next: () => this.router.navigate(['/']),
       error: err => this.error = err.error.error
     });

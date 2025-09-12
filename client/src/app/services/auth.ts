@@ -3,6 +3,7 @@ import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { tap } from 'rxjs/operators';
 import { BehaviorSubject } from 'rxjs';
+import { switchMap } from 'rxjs/operators';
 
 @Injectable({ providedIn: 'root' })
 export class AuthService {
@@ -12,8 +13,18 @@ export class AuthService {
   private currentUserSubject = new BehaviorSubject<any>(null);
   currentUser$ = this.currentUserSubject.asObservable(); // 👈 expose observable
 
-
-  constructor(private http: HttpClient) { }
+  // Call this once on app startup
+  constructor(private http: HttpClient) {
+    const token = this.getToken();
+    if (token) {
+      this.fetchMe().subscribe({
+        error: () => {
+          // If token is invalid, clear it
+          this.logout();
+        }
+      });
+    }
+  }
 
   login(email: string, password: string) {
     return this.http.post<{ token: string }>(
@@ -24,18 +35,49 @@ export class AuthService {
         localStorage.setItem('token', res.token);
 
         // After login, fetch /me immediately
-        this.fetchMe().subscribe();
+        this.fetchMe().subscribe(user => {
+          if (!user.role) {
+            // 🚀 Redirect to choose-role
+            window.location.href = '/choose-role';
+          }
+        });
       })
     );
   }
 
-  register(name: string, email: string, password: string, role: string) {
-    return this.http.post(`${this.apiUrl}/register`, { name, email, password, role });
+  // Google OAuth login
+  googleLogin(idToken: string) {
+    return this.http.post<{ token: string }>(
+      `${this.apiUrl}/google`,
+      { idToken }
+    ).pipe(
+      tap(res => {
+        localStorage.setItem('token', res.token);
+        this.fetchMe().subscribe(
+          user => {
+            if (!user.role) {
+              // 🚀 Redirect to choose-role
+              window.location.href = '/choose-role';
+            }
+          }
+        ); // same as normal login
+      })
+    );
+  }
+
+
+  getToken(): string | null {
+    return localStorage.getItem('token');
+  }
+
+  register(name: string, email: string, password: string) {
+    return this.http.post(`${this.apiUrl}/register`, { name, email, password });
   }
 
   logout() {
     localStorage.clear();
-    // this.currentUser = null;
+    localStorage.removeItem('token');
+    localStorage.removeItem('user');
     this.currentUserSubject.next(null);
   }
 
@@ -43,20 +85,16 @@ export class AuthService {
     return !!localStorage.getItem('token');
   }
 
-  // /** ✅ Call this once on app startup */
-  // fetchMe() {
-  //   return this.http.get<any>(`${this.apiUrl}/me`).pipe(
-  //     tap(user => {
-  //       this.currentUser = user;
-  //       localStorage.setItem('userId', user.userId);
-  //       localStorage.setItem('teacherId', user.teacherId ?? '');
-  //       localStorage.setItem('employerId', user.employerId ?? '');
-  //       localStorage.setItem('role', user.role);
-  //       localStorage.setItem('name', user.name);
-  //     })
-  //   );
-  // }
+  // Password reset
+  forgotPassword(email: string) {
+    return this.http.post(`${this.apiUrl}/forgot-password`, { email });
+  }
 
+  resetPassword(token: string, password: string) {
+    return this.http.post(`${this.apiUrl}/reset-password/${token}`, { password });
+  }
+
+  // Fetch current user profile
   fetchMe() {
     return this.http.get<any>(`${this.apiUrl}/me`).pipe(
       tap(user => {
@@ -66,35 +104,7 @@ export class AuthService {
     );
   }
 
-  // // Getters for user info
-  // getUser() {
-  //   if (!this.currentUser) {
-  //     this.currentUser = JSON.parse(localStorage.getItem('user') || '{}');
-  //   }
-  //   return this.currentUser;
-  // }
-
-  // getUserId() {
-  //   return this.currentUser?.userId || localStorage.getItem('userId');
-  // }
-
-  // getTeacherId() {
-  //   return this.currentUser?.teacherId || localStorage.getItem('teacherId');
-  // }
-
-  // getEmployerId() {
-  //   return this.currentUser?.employerId || localStorage.getItem('employerId');
-  // }
-
-  // getRole() {
-  //   return this.currentUser?.role || localStorage.getItem('role');
-  // }
-
-  // getUserName() {
-  //   return this.currentUser?.name || localStorage.getItem('name');
-  // }
-
-  // Still keep sync accessors for convenience
+  // Getters
   getUser() {
     return this.currentUserSubject.value || JSON.parse(localStorage.getItem('user') || '{}');
   }
@@ -119,5 +129,30 @@ export class AuthService {
     return this.getUser()?.name || localStorage.getItem('name');
   }
 
+  // Email verification
+  verifyEmail(token: string) {
+    return this.http.get(`${this.apiUrl}/verify-email/${token}`);
+  }
+
+  // Resend verification email
+  resendVerification(email: string) {
+    return this.http.post(`${this.apiUrl}/resend-verification`, { email });
+  }
+
+
+  // Set role (for users without a role yet)
+  setRole(role: string) {
+    return this.http.post<{ role: string, token: string }>(
+      `${this.apiUrl}/set-role`,
+      { role }
+    ).pipe(
+      tap(res => {
+        if (res.token) {
+          localStorage.setItem('token', res.token);
+        }
+      }),
+      switchMap(() => this.fetchMe())
+    );
+  }
 
 }

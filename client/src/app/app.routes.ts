@@ -2,6 +2,10 @@ import { Routes } from '@angular/router';
 import { LandingComponent } from './components/landing/landing';
 import { LoginComponent } from './components/login/login';
 import { RegisterComponent } from './components/register/register';
+import { ForgotPasswordComponent } from './components/auth/forgot-password/forgot-password';
+import { ResetPasswordComponent } from './components/auth/reset-password/reset-password';
+import { VerifyEmailComponent } from './components/auth/verify-email/verify-email';
+import { ChooseRoleComponent } from './components/auth/choose-role/choose-role';
 import { TeacherListComponent } from './components/teacher/list/list';
 import { TeacherProfileComponent } from './components/teacher/profile/profile';
 import { MyProfileComponent } from './components/teacher/my-profile/my-profile';
@@ -14,6 +18,10 @@ export const routes: Routes = [
   { path: '', component: LandingComponent },          // landing page
   { path: 'login', component: LoginComponent },      // login page
   { path: 'register', component: RegisterComponent }, // registration page
+  { path: 'forgot-password', component: ForgotPasswordComponent },
+  { path: 'reset-password/:token', component: ResetPasswordComponent },
+  { path: 'verify-email/:token', component: VerifyEmailComponent }, // email verification
+  { path: 'choose-role', component: ChooseRoleComponent }, // choose role
   { path: 'teachers', component: TeacherListComponent }, // teacher list
   { path: 'teacher/my-profile', component: MyProfileComponent }, // my profile
   { path: 'teachers/:id', component: TeacherProfileComponent }, // teacher profile
