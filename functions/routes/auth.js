@@ -16,6 +16,15 @@ const { authenticate } = require("../middleware/auth")
 const { signJwt } = require("../utils/jwt");
 const FRONTEND_URL = defineSecret("FRONTEND_URL");
 
+// Google OAuth 
+const { OAuth2Client } = require("google-auth-library");
+const GOOGLE_CLIENT_ID = defineSecret("GOOGLE_CLIENT_ID");
+
+// Helper to resolve client ID at runtime
+function getGoogleClientId() {
+  return process.env.GOOGLE_CLIENT_ID || GOOGLE_CLIENT_ID.value();
+}
+
 // Helper to get frontend URL based on environment
 function getFrontendUrl() {
   // Hybrid: if running locally, fall back to process.env
@@ -215,5 +224,49 @@ router.get("/verify-email/:token", async (req, res) => {
   res.json({ message: "Email verified successfully" });
 });
 
+// Google Login
+router.post("/google", async (req, res) => {
+  const { idToken } = req.body;
+  if (!idToken) {
+    return res.status(400).json({ error: "auth/no-id-token", message: "Missing Google ID token" });
+  }
+
+  try {
+    // Initialize Google OAuth client
+    const googleClient = new OAuth2Client(GOOGLE_CLIENT_ID.value());
+
+    // Verify Google token
+    const ticket = await googleClient.verifyIdToken({
+      idToken,
+      audience: getGoogleClientId(),
+    });
+    const payload = ticket.getPayload();
+
+    const { email, name, sub } = payload; // sub = Google user ID
+
+    // Find or create user
+    let user = await User.findOne({ email });
+    if (!user) {
+      user = new User({
+        email,
+        name,
+        role: "teacher", // 👈 default role; you may redirect frontend to let them choose
+        isVerified: true, // Google guarantees verified email
+      });
+      await user.save();
+
+      // Create teacher/employer profile depending on role
+      const teacher = new Teacher({ user: user._id, contactEmail: email });
+      await teacher.save();
+    }
+
+    // Issue JWT
+    const token = signJwt({ userId: user._id, role: user.role, name: user.name });
+    res.json({ token });
+  } catch (err) {
+    console.error("Google login error:", err);
+    res.status(401).json({ error: "auth/google-failed", message: "Google login failed" });
+  }
+});
 
 module.exports = router;
