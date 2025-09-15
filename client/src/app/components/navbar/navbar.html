@@ -52,6 +52,15 @@
             </li>
             }
 
+            <!-- Employer only: Buy Points -->
+            @if (authService.getRole() === 'employer') {
+            <li>
+              <a routerLink="/employers/buy-points" class="dropdown-item">
+                Buy Points
+              </a>
+            </li>
+            }
+
             <li>
               <hr class="dropdown-divider">
             </li>

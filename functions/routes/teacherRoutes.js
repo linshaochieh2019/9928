@@ -2,6 +2,7 @@ const express = require("express");
 const Teacher = require("../models/Teacher");
 const Employer = require("../models/Employer");
 const UnlockLog = require("../models/UnlockLog");
+const PointTransaction = require("../models/PointTransaction");
 const { authenticate, authorize, optionalAuth } = require("../middleware/auth");
 const { mongo, default: mongoose } = require("mongoose");
 const router = express.Router();
@@ -160,6 +161,14 @@ router.post("/unlock", authenticate, authorize("employer"), async (req, res) => 
     // 4. Deduct points
     employer.points -= 1;
     await employer.save();
+
+    // 4.1 Record point transaction
+    await PointTransaction.create({
+      employerId: employer._id,
+      type: "debit",
+      points: 1,
+      reason: `unlock:${teacher._id}`,
+    });
 
     // 5. Record unlock in log
     await UnlockLog.create({

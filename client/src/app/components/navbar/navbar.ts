@@ -10,6 +10,7 @@ import { AuthService } from '../../services/auth';
   templateUrl: './navbar.html',
 })
 export class NavbarComponent {
+
   constructor(public authService: AuthService, private router: Router) { }
 
   goToMyProfile() {

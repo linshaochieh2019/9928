@@ -12,7 +12,13 @@ require("dotenv").config();
 const MONGODB_URI = defineSecret("MONGODB_URI");
 const JWT_SECRET = defineSecret("JWT_SECRET");
 const FRONTEND_URL = defineSecret("FRONTEND_URL");
+const BACKEND_URL = defineSecret("BACKEND_URL");
 const GOOGLE_CLIENT_ID = defineSecret("GOOGLE_CLIENT_ID");
+const SENDGRID_API_KEY = defineSecret("SENDGRID_API_KEY");
+const SPGATEWAY_ENV = defineSecret("SPGATEWAY_ENV");
+const SPGATEWAY_SANDBOX_MERCHANT_ID = defineSecret("SPGATEWAY_SANDBOX_MERCHANT_ID");
+const SPGATEWAY_SANDBOX_HASH_KEY = defineSecret("SPGATEWAY_SANDBOX_HASH_KEY");
+const SPGATEWAY_SANDBOX_HASH_IV = defineSecret("SPGATEWAY_SANDBOX_HASH_IV");
 
 // Mongo DB
 const { connectToDatabase } = require("./mongo");
@@ -43,12 +49,16 @@ const { authenticate, authorize } = require("./middleware/auth");
 const teacherRoutes = require("./routes/teacherRoutes");
 const employerRoutes = require("./routes/employers");
 const emailRoutes = require("./routes/email");
+const paymentRoutes = require("./routes/payment");
+const pointsRoutes = require("./routes/points");
 
 // Use routes
 app.use("/auth", authRoutes);
 app.use("/teachers", teacherRoutes);
 app.use("/employers", employerRoutes);
 app.use("/email", emailRoutes);
+app.use("/payments", paymentRoutes);
+app.use("/points", pointsRoutes);
 
 // Simple test route
 app.get("/ping", (req, res) => {
@@ -80,13 +90,47 @@ app.use((err, req, res, next) => {
   res.status(500).json({ error: "Internal Server Error", message: "An unexpected error occurred on the server." });
 });
 
-// Export function with secret wired in
+// // Export function with secret wired in
+// exports.api = onRequest(
+//   { secrets: [MONGODB_URI, JWT_SECRET, FRONTEND_URL, GOOGLE_CLIENT_ID, SPGATEWAY_ENV, SPGATEWAY_SANDBOX_MERCHANT_ID, SPGATEWAY_SANDBOX_HASH_KEY, SPGATEWAY_SANDBOX_HASH_IV] },
+//   async (req, res) => {
+//     try {
+//       await initDB(); // <-- ensure DB is ready before handling any route
+//       if (req.path.startsWith("/api")) req.url = req.url.replace("/api", "");
+//       return app(req, res);
+//     } catch (err) {
+//       logger.error("DB init failed", err);
+//       res.status(500).json({ error: "Database connection failed" });
+//     }
+//   }
+// );
+
+// ✅ Export function with secrets wired in
 exports.api = onRequest(
-  { secrets: [MONGODB_URI, JWT_SECRET, FRONTEND_URL, GOOGLE_CLIENT_ID] },
+  {
+    secrets: [
+      MONGODB_URI,
+      JWT_SECRET,
+      FRONTEND_URL,
+      BACKEND_URL,
+      GOOGLE_CLIENT_ID,
+      SENDGRID_API_KEY,
+      SPGATEWAY_ENV,
+      SPGATEWAY_SANDBOX_MERCHANT_ID,
+      SPGATEWAY_SANDBOX_HASH_KEY,
+      SPGATEWAY_SANDBOX_HASH_IV,
+    ],
+  },
   async (req, res) => {
     try {
-      await initDB(); // <-- ensure DB is ready before handling any route
-      if (req.path.startsWith("/api")) req.url = req.url.replace("/api", "");
+      // Ensure DB is ready before handling any route
+      await initDB();
+
+      // Strip `/api` prefix so Express routes match correctly
+      if (req.path.startsWith("/api")) {
+        req.url = req.url.replace("/api", "");
+      }
+
       return app(req, res);
     } catch (err) {
       logger.error("DB init failed", err);

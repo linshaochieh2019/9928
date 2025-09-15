@@ -1,16 +1,29 @@
 import sgMail from "@sendgrid/mail";
 import * as dotenv from "dotenv";
+import { defineSecret } from "firebase-functions/params"; // 👈 fixed
 
 // Load .env.local for local development only
 dotenv.config({ path: ".env.local" });
 
-// Initialize SendGrid with API key
-const sendgridKey = process.env.SENDGRID_API_KEY;
+// Access SENDGRID_API_KEY from env or Firebase Secret Manager
+const SENDGRID_API_KEY = defineSecret("SENDGRID_API_KEY");
 
-if (!sendgridKey) {
-  console.error("❌ Missing SENDGRID_API_KEY");
-} else {
-  sgMail.setApiKey(sendgridKey);
+function getSendGridKey() {
+  return (typeof SENDGRID_API_KEY.value === "function"
+    ? SENDGRID_API_KEY.value()
+    : process.env.SENDGRID_API_KEY);
+}
+
+
+// lazy init flag
+let initialized = false;
+function initSendGrid() {
+  if (!initialized) {
+    const key = getSendGridKey();
+    sgMail.setApiKey(key);
+    initialized = true;
+    console.log("✅ SendGrid initialized");
+  }
 }
 
 /**
@@ -21,6 +34,8 @@ if (!sendgridKey) {
  * @param {string} [text] - optional plain text body
  */
 export async function sendEmail(to, subject, html, text) {
+  initSendGrid(); // 👈 init only when function is invoked
+
   const msg = {
     to,
     from: {
