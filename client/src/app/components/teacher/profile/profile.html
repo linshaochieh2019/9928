@@ -244,17 +244,14 @@
             No contact details available
           </li>
         </ul>
-
         <p *ngIf="errorMsg" class="text-danger small">{{ errorMsg }}</p>
       </div>
       <div class="modal-footer">
         <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
-        <button *ngIf="hasEnoughPoints" type="button" class="btn btn-primary" (click)="confirmUnlock()"
-          [disabled]="!teacher?.meta?.hasEmail && !teacher?.meta?.hasPhone" data-bs-dismiss="modal">
+        <button *ngIf="employerPoints >= 1" type="button" class="btn btn-primary" (click)="confirmUnlock()">
           Confirm Unlock
         </button>
-        <!-- If not enough points: show Buy Points -->
-        <button *ngIf="!hasEnoughPoints" type="button" class="btn btn-warning" (click)="buyPoints()">
+        <button *ngIf="employerPoints < 1" type="button" class="btn btn-warning" (click)="buyPoints()">
           Buy Points
         </button>
       </div>

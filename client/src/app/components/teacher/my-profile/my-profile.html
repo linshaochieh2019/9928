@@ -34,7 +34,10 @@
         <div class="col-md-9">
           <div class="row g-3">
             <div class="col-md-6">
-              <label class="form-label">Display Name</label>
+              <!-- <label class="form-label">Display Name</label> -->
+              <label for="displayName" class="form-label">
+                Display Name <span class="text-danger">*</span>
+              </label>
               <input class="form-control" [(ngModel)]="teacher.displayName" name="displayName" />
             </div>
             <div class="col-md-6">
@@ -74,9 +77,10 @@
       <!-- Registration Email (read-only) -->
       <div class="col-md-12">
         <label for="email" class="form-label">
-          Email
-          <i class="bi bi-info-circle text-muted"
+          Email 
+           <i class="bi bi-info-circle text-muted"
             title="This is your registration/login email. Not public to any users"></i>
+            
         </label>
 
         <div class="input-group">
@@ -103,7 +107,7 @@
         <label for="contactEmail" class="form-label">
           Contact Email
           <i class="bi bi-info-circle text-muted"
-            title="This email will be displayed to employers after they unlock your contact information"></i>
+            title="Required. This email will be displayed to employers after they unlock your contact information"></i>
         </label>
         <input id="contactEmail" type="email" class="form-control" [(ngModel)]="teacher.contactEmail"
           name="contactEmail" placeholder="Enter contact email" required>

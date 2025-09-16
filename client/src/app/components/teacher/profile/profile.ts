@@ -6,6 +6,7 @@ import { TeacherService } from '../../../services/teacher.service';
 import { AuthService } from '../../../services/auth';
 import { EmployerService } from '../../../services/employer.service';
 import { Teacher } from '../../../models/teacher.model';
+// import { UnlockModalComponent } from '../../shared/unlock-modal/unlock-modal';
 
 declare var bootstrap: any;
 
@@ -81,6 +82,13 @@ export class TeacherProfileComponent implements OnInit {
       next: () => {
         // ✅ Refetch teacher so contact is unmasked
         this.fetchTeacher(this.teacher!._id as string);
+
+        // Close modal manually only after success
+        const modalEl = document.getElementById('unlockConfirmModal');
+        if (modalEl) {
+          const modal = bootstrap.Modal.getInstance(modalEl);
+          modal?.hide();
+        }
       },
       error: (err) => {
         this.errorMsg = err.error?.error || 'Failed to unlock contact';

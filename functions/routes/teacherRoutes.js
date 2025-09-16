@@ -285,7 +285,10 @@ router.patch("/me/:section", authenticate, authorize("teacher"), async (req, res
     await teacher.save();
     res.json(teacher);
   } catch (err) {
-    res.status(500).json({ error: err.message });
+    if (err.name === "ValidationError") {
+      return res.status(400).json({ error: err.message });
+    }
+    res.status(500).json({ error: "Server error: " + err.message });
   }
 });
 
