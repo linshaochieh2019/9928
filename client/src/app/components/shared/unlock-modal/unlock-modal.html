@@ -21,17 +21,16 @@
       <div class="modal-footer">
         <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
 
-        <button *ngIf="hasEnoughPoints" type="button" class="btn btn-primary"
-                (click)="confirmUnlock.emit()"
-                [disabled]="!teacher?.meta?.hasEmail && !teacher?.meta?.hasPhone"
-                data-bs-dismiss="modal">
+        <button *ngIf="hasEnoughPoints" type="button" class="btn btn-primary" (click)="confirmUnlock.emit()"
+          [disabled]="!teacher?.meta?.hasEmail && !teacher?.meta?.hasPhone" data-bs-dismiss="modal">
           Confirm Unlock
         </button>
 
-        <button *ngIf="!hasEnoughPoints" type="button" class="btn btn-warning"
-                (click)="buyPoints.emit()">
+        <button *ngIf="!hasEnoughPoints" type="button" class="btn btn-warning" (click)="buyPoints.emit()"
+          data-bs-dismiss="modal">
           Buy Points
         </button>
+
       </div>
     </div>
   </div>

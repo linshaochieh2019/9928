@@ -1,0 +1,18 @@
+.card {
+  display: flex;
+  flex-direction: column;
+}
+
+.card-body {
+  flex: 1 1 auto;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+}
+
+.support-text {
+  min-height: 40px; /* Adjust until both descriptions line up */
+  display: flex;
+  align-items: center; /* vertically center if text is short */
+  justify-content: center; /* optional: center horizontally */
+}

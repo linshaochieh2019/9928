@@ -7,6 +7,8 @@ import { AuthService } from '../../../services/auth';
 import { EmployerService } from '../../../services/employer.service';
 import { Teacher } from '../../../models/teacher.model';
 
+declare var bootstrap: any;
+
 @Component({
   selector: 'app-teacher-profile',
   standalone: true,
@@ -122,7 +124,15 @@ export class TeacherProfileComponent implements OnInit {
   }
 
   buyPoints() {
-    // TODO: implement later (redirect to payment / open modal)
     console.log("Redirecting to buy points...");
+
+    // Close the modal manually
+    const modalEl = document.getElementById('unlockConfirmModal');
+    if (modalEl) {
+      const modal = bootstrap.Modal.getInstance(modalEl) || new bootstrap.Modal(modalEl);
+      modal.hide();
+    }
+
+    this.router.navigate(['/employers/buy-points']);
   }
 }

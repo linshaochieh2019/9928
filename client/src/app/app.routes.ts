@@ -13,6 +13,9 @@ import { EmployerListComponent } from './components/employer/list/list';
 import { EmployerDetailComponent } from './components/employer/employer-detail/employer-detail';
 import { MyEmployerProfileComponent } from './components/employer/my-employer-profile/my-employer-profile';
 import { UnlockedTeachersComponent } from './components/teacher/unlocked-teachers/unlocked-teachers';
+import { BuyPointsComponent } from './components/employer/buy-points/buy-points';
+import { PaymentResultComponent } from './components/employer/payment-result/payment-result';
+import { PointsComponent } from './components/employer/points/points';
 
 export const routes: Routes = [
   { path: '', component: LandingComponent },          // landing page
@@ -28,6 +31,9 @@ export const routes: Routes = [
   { path: 'employers', component: EmployerListComponent }, // employer list
   { path: 'employers/my-employer-profile', component: MyEmployerProfileComponent }, // my employer profile
   { path: 'employers/unlocked-teachers', component: UnlockedTeachersComponent }, // unlocked teachers
+  { path: 'employers/buy-points', component: BuyPointsComponent }, // buy points
+  { path: 'employers/payment-result', component: PaymentResultComponent }, // payment result
+  { path: 'employers/points', component: PointsComponent }, // points history
   { path: 'employers/:id', component: EmployerDetailComponent }, // employer detail
   { path: '**', redirectTo: '' }                      // fallback → landing
 ];

@@ -1,0 +1,37 @@
+<div class="container py-5">
+  <h2>My Points</h2>
+
+  @if (loading) {
+    <p>Loading...</p>
+  } @else {
+    <h4>Current Balance: {{ balance }} points</h4>
+
+    <table class="table mt-4">
+      <thead>
+        <tr>
+          <th>Date</th>
+          <th>Type</th>
+          <th>Points</th>
+          <th>Reason</th>
+        </tr>
+      </thead>
+      <tbody>
+        @for (tx of transactions; track tx._id) {
+          <tr>
+            <td>{{ tx.createdAt | date:'yyyy-MM-dd HH:mm' }}</td>
+            <td>{{ tx.type }}</td>
+            <td
+              [ngClass]="{
+                'text-success': tx.type === 'credit',
+                'text-danger': tx.type === 'debit'
+              }"
+            >
+              {{ tx.type === 'credit' ? '+' : '-' }}{{ tx.points }}
+            </td>
+            <td>{{ tx.formattedReason }}</td>
+          </tr>
+        }
+      </tbody>
+    </table>
+  }
+</div>
