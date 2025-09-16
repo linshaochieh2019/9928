@@ -20,10 +20,15 @@
           <tr>
             <td>{{ tx.createdAt | date:'yyyy-MM-dd HH:mm' }}</td>
             <td>{{ tx.type }}</td>
-            <td [ngClass]="{'text-success': tx.type==='credit', 'text-danger': tx.type==='debit'}">
+            <td
+              [ngClass]="{
+                'text-success': tx.type === 'credit',
+                'text-danger': tx.type === 'debit'
+              }"
+            >
               {{ tx.type === 'credit' ? '+' : '-' }}{{ tx.points }}
             </td>
-            <td>{{ tx.reason }}</td>
+            <td>{{ tx.formattedReason }}</td>
           </tr>
         }
       </tbody>

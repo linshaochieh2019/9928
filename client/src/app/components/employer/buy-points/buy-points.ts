@@ -1,17 +1,26 @@
 import { Component } from '@angular/core';
 import { PaymentService } from '../../../services/payment';
 import { AuthService } from '../../../services/auth';
+import { CommonModule } from '@angular/common';
 
 @Component({
   selector: 'app-buy-points',
   standalone: true,
-  templateUrl: './buy-points.html'
+  templateUrl: './buy-points.html',
+  styleUrls: ['./buy-points.scss'],
+  imports: [CommonModule]
 })
 export class BuyPointsComponent {
+  
+  loading = false;   // ✅ add this state
+  errorMsg = '';    // ✅ add this state
+  
   constructor(
     private paymentService: PaymentService,
     private authService: AuthService
   ) {}
+
+
 
   buyPoints(amount: number, packageId: string) {
     const employerId = this.authService.getEmployerId();

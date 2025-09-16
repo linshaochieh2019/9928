@@ -24,49 +24,47 @@
 
       <!-- Right side: auth links -->
       <ul class="navbar-nav ms-auto mb-2 mb-lg-0">
+        <!-- Guest -->
         @if (!authService.isLoggedIn()) {
-        <li class="nav-item me-2">
-          <a class="btn btn-outline-primary" routerLink="/login">Login</a>
-        </li>
-        <li class="nav-item">
-          <a class="btn btn-primary" routerLink="/register">Register</a>
-        </li>
+          <li class="nav-item me-2">
+            <a class="btn btn-outline-primary" routerLink="/login">Login</a>
+          </li>
+          <li class="nav-item">
+            <a class="btn btn-primary" routerLink="/register">Register</a>
+          </li>
         }
 
+        <!-- Logged in -->
         @if (authService.isLoggedIn()) {
-        <li class="nav-item dropdown mx-4">
-          <a class="nav-link dropdown-toggle" href="#" id="userDropdown" role="button" data-bs-toggle="dropdown"
-            aria-expanded="false">
-            {{ authService.getUserName() }}
-          </a>
-          <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="userDropdown">
-            <li><a (click)="goToMyProfile()" class="dropdown-item">My Profile</a>
-            </li>
+          <li class="nav-item dropdown mx-4">
+            <a class="nav-link dropdown-toggle" href="#" id="userDropdown" role="button"
+               data-bs-toggle="dropdown" aria-expanded="false">
+              {{ authService.getUserName() }}
+            </a>
+            <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="userDropdown">
+              <li>
+                <a (click)="goToMyProfile()" class="dropdown-item">My Profile</a>
+              </li>
 
-            <!-- Employer only: Unlocked Teachers -->
-            @if (authService.getRole() === 'employer') {
-            <li>
-              <a routerLink="/employers/unlocked-teachers" class="dropdown-item">
-                Unlocked Teachers
-              </a>
-            </li>
-            }
+              <!-- Employer-only links -->
+              @if (authService.getRole() === 'employer') {
+                <li>
+                  <a routerLink="/employers/unlocked-teachers" class="dropdown-item">Unlocked Teachers</a>
+                </li>
+                <li>
+                  <a routerLink="/employers/buy-points" class="dropdown-item">Buy Points</a>
+                </li>
+                <li>
+                  <a routerLink="/employers/points" class="dropdown-item">Point History</a>
+                </li>
+              }
 
-            <!-- Employer only: Buy Points -->
-            @if (authService.getRole() === 'employer') {
-            <li>
-              <a routerLink="/employers/buy-points" class="dropdown-item">
-                Buy Points
-              </a>
-            </li>
-            }
-
-            <li>
-              <hr class="dropdown-divider">
-            </li>
-            <li><button class="dropdown-item text-danger" (click)="logout()">Log out</button></li>
-          </ul>
-        </li>
+              <li><hr class="dropdown-divider"></li>
+              <li>
+                <button class="dropdown-item text-danger" (click)="logout()">Log out</button>
+              </li>
+            </ul>
+          </li>
         }
       </ul>
     </div>

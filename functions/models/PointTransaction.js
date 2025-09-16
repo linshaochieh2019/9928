@@ -17,7 +17,7 @@ const pointTransactionSchema = new mongoose.Schema(
       required: true,
     },
     reason: {
-      type: String, // e.g. "purchase:30_points", "unlock:teacherId", "admin_adjustment"
+      type: String, // e.g. "purchase:8_points", "unlock:teacherId", "admin_adjustment"
       required: true,
     },
     referenceId: {

@@ -8,7 +8,7 @@ const paymentSchema = new mongoose.Schema(
       required: true,
     },
     packageId: {
-      type: String, // e.g. "10_points", "30_points"
+      type: String, // e.g. "1_point", "8_points"
       required: true,
     },
     merchantOrderNo: {

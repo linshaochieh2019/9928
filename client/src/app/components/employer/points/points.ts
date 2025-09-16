@@ -2,12 +2,14 @@ import { Component, OnInit } from '@angular/core';
 import { PointsService } from '../../../services/points';
 import { AuthService } from '../../../services/auth';
 import { DatePipe, NgClass } from '@angular/common';
+import { RouterModule } from '@angular/router';
+// import { JsonPipe } from '@angular/common';
 
 @Component({
   selector: 'app-points',
   standalone: true,
   templateUrl: './points.html',
-  imports: [NgClass, DatePipe],
+  imports: [NgClass, DatePipe, RouterModule],
 })
 export class PointsComponent implements OnInit {
   balance = 0;

@@ -44,9 +44,8 @@ function sha256(encrypted) {
 }
 
 const pointPackages = {
-  "10_points": { points: 10, amount: 200 },
-  "30_points": { points: 30, amount: 500 },
-  "60_points": { points: 60, amount: 1000 },
+  "1_point": { points: 1, amount: 150 },
+  "8_points": { points: 8, amount: 990 }
 };
 
 module.exports = { MERCHANT_ID, HASH_KEY, HASH_IV, MPG_URL, aesEncrypt, aesDecrypt, sha256, pointPackages };
