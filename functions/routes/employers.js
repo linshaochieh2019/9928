@@ -24,7 +24,7 @@ router.post("/profile", authenticate, authorize("employer"), async (req, res) =>
 // ✅ Public: Get all employers (list for directory)
 router.get("/", async (req, res) => {
   try {
-    const employers = await Employer.find()
+    const employers = await Employer.find({ isPublished: true })
       .populate("user", "name") // only show safe user fields
       .select("-__v") // remove Mongoose version key
       .sort({ updatedAt: -1 });  // 👈 ascending order
@@ -188,6 +188,21 @@ router.put("/points", authenticate, async (req, res) => {
   }
 });
 
+// ✅ Publish / Unpublish employer profile
+router.patch("/me/publish", authenticate, authorize("employer"), async (req, res) => {
+  try {
+    const employer = await Employer.findOneAndUpdate(
+      { user: req.user.userId },
+      { isPublished: req.body.isPublished },
+      { new: true }
+    );
+    if (!employer) return res.status(404).json({ error: "Profile not found" });
+
+    res.json({ success: true, isPublished: employer.isPublished });
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+});
 
 
 module.exports = router;

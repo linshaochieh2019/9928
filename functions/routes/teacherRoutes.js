@@ -25,21 +25,6 @@ router.post("/profile", authenticate, authorize("teacher"), async (req, res) => 
   }
 });
 
-// // Public: Get all teachers (list for directory)
-// router.get("/", async (req, res) => {
-//   try {
-//     const teachers = await Teacher.find()
-//       .populate("user", "name") // only show public-safe fields
-//       .select("-__v"); // remove Mongoose version key
-
-//     // Mask contact info for each teacher
-//     const safeTeachers = teachers.map(maskContact);
-//     res.json(safeTeachers);
-
-//   } catch (err) {
-//     res.status(500).json({ error: err.message });
-//   }
-// });
 
 // ✅ Get teachers in daily random order
 router.get("/", async (req, res) => {
@@ -50,6 +35,7 @@ router.get("/", async (req, res) => {
 
 
     const teachers = await Teacher.aggregate([
+      { $match: { isPublished: true } }, // 👈 only include published profiles
       {
         $addFields: {
           sortKey: {
@@ -83,23 +69,6 @@ router.get("/me", authenticate, authorize("teacher"), async (req, res) => {
     res.status(500).json({ error: err.message });
   }
 });
-
-// // Public: Get teacher by id
-// router.get("/:id", async (req, res) => {
-//   try {
-//     // const teacher = await Teacher.findById(req.params.id).populate("user", "email");        
-//     const teacher = await Teacher.findById(req.params.id);
-//     if (!teacher) return res.status(404).json({ error: "Not found" });
-
-//     // Mask contact info
-//     // (assume not unlocked, not owner), the unlocked logic will be handled in future
-//     const safeTeacher = maskContact(teacher);
-//     res.json(safeTeacher);
-
-//   } catch (err) {
-//     res.status(500).json({ error: err.message });
-//   }
-// });
 
 
 // Public: Get teacher by id (with unlock logic)
@@ -206,6 +175,21 @@ router.put("/me/profile-photo", authenticate, authorize("teacher"), async (req, 
   }
 });
 
+// ✅ Publish / Unpublish profile
+router.patch("/me/publish", authenticate, authorize("teacher"), async (req, res) => {
+  try {
+    const teacher = await Teacher.findOneAndUpdate(
+      { user: req.user.userId },
+      { isPublished: req.body.isPublished },
+      { new: true }
+    );
+    if (!teacher) return res.status(404).json({ error: "Profile not found" });
+    res.json({ success: true, isPublished: teacher.isPublished });
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+});
+
 // ✅ Section update
 router.patch("/me/:section", authenticate, authorize("teacher"), async (req, res) => {
   try {
@@ -291,6 +275,8 @@ router.patch("/me/:section", authenticate, authorize("teacher"), async (req, res
     res.status(500).json({ error: "Server error: " + err.message });
   }
 });
+
+
 
 
 

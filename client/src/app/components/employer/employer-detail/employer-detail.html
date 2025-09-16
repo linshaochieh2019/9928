@@ -1,13 +1,36 @@
 <div class="container my-4">
 
-  <!-- ✅ Edit Profile Button (only owner) -->
+  <!-- ✅ Owner-only controls -->
   @if (isOwner()) {
-  <div class="d-flex justify-content-end mb-2">
-    <button (click)="goEdit()" class="btn btn-outline-brand">
-      Edit Profile 🖊️
+  <div class="d-flex justify-content-end mb-3 gap-2">
+    <!-- Publish toggle -->
+    <div class="dropdown">
+      <button class="btn btn-outline-brand dropdown-toggle" type="button" data-bs-toggle="dropdown">
+        {{ employer?.isPublished ? 'Published' : 'Hidden' }}
+      </button>
+      <ul class="dropdown-menu">
+        <li>
+          <a class="dropdown-item" (click)="setPublish(true)">
+            <i class="bi bi-check-circle text-success me-2"></i> Publish
+          </a>
+        </li>
+        <li>
+          <a class="dropdown-item" (click)="setPublish(false)">
+            <i class="bi bi-slash-circle text-muted me-2"></i> Hide
+          </a>
+        </li>
+      </ul>
+    </div>
+
+    <!-- Edit Profile button -->
+    <button (click)="goEdit()" class="btn btn-outline-brand d-flex align-items-center gap-2" style="height: 38px;">
+      <i class="bi bi-pencil"></i> Edit Profile
     </button>
   </div>
   }
+
+
+
 
   <!-- Profile Header Row -->
   <div class="row g-4 mb-4">
@@ -168,7 +191,17 @@
       </div>
     </div>
   </div>
+</div>
 
-
-
+<!-- ✅ Toast container (bottom-right) -->
+<div class="toast-container position-fixed bottom-0 end-0 p-3">
+  <div *ngIf="toastMessage" class="toast align-items-center text-bg-{{toastType}} border-0 show" role="alert">
+    <div class="d-flex">
+      <div class="toast-body">
+        {{ toastMessage }}
+      </div>
+      <button type="button" class="btn-close btn-close-white me-2 m-auto" aria-label="Close"
+        (click)="toastMessage = null"></button>
+    </div>
+  </div>
 </div>

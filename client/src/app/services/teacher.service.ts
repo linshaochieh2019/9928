@@ -55,4 +55,12 @@ export class TeacherService {
     return this.http.post(`${this.apiUrl}/unlock`, { teacherId });
   }
 
+  // Update publish status
+  updatePublishStatus(isPublished: boolean) {
+    return this.http.patch<{ success: boolean; isPublished: boolean }>(
+      `/api/teachers/me/publish`,
+      { isPublished }
+    );
+  }
+
 }

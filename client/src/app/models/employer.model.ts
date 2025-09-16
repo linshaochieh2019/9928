@@ -4,6 +4,9 @@ export interface Employer {
   _id?: string;
   user?: User;
 
+  // Publishing status
+  isPublished?: boolean;
+
   // Unlock logic
   points?: number;
   unlockedTeachers?: string[]; // optional convenience

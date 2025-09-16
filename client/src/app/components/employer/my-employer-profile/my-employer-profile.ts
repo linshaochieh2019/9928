@@ -34,6 +34,9 @@ export class MyEmployerProfileComponent implements OnInit {
   email: string | null = null;
   isVerified: boolean | null = null;
 
+  // Toast notification
+  toastMessage: string | null = null;
+  toastType: 'success' | 'danger' | 'secondary' = 'success';
 
   typeOptions = [
     'Kindergarten',
@@ -50,6 +53,8 @@ export class MyEmployerProfileComponent implements OnInit {
     "Hourly",
     "Online"
   ];
+
+
 
   constructor(private employerService: EmployerService, private authService: AuthService, private router: Router) { }
 
@@ -190,5 +195,4 @@ export class MyEmployerProfileComponent implements OnInit {
       error: err => this.message = err.error?.message || '❌ Failed to send email.'
     });
   }
-
 }

@@ -87,4 +87,41 @@ export class EmployerDetailComponent implements OnInit {
     return this.employer.images;
   }
 
+
+  
+  // Toast notification
+  toastMessage: string | null = null;
+  toastType: 'success' | 'danger' | 'secondary' = 'success';
+
+
+  private showToast(
+    message: string,
+    type: 'success' | 'danger' | 'secondary' = 'success',
+    duration = 5000
+  ) {
+    this.toastMessage = message;
+    this.toastType = type;
+    setTimeout(() => (this.toastMessage = null), duration);
+  }
+
+  setPublish(status: boolean) {
+    this.employerService.updatePublishStatus(status).subscribe({
+      next: (res) => {
+        if (this.employer) {
+          this.employer.isPublished = res.isPublished;
+        }
+
+        if (res.isPublished) {
+          this.showToast('Profile Published – Teachers can now see your employer profile.', 'success');
+        } else {
+          this.showToast('Profile Hidden – Your employer profile is now hidden from teachers.', 'secondary');
+        }
+      },
+      error: () => {
+        this.showToast('Failed to update publish status. Please try again.', 'danger');
+      }
+    });
+  }
+
+
 }

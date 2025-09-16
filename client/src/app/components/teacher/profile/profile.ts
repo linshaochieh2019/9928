@@ -26,6 +26,10 @@ export class TeacherProfileComponent implements OnInit {
   isEmployer = false;
   employerPoints = 0;
 
+  // Feedback messages 
+  toastMessage: string | null = null;
+  toastType: 'success' | 'danger' | 'secondary' = 'success';
+
   constructor(
     private route: ActivatedRoute,
     private router: Router,
@@ -142,5 +146,34 @@ export class TeacherProfileComponent implements OnInit {
     }
 
     this.router.navigate(['/employers/buy-points']);
+  }
+
+  // Generic toast handler
+  private showToast(message: string, type: 'success' | 'danger' | 'secondary' = 'success', duration = 5000) {
+    this.toastMessage = message;
+    this.toastType = type;
+
+    // auto-hide after given duration
+    setTimeout(() => {
+      this.toastMessage = null;
+    }, duration);
+  }
+
+  setPublish(status: boolean) {
+    this.teacherService.updatePublishStatus(status).subscribe({
+      next: (res) => {
+        if (!this.teacher) return;
+        this.teacher.isPublished = res.isPublished;
+
+        if (res.isPublished) {
+          this.showToast('Profile Published – Employers can now see your teacher profile.', 'success');
+        } else {
+          this.showToast('Profile Hidden – Your profile is now hidden from employers.', 'secondary');
+        }
+      },
+      error: () => {
+        this.showToast('Failed to update publish status. Please try again.', 'danger');
+      }
+    });
   }
 }

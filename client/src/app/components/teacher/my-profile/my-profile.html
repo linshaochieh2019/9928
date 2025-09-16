@@ -1,13 +1,14 @@
 <main class="container py-4">
-  <!-- <h2 class="fw-bold mb-4" style="color: var(--brand-primary);">My Teacher Profile</h2> -->
 
   <div class="d-flex justify-content-between align-items-center mb-3">
     <h2 class="fw-bold mb-0" style="color: var(--brand-primary);">Teacher Profile</h2>
 
-    <button class="btn btn-outline-secondary d-flex align-items-center gap-1" type="button" (click)="goToViewProfile()">
-      View Profile <i class="bi bi-person"></i>
-    </button>
-
+    <div class="d-flex align-items-center gap-2">
+      <button class="btn btn-outline-secondary d-flex align-items-center gap-1" type="button"
+        (click)="goToViewProfile()">
+        View Profile <i class="bi bi-person"></i>
+      </button>
+    </div>
   </div>
 
   <!-- Basic Identity -->
@@ -34,10 +35,7 @@
         <div class="col-md-9">
           <div class="row g-3">
             <div class="col-md-6">
-              <!-- <label class="form-label">Display Name</label> -->
-              <label for="displayName" class="form-label">
-                Display Name <span class="text-danger">*</span>
-              </label>
+              <label class="form-label">Display Name</label>
               <input class="form-control" [(ngModel)]="teacher.displayName" name="displayName" />
             </div>
             <div class="col-md-6">
@@ -77,10 +75,10 @@
       <!-- Registration Email (read-only) -->
       <div class="col-md-12">
         <label for="email" class="form-label">
-          Email 
-           <i class="bi bi-info-circle text-muted"
+          Email
+          <i class="bi bi-info-circle text-muted"
             title="This is your registration/login email. Not public to any users"></i>
-            
+
         </label>
 
         <div class="input-group">
@@ -109,8 +107,15 @@
           <i class="bi bi-info-circle text-muted"
             title="Required. This email will be displayed to employers after they unlock your contact information"></i>
         </label>
+        <!-- <input id="contactEmail" type="email" class="form-control" [(ngModel)]="teacher.contactEmail"
+          name="contactEmail" placeholder="Enter contact email" required> -->
         <input id="contactEmail" type="email" class="form-control" [(ngModel)]="teacher.contactEmail"
-          name="contactEmail" placeholder="Enter contact email" required>
+          name="contactEmail" placeholder="Enter contact email" required #contactEmail="ngModel">
+        <!-- Validation feedback -->
+        <div *ngIf="contactEmail.invalid && (contactEmail.dirty || contactEmail.touched)"
+          class="text-danger small mt-1">
+          Contact Email is required and must be valid.
+        </div>
       </div>
 
       <!-- Phone -->

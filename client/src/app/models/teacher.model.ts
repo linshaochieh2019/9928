@@ -3,6 +3,7 @@ import { User } from "./user.model";
 export interface Teacher {
   _id?: string;
   user?: User;
+  isPublished: boolean;
 
   // 1. Basic Identity
   displayName?: string;

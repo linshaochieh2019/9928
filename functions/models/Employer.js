@@ -3,6 +3,13 @@ const mongoose = require("mongoose");
 const EmployerSchema = new mongoose.Schema({
     user: { type: mongoose.Schema.Types.ObjectId, ref: "User", required: true, unique: true },
     points: { type: Number, default: 0 }, // for unlock teachers' contact info
+
+    // Profile visibility
+    isPublished: {
+        type: Boolean,
+        default: false,
+    },
+
     name: { type: String },
     // logoUrl: String,
     images: [String],             // all uploaded image URLs

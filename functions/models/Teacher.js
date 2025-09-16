@@ -4,8 +4,14 @@ const mongoose = require("mongoose");
 const teacherSchema = new mongoose.Schema({
   user: { type: mongoose.Schema.Types.ObjectId, ref: "User", required: true, unique: true },
 
+  // Profile visibility
+  isPublished: {
+    type: Boolean,
+    default: false, // safer default: profile hidden until user chooses
+  },
+
   // 1. Basic Identity
-  displayName: { type: String, required: [true, "Display name is required"] }, // can override user.name for privacy
+  displayName: { type: String}, // can override user.name for privacy
   profilePhoto: { type: String }, // URL to uploaded image
   nationality: { type: String },
   age: { type: Number },        // ✅ store age directly
@@ -14,7 +20,9 @@ const teacherSchema = new mongoose.Schema({
 
   // Contact: Masked unless unlocked by employer
   phone: { type: String },
-  contactEmail: { type: String, lowercase: true, trim: true, required: [true, "Contact email is required"]}, // can be different from user.email
+  contactEmail: {
+    type: String, lowercase: true, trim: true, required: [true, "Contact email is required"], match: /.+\@.+\..+/ // basic email format validation
+  }, // can be different from user.email
 
   // 2. Professional Summary
   bio: { type: String },

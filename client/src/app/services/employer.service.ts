@@ -58,4 +58,13 @@ export class EmployerService {
     return this.http.get<UnlockLog[]>(`${this.apiUrl}/me/unlocks`);
   }
 
+  // Update publish status
+  updatePublishStatus(isPublished: boolean) {
+    return this.http.patch<{ success: boolean; isPublished: boolean }>(
+      `/api/employers/me/publish`,
+      { isPublished }
+    );
+  }
+
+
 }

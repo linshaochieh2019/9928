@@ -3,19 +3,21 @@ import { CommonModule } from '@angular/common';
 import { AuthService } from '../../../services/auth';
 import { Teacher } from '../../../models/teacher.model';
 import { TeacherService } from '../../../services/teacher.service';
-import { FormsModule } from '@angular/forms';
+import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-my-profile',
   standalone: true,
-  imports: [CommonModule, FormsModule],
+  imports: [CommonModule, FormsModule, ReactiveFormsModule],
   templateUrl: './my-profile.html',
   styleUrls: ['./my-profile.scss']
 })
 export class MyProfileComponent implements OnInit {
   // initialize teacher so it's never undefined
   teacher: Teacher = {
+    isPublished: false, // default to false
+
     // 1. Basic Identity
     displayName: '',
     profilePhoto: '',
@@ -70,7 +72,7 @@ export class MyProfileComponent implements OnInit {
   successMessage: string | null = null;
   errorMessage: string | null = null;
   toastMessage: string | null = null;
-  toastType: 'success' | 'danger' = 'success';
+  toastType: 'success' | 'danger' | 'secondary' = 'success';
 
   // Email verification status
   isVerified: boolean | null = null;
@@ -117,6 +119,8 @@ export class MyProfileComponent implements OnInit {
     "Online (remote teaching)",
     "Other"
   ];
+
+
 
   constructor(private teacherService: TeacherService, private authService: AuthService, private router: Router) { }
 
@@ -371,25 +375,34 @@ export class MyProfileComponent implements OnInit {
 
   }
 
+  // Generic toast handler
+  private showToast(message: string, type: 'success' | 'danger' | 'secondary' = 'success', duration = 5000) {
+    this.toastMessage = message;
+    this.toastType = type;
+
+    // auto-hide after given duration
+    setTimeout(() => {
+      this.toastMessage = null;
+    }, duration);
+  }
+
   // Resend verification email
-  message: string | null = null;
   resendVerification() {
     const email = this.authService.getUser()?.email;
     if (!email) return;
 
     this.authService.resendVerification(email).subscribe({
       next: () => {
-        this.toastMessage = '📩 A new verification email has been sent.';
-        this.toastType = 'success';
-        setTimeout(() => (this.toastMessage = null), 3000); // auto-dismiss after 3s
+        this.showToast('📩 A new verification email has been sent.', 'success', 3000);
       },
       error: (err) => {
-        this.toastMessage = err.error?.message || '❌ Failed to send verification email.';
-        this.toastType = 'danger';
-        setTimeout(() => (this.toastMessage = null), 4000); // auto-dismiss after 4s
+        this.showToast(
+          err.error?.message || '❌ Failed to send verification email.',
+          'danger',
+          4000
+        );
       },
     });
   }
-
 
 }
