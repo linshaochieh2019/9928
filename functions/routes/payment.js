@@ -43,7 +43,7 @@ router.post("/initiate", async (req, res) => {
             Amt: amount.toString(),
             ItemDesc: `Points Package ${packageId}`,
             NotifyURL: `${BACKEND_URL}/payments/callback`, // backend
-            ReturnURL: `${FRONTEND_URL}/employers/payment-result`,  // frontend
+            ReturnURL: `${FRONTEND_URL}/employers/payment-result?status=success`,  // frontend
             ClientBackURL: `${FRONTEND_URL}/employers/payment-result?status=cancel` // frontend for cancelled payment
         }).toString();
 
