@@ -20,7 +20,7 @@
       <a [routerLink]="['/employers', employer._id]" class="text-decoration-none text-dark">
         <div class="card h-100 shadow-sm border-0 hover-shadow">
           <!-- Image -->
-          <img [src]="employer.coverImage || (employer.images?.[0] || 'assets/default-employer-cover.jpg')"
+          <img [src]="employer.coverImage || (employer.images[0] || 'assets/default-employer-cover.jpg')"
             alt="{{ employer.name }}" class="card-img-top" style="height: 180px; object-fit: cover;" />
 
           <!-- Card Body -->
@@ -35,7 +35,7 @@
 
             <div class="d-flex align-items-center text-muted small">
               <i class="bi bi-geo-alt me-2"></i>
-              <span>{{ employer.location?.mainAddress || 'No address provided' }}</span>
+              <span>{{ employer.location.mainAddress || 'No address provided' }}</span>
             </div>
           </div>
         </div>

@@ -105,13 +105,28 @@ export class MyEmployerProfileComponent implements OnInit {
     }
   }
 
+  // saveProfile(): void {
+  //   this.employerService.createOrUpdate(this.employer).subscribe({
+  //     next: () => {
+  //       alert('Employer profile saved!');
+  //       this.goToMyProfile(); // ✅ redirect with profile-specific logic
+  //     },
+  //     error: (err) => alert('Error saving profile: ' + err.message),
+  //   });
+  // }
+
   saveProfile(): void {
     this.employerService.createOrUpdate(this.employer).subscribe({
       next: () => {
-        alert('Employer profile saved!');
-        this.goToMyProfile(); // ✅ redirect with profile-specific logic
+        this.toastType = 'success';
+        this.toastMessage = '✅ Employer profile saved successfully!';
+        setTimeout(() => this.toastMessage = null, 5000); // hide after 5s
       },
-      error: (err) => alert('Error saving profile: ' + err.message),
+      error: (err) => {
+        this.toastType = 'danger';
+        this.toastMessage = '❌ Error saving profile: ' + (err.message || 'Unknown error');
+        setTimeout(() => this.toastMessage = null, 5000);
+      },
     });
   }
 

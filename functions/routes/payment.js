@@ -43,7 +43,7 @@ router.post("/initiate", async (req, res) => {
             Amt: amount.toString(),
             ItemDesc: `Points Package ${packageId}`,
             NotifyURL: `${BACKEND_URL}/payments/callback`, // backend
-            ReturnURL: `${FRONTEND_URL}/employers/payment-result?status=success`,  // frontend
+            ReturnURL: `${FRONTEND_URL}/employers/payment-result?status=success`,  // frontend; note that this cannot be tested locally because Spgateway must reach it
             ClientBackURL: `${FRONTEND_URL}/employers/payment-result?status=cancel` // frontend for cancelled payment
         }).toString();
 

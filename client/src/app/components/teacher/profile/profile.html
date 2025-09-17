@@ -227,13 +227,18 @@
 
       <p><strong>Work Visa Status:</strong> {{ teacher?.workVisaStatus || '—' }}</p>
 
-      <p><strong>Available From:</strong>
+      <!-- <p><strong>Available From:</strong>
         <span *ngIf="teacher?.availableFrom === 'Immediately'">Immediately</span>
         <span *ngIf="teacher?.availableFrom && teacher?.availableFrom !== 'Immediately'">
           {{ teacher?.availableFrom | date:'yyyy/MM/dd' }}
         </span>
         <span *ngIf="!teacher?.availableFrom">Not provided</span>
+      </p> -->
+      <p>
+        <strong>Available From:</strong>
+        {{ formatAvailableFrom(teacher?.availableFrom) }}
       </p>
+
     </div>
   </div>
 

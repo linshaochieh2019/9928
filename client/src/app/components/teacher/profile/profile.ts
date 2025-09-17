@@ -159,6 +159,7 @@ export class TeacherProfileComponent implements OnInit {
     }, duration);
   }
 
+  // Toggle publish status
   setPublish(status: boolean) {
     this.teacherService.updatePublishStatus(status).subscribe({
       next: (res) => {
@@ -176,4 +177,12 @@ export class TeacherProfileComponent implements OnInit {
       }
     });
   }
+
+  // Helper to format availableFrom date or show "Not provided"
+  formatAvailableFrom(value: string | null | undefined): string {
+    if (!value) return 'Not provided';
+    if (value.toLowerCase() === 'immediately') return 'Immediately';
+    return new Date(value).toLocaleDateString('en-CA'); // yyyy-MM-dd
+  }
+
 }
