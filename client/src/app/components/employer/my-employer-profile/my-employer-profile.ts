@@ -148,10 +148,18 @@ export class MyEmployerProfileComponent implements OnInit {
   // Image handling
   selectedFile: File | null = null;
   previewUrl: string | null = null;
+  maxFileSize = 2 * 1024 * 1024; // 2 MB
 
   onFileSelected(event: Event) {
     const input = event.target as HTMLInputElement;
     if (!input.files || input.files.length === 0) return;
+
+    // ✅ validate file size
+    if (input.files[0].size > this.maxFileSize) {
+      alert(`File too large! Max size is ${this.maxFileSize / (1024 * 1024)} MB`);
+      (event.target as HTMLInputElement).value = ""; // reset input
+      return;
+    }
 
     this.selectedFile = input.files[0];
     const reader = new FileReader();

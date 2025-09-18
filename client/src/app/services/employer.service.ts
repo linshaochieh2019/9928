@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
-import { Observable, switchMap } from 'rxjs';
+import { Observable } from 'rxjs';
 import { Employer } from '../models/employer.model';
 import { UnlockLog } from '../models/unlocklog.model';
 import { getStorage, ref, uploadBytes, getDownloadURL } from 'firebase/storage';
