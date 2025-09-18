@@ -7,7 +7,7 @@ const Employer = require("../models/Employer");
 
 // Utils
 const crypto = require("crypto");
-const { sendEmail } = require("../utils/email");
+const { sendEmail, buildEmailTemplate } = require("../utils/email");
 
 // Secrets
 const { defineSecret } = require("firebase-functions/params");
@@ -56,27 +56,24 @@ router.post("/register", async (req, res) => {
     // Save user
     await user.save();
 
-    // Send verification email
+    // Set verification email
     const verifyUrl = `${getFrontendUrl()}/verify-email/${token}`;
+
+    // format email using template
+    const html = buildEmailTemplate(
+      "Verify your email address",
+      "Thanks for signing up! Please click the button below to verify your email address:",
+      verifyUrl,
+      "Verify Email"
+    );
+
+    // send email
     await sendEmail(
       user.email,
       "Verify your email address",
-      `<p>Welcome to 9928! Please <a href="${verifyUrl}">verify your email</a>.</p>`,
+      html,
       `Visit this link to verify: ${verifyUrl}`
     );
-
-
-    // // Set up profiles depending on user role
-    // if (role === "teacher") {
-    //   const teacher = new Teacher({
-    //     user: user._id,
-    //     contactEmail: email // 👈 default contact email = registration email
-    //   });
-    //   await teacher.save();
-    // } else if (role === "employer") {
-    //   const employer = new Employer({ user: user._id });
-    //   await employer.save();
-    // }
 
     res.status(201).json({ message: "User registered successfully" });
   } catch (err) {
@@ -143,10 +140,20 @@ router.post("/forgot-password", async (req, res) => {
   await user.save();
 
   const resetUrl = `${getFrontendUrl()}/reset-password/${token}`;
+
+  // format email using template
+  const html = buildEmailTemplate(
+    "Reset your password",
+    "We received a request to reset your password. Click below to choose a new one:",
+    resetUrl,
+    "Reset Password"
+  );
+
+  // send email
   await sendEmail(
     user.email,
     "Reset your password",
-    `<p>Click <a href="${resetUrl}">here</a> to reset your password.</p>`,
+    html,
     `Reset your password by visiting: ${resetUrl}`
   );
 
@@ -193,12 +200,20 @@ router.post("/resend-verification", async (req, res) => {
   user.emailVerifyExpires = Date.now() + 24 * 60 * 60 * 1000; // 24h
   await user.save();
 
-  // Send email
+  // Build email using template
   const verifyUrl = `${getFrontendUrl()}/verify-email/${token}`;
+  const html = buildEmailTemplate(
+    "Verify your email address",
+    "Please click the button below to verify your email address:",
+    verifyUrl,
+    "Verify Email"
+  );
+
+  // send email
   await sendEmail(
     user.email,
     "Verify your email address",
-    `<p>Please <a href="${verifyUrl}">verify your email</a>.</p>`,
+    html,
     `Visit this link to verify: ${verifyUrl}`
   );
 
