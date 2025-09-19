@@ -1,70 +1,289 @@
 <!-- landing.component.html -->
-<section class="hero-section text-center">
-    <div>
-        <h1 class="display-4 fw-bold">Find Qualified Teachers in Taiwan Fast</h1>
-        <p class="lead text-muted mb-4">
-            9928 connects schools and employers with foreign teachers quickly and securely.
-        </p>
-        <div class="d-flex justify-content-center gap-3">
-            <!-- Employers CTA -->
-            <a routerLink="/teachers" class="btn btn-primary btn-lg">Browse Teachers</a>
-            <!-- Teachers CTA -->
-            <a routerLink="/employers" class="btn btn-outline-secondary btn-lg">
-                Browse Employers
-            </a>
-        </div>
+<section class="hero-section text-center py-5">
+  <div class="container">
+    <h1 class="display-4 fw-bold mb-3">
+      Hire Foreign Teachers in Taiwan
+    </h1>
+    <p class="lead text-muted mb-4">
+      Browse teacher profiles, unlock contact info, and connect right away. 
+      No job postings, no middlemen.
+    </p>
+    <div class="d-flex justify-content-center gap-3">
+      <!-- Primary CTA: Employers -->
+      <a routerLink="/teachers" class="btn btn-primary btn-lg">
+        Browse Teachers
+      </a>
+      <!-- Secondary CTA: Employer Profile -->
+      <a (click)="goToMyProfile()" class="btn btn-outline-secondary btn-lg">
+        Create Profile
+      </a>
     </div>
+  </div>
 </section>
-
 
 <!-- How It Works Section -->
 <section class="how-it-works-section text-center py-5">
+  <div class="container">
     <h2 class="fw-bold mb-4 text-dark">How It Works</h2>
     <p class="text-muted mb-5">
-        Whether you're an employer or a teacher, getting started is simple.
+      Connecting with foreign teachers is fast and simple.
     </p>
 
-    <div class="row mx-0">
-        <!-- Employers -->
-        <div class="col-md-6 mb-4">
-            <h4 class="fw-bold mb-4" style="color: var(--brand-primary);">
-                For Employers
-            </h4>
-            <div class="d-flex justify-content-center gap-5 flex-wrap">
-                <div>
-                    <i class="bi bi-pencil-square fs-1" style="color: var(--brand-primary);"></i>
-                    <p class="mt-2">Post your job</p>
-                </div>
-                <div>
-                    <i class="bi bi-search fs-1" style="color: var(--brand-primary);"></i>
-                    <p class="mt-2">Browse teachers</p>
-                </div>
-                <div>
-                    <i class="bi bi-envelope fs-1" style="color: var(--brand-primary);"></i>
-                    <p class="mt-2">Contact directly</p>
-                </div>
-            </div>
-        </div>
+    <div class="row justify-content-center g-5">
+      <!-- Step 1 -->
+      <div class="col-md-4">
+        <i class="bi bi-search fs-1" style="color: var(--brand-primary);"></i>
+        <h5 class="fw-bold mt-3">Browse Teachers</h5>
+        <p class="text-muted small">
+          Filter by location, experience, and teaching style.
+        </p>
+      </div>
 
-        <!-- Teachers -->
-        <div class="col-md-6 mb-4">
-            <h4 class="fw-bold mb-4" style="color: var(--brand-secondary);">
-                For Teachers
-            </h4>
-            <div class="d-flex justify-content-center gap-5 flex-wrap">
-                <div>
-                    <i class="bi bi-person-plus fs-1" style="color: var(--brand-secondary);"></i>
-                    <p class="mt-2">Sign up</p>
-                </div>
-                <div>
-                    <i class="bi bi-card-text fs-1" style="color: var(--brand-secondary);"></i>
-                    <p class="mt-2">Build your profile</p>
-                </div>
-                <div>
-                    <i class="bi bi-briefcase fs-1" style="color: var(--brand-secondary);"></i>
-                    <p class="mt-2">Get hired</p>
-                </div>
-            </div>
-        </div>
+      <!-- Step 2 -->
+      <div class="col-md-4">
+        <i class="bi bi-unlock fs-1" style="color: var(--brand-primary);"></i>
+        <h5 class="fw-bold mt-3">Unlock Contact Info</h5>
+        <p class="text-muted small">
+          Use points to connect with the teachers you choose.
+        </p>
+      </div>
+
+      <!-- Step 3 -->
+      <div class="col-md-4">
+        <i class="bi bi-chat-dots fs-1" style="color: var(--brand-primary);"></i>
+        <h5 class="fw-bold mt-3">Hire Directly</h5>
+        <p class="text-muted small">
+          Reach out, interview, and hire on your own terms.
+        </p>
+      </div>
     </div>
+  </div>
+</section>
+
+<!-- Teacher Preview Section -->
+<section class="teacher-preview-section py-5">
+  <div class="container text-center">
+    <h2 class="fw-bold mb-4 text-dark">Featured Teachers</h2>
+    <p class="text-muted mb-5">
+      Browse real teacher profiles and connect directly when you're ready.
+    </p>
+
+    <div class="row g-4 justify-content-center">
+      @for (teacher of teachers.slice(0, 3); track teacher._id) {
+      <div class="col-md-4">
+        <div class="card h-100 shadow-sm">
+
+          <!-- Profile Photo -->
+          <img [src]="teacher.profilePhoto || 'assets/default-avatar.png'" 
+               alt="{{ teacher.displayName }}" 
+               class="card-img-top"
+               style="object-fit: cover; height: 220px;">
+
+          <div class="card-body d-flex flex-column">
+            <!-- Name + Headline -->
+            <h5 class="card-title">{{ teacher.displayName }}</h5>
+            <p class="headline text-brand fw-semibold mb-2">
+              {{ teacher.headline }}
+            </p>
+
+            <!-- Quick Info (lighter than full list) -->
+            <p class="mb-1 text-muted small">{{ teacher.nationality }}</p>
+            <p class="mb-1 text-muted small">{{ teacher.location }}</p>
+            <p class="mb-3 text-muted small">
+              {{ teacher.yearsExperience }}+ years teaching
+            </p>
+
+            <!-- Button -->
+            <div class="mt-auto">
+              <a [routerLink]="['/teachers', teacher._id]" 
+                 class="btn btn-outline-brand btn-sm w-100">
+                View Profile
+              </a>
+            </div>
+          </div>
+        </div>
+      </div>
+      }
+    </div>
+
+    <!-- CTA -->
+    <div class="mt-4">
+      <a routerLink="/teachers" class="btn btn-primary btn-lg">
+        See More Teachers
+      </a>
+    </div>
+  </div>
+</section>
+
+<!-- Why Employers Use 9928 Section -->
+<section class="why-employers-section py-5">
+  <div class="container text-center">
+    <h2 class="fw-bold mb-4 text-dark">Why Employers Use 9928</h2>
+    <p class="text-muted mb-5">
+      Designed for schools and institutions that want to hire teachers quickly and directly.
+    </p>
+
+    <div class="row g-5 justify-content-center">
+      <!-- Value 1 -->
+      <div class="col-md-3">
+        <i class="bi bi-people fs-1" style="color: var(--brand-primary);"></i>
+        <h5 class="fw-bold mt-3">Direct Connections</h5>
+        <p class="text-muted small">
+          Contact teachers directly without agencies or middlemen.
+        </p>
+      </div>
+
+      <!-- Value 2 -->
+      <div class="col-md-3">
+        <i class="bi bi-lightning-charge fs-1" style="color: var(--brand-primary);"></i>
+        <h5 class="fw-bold mt-3">Fast & Flexible</h5>
+        <p class="text-muted small">
+          Unlock only the teachers you want to reach and move at your own pace.
+        </p>
+      </div>
+
+      <!-- Value 3 -->
+      <div class="col-md-3">
+        <i class="bi bi-building fs-1" style="color: var(--brand-primary);"></i>
+        <h5 class="fw-bold mt-3">Showcase Your School</h5>
+        <p class="text-muted small">
+          Create a profile so teachers know more about your institution.
+        </p>
+      </div>
+
+      <!-- Value 4 -->
+      <div class="col-md-3">
+        <i class="bi bi-check-circle fs-1" style="color: var(--brand-primary);"></i>
+        <h5 class="fw-bold mt-3">Simple & Secure</h5>
+        <p class="text-muted small">
+          Start in minutes with a safe, easy-to-use platform built for hiring.
+        </p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Employer Preview Section -->
+<section class="employer-preview-section py-5">
+  <div class="container text-center">
+    <h2 class="fw-bold mb-4 text-dark">Featured Employers</h2>
+    <p class="text-muted mb-5">
+      See how schools and institutions present themselves to teachers.
+    </p>
+
+    <div class="row g-4 justify-content-center">
+      @for (employer of employers.slice(0, 3); track employer._id) {
+      <div class="col-md-6 col-lg-4">
+        <!-- Whole card is clickable -->
+        <a [routerLink]="['/employers', employer._id]" class="text-decoration-none text-dark">
+          <div class="card h-100 shadow-sm border-0 hover-shadow">
+            <!-- Cover Image -->
+            <img [src]="employer.coverImage || (employer.images[0] || 'assets/default-employer-cover.jpg')"
+                 alt="{{ employer.name }}"
+                 class="card-img-top"
+                 style="height: 180px; object-fit: cover;" />
+
+            <!-- Card Body -->
+            <div class="card-body">
+              <h5 class="card-title fw-bold mb-1">{{ employer.name }}</h5>
+              <p class="text-muted mb-2">{{ employer.type }}</p>
+
+              <div class="d-flex align-items-center text-muted small">
+                <i class="bi bi-geo-alt me-2"></i>
+                <span>{{ employer.location.mainAddress || 'No address provided' }}</span>
+              </div>
+            </div>
+          </div>
+        </a>
+      </div>
+      }
+    </div>
+  </div>
+</section>
+
+<!-- FAQ Section -->
+<section class="faq-section py-5 bg-light">
+  <div class="container">
+    <h2 class="fw-bold mb-4 text-center text-dark">Frequently Asked Questions</h2>
+    <p class="text-muted text-center mb-5">
+      Quick answers for employers getting started on 9928.
+    </p>
+
+    <div class="accordion" id="faqAccordion">
+      <!-- Q1 -->
+      <div class="accordion-item">
+        <h2 class="accordion-header" id="faqHeading1">
+          <button class="accordion-button" type="button" data-bs-toggle="collapse"
+                  data-bs-target="#faqCollapse1" aria-expanded="true" aria-controls="faqCollapse1">
+            <strong>Q:</strong>&nbsp;Do I need to post a job?
+          </button>
+        </h2>
+        <div id="faqCollapse1" class="accordion-collapse collapse show" aria-labelledby="faqHeading1" data-bs-parent="#faqAccordion">
+          <div class="accordion-body">
+            <strong>A:</strong>&nbsp;No. On 9928 you simply browse teacher profiles, unlock their contact info, and reach out directly.
+          </div>
+        </div>
+      </div>
+
+      <!-- Q2 -->
+      <div class="accordion-item">
+        <h2 class="accordion-header" id="faqHeading2">
+          <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse"
+                  data-bs-target="#faqCollapse2" aria-expanded="false" aria-controls="faqCollapse2">
+            <strong>Q:</strong>&nbsp;Do I need to create an employer account?
+          </button>
+        </h2>
+        <div id="faqCollapse2" class="accordion-collapse collapse" aria-labelledby="faqHeading2" data-bs-parent="#faqAccordion">
+          <div class="accordion-body">
+            <strong>A:</strong>&nbsp;Yes. An employer account is required to buy points and unlock teacher contact information.
+          </div>
+        </div>
+      </div>
+
+      <!-- Q3 -->
+      <div class="accordion-item">
+        <h2 class="accordion-header" id="faqHeading3">
+          <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse"
+                  data-bs-target="#faqCollapse3" aria-expanded="false" aria-controls="faqCollapse3">
+            <strong>Q:</strong>&nbsp;How do I contact teachers?
+          </button>
+        </h2>
+        <div id="faqCollapse3" class="accordion-collapse collapse" aria-labelledby="faqHeading3" data-bs-parent="#faqAccordion">
+          <div class="accordion-body">
+            <strong>A:</strong>&nbsp;Use points to unlock teacher contact details. Once unlocked, you can message or email the teacher directly.
+          </div>
+        </div>
+      </div>
+
+      <!-- Q4 -->
+      <div class="accordion-item">
+        <h2 class="accordion-header" id="faqHeading4">
+          <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse"
+                  data-bs-target="#faqCollapse4" aria-expanded="false" aria-controls="faqCollapse4">
+            <strong>Q:</strong>&nbsp;How much does it cost?
+          </button>
+        </h2>
+        <div id="faqCollapse4" class="accordion-collapse collapse" aria-labelledby="faqHeading4" data-bs-parent="#faqAccordion">
+          <div class="accordion-body">
+            <strong>A:</strong>&nbsp;Employers purchase points. You only spend points when unlocking teacher contact info — there are no monthly fees.
+          </div>
+        </div>
+      </div>
+
+      <!-- Q5 -->
+      <div class="accordion-item">
+        <h2 class="accordion-header" id="faqHeading5">
+          <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse"
+                  data-bs-target="#faqCollapse5" aria-expanded="false" aria-controls="faqCollapse5">
+            <strong>Q:</strong>&nbsp;Can teachers see my profile?
+          </button>
+        </h2>
+        <div id="faqCollapse5" class="accordion-collapse collapse" aria-labelledby="faqHeading5" data-bs-parent="#faqAccordion">
+          <div class="accordion-body">
+            <strong>A:</strong>&nbsp;Yes. Teachers can see your profile once you publish it. You can hide it anytime if you don’t want it visible.
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
 </section>
