@@ -4,11 +4,12 @@ import { RouterModule } from '@angular/router';
 import { FormsModule } from '@angular/forms';
 import { TeacherService } from '../../../services/teacher.service';
 import { Teacher } from '../../../models/teacher.model';
+import { TeacherCardComponent } from '../../shared/teacher-card/teacher-card';
 
 @Component({
   selector: 'app-teacher-list',
   standalone: true,
-  imports: [CommonModule, RouterModule, FormsModule],
+  imports: [CommonModule, RouterModule, FormsModule, TeacherCardComponent],
   templateUrl: './list.html',
   styleUrls: ['./list.scss'],
 })
@@ -16,7 +17,7 @@ export class TeacherListComponent implements OnInit {
   teachers: Teacher[] = [];
   loading = true;
   page = 1;               // current page
-  pageSize = 6;          // teachers per page
+  pageSize = 12;          // teachers per page
   searchTerm = '';
 
   constructor(private teacherService: TeacherService ) { }
@@ -33,16 +34,6 @@ export class TeacherListComponent implements OnInit {
       },
     });
   }
-
-  // // Fisher-Yates shuffle
-  // private shuffleArray<T>(array: T[]): T[] {
-  //   const shuffled = [...array];
-  //   for (let i = shuffled.length - 1; i > 0; i--) {
-  //     const j = Math.floor(Math.random() * (i + 1));
-  //     [shuffled[i], shuffled[j]] = [shuffled[j], shuffled[i]];
-  //   }
-  //   return shuffled;
-  // }
 
   // Filtering logic
   get filteredTeachers() {

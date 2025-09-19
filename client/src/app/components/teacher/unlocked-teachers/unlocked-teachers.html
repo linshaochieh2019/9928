@@ -20,33 +20,8 @@
     <div class="row g-4">
         @for (log of paginatedUnlocks; track log._id) {
         <div class="col-md-4">
-            <div class="card h-100 shadow-sm">
-                <img [src]="log.teacher.profilePhoto || 'assets/default-avatar.png'" alt="{{ log.teacher.displayName }}"
-                    class="card-img-top" style="object-fit: cover; height: 250px;">
-
-                <div class="card-body d-flex flex-column">
-                    <!-- Name + Headline -->
-                    <h5 class="card-title">{{ log.teacher.displayName }}</h5>
-                    <p class="headline text-brand fw-semibold mb-2">{{ log.teacher.headline }}</p>
-
-                    <!-- Quick Info -->
-                    <p class="mb-1"><strong>Nationality:</strong> {{ log.teacher.nationality }}</p>
-                    <p class="mb-1"><strong>Current Location:</strong> {{ log.teacher.location }}</p>
-                    <p class="mb-1"><strong>Experience:</strong> {{ log.teacher.yearsExperience }}+ years teaching</p>
-
-                    <!-- Unlock Date -->
-                    <p class="text-muted small fst-italic mt-2">
-                        Unlocked on {{ log.createdAt | date: 'mediumDate' }}
-                    </p>
-
-                    <!-- Push buttons to bottom -->
-                    <div class="mt-auto">
-                        <a [routerLink]="['/teachers', log.teacher._id]" class="btn btn-outline-brand btn-sm w-100">
-                            View Profile
-                        </a>
-                    </div>
-                </div>
-            </div>
+            <app-teacher-card [teacher]="log.teacher" [photoHeight]="250" [showExperience]="true">
+            </app-teacher-card>
         </div>
         }
     </div>

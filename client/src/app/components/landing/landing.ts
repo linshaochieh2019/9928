@@ -6,12 +6,14 @@ import { TeacherService } from '../../services/teacher.service';
 import { Teacher } from '../../models/teacher.model';
 import { EmployerService } from '../../services/employer.service';
 import { Employer } from '../../models/employer.model';
+import { TeacherCardComponent } from '../shared/teacher-card/teacher-card';
+import { EmployerCardComponent } from '../shared/employer-card/employer-card';
 
 
 @Component({
   selector: 'app-landing',
   standalone: true,
-  imports: [CommonModule, RouterLink],
+  imports: [CommonModule, RouterLink, TeacherCardComponent, EmployerCardComponent],
   templateUrl: './landing.html',
   styleUrls: ['./landing.scss']
 })

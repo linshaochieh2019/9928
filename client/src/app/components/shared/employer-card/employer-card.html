@@ -1,0 +1,31 @@
+<!-- Whole card clickable -->
+<a [routerLink]="['/employers', employer?._id]" class="text-decoration-none text-dark">
+    <div class="card h-100 shadow-sm border-0 hover-shadow">
+        <!-- Cover Image -->
+        <img [src]="employer?.coverImage || (employer?.images?.[0] || 'assets/default-employer-cover.jpg')"
+            [alt]="employer?.name" class="card-img-top" [style.height.px]="photoHeight" style="object-fit: cover;" />
+
+        <!-- Card Body -->
+        <div class="card-body">
+            <h5 class="card-title fw-bold mb-1">
+                {{ employer?.name }}
+
+            </h5>
+            <p class="text-muted mb-2">{{ employer?.type }}</p>
+
+            <!-- Location (always shows same icon) -->
+            <div class="d-flex align-items-center text-muted small">
+                <i class="bi bi-geo-alt me-2"></i>
+                <span>
+                    @if (employer?.location?.mainAddress) {
+                    {{ employer.location.mainAddress }}
+                    } @else if (employer?.location?.onlineOnly) {
+                    Online only
+                    } @else {
+                    No address provided
+                    }
+                </span>
+            </div>
+        </div>
+    </div>
+</a>

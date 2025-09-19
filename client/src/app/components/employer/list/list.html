@@ -16,30 +16,7 @@
   <div class="row g-4">
     @for (employer of filteredEmployers; track employer._id) {
     <div class="col-md-6 col-lg-4">
-      <!-- Whole card is clickable -->
-      <a [routerLink]="['/employers', employer._id]" class="text-decoration-none text-dark">
-        <div class="card h-100 shadow-sm border-0 hover-shadow">
-          <!-- Image -->
-          <img [src]="employer.coverImage || (employer.images[0] || 'assets/default-employer-cover.jpg')"
-            alt="{{ employer.name }}" class="card-img-top" style="height: 180px; object-fit: cover;" />
-
-          <!-- Card Body -->
-          <div class="card-body">
-            <h5 class="card-title fw-bold mb-1">
-              {{ employer.name }}
-              <!-- @if (employer.contact?.verified) {
-                      <span class="badge bg-success ms-2">✔ Verified</span>
-                    } -->
-            </h5>
-            <p class="text-muted mb-2">{{ employer.type }}</p>
-
-            <div class="d-flex align-items-center text-muted small">
-              <i class="bi bi-geo-alt me-2"></i>
-              <span>{{ employer.location.mainAddress || 'No address provided' }}</span>
-            </div>
-          </div>
-        </div>
-      </a>
+      <app-employer-card [employer]="employer"></app-employer-card>
     </div>
     }
   </div>

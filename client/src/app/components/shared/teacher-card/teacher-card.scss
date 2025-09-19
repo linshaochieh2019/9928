@@ -1,0 +1,24 @@
+.text-brand {
+  color: var(--brand-primary) !important;
+}
+
+.headline {
+  display: -webkit-box;
+  -webkit-line-clamp: 1;   /* only 1 line */
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: normal;     
+  min-height: 1.5rem;      
+}
+
+a {
+  text-decoration: none;
+  color: inherit;
+}
+
+a:hover .card {
+  box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.15); /* subtle hover lift */
+  transform: translateY(-1px);
+  transition: all 0.2s ease;
+}

@@ -5,7 +5,7 @@
       Hire Foreign Teachers in Taiwan
     </h1>
     <p class="lead text-muted mb-4">
-      Browse teacher profiles, unlock contact info, and connect right away. 
+      Browse teacher profiles, unlock contact info, and connect right away.
       No job postings, no middlemen.
     </p>
     <div class="d-flex justify-content-center gap-3">
@@ -62,58 +62,39 @@
 
 <!-- Teacher Preview Section -->
 <section class="teacher-preview-section py-5">
-  <div class="container text-center">
-    <h2 class="fw-bold mb-4 text-dark">Featured Teachers</h2>
-    <p class="text-muted mb-5">
-      Browse real teacher profiles and connect directly when you're ready.
-    </p>
+  <div class="container">
+    <!-- Center title & subtitle -->
+    <div class="text-center mb-5">
+      <h2 class="fw-bold mb-4 text-dark">Featured Teachers</h2>
+      <p class="text-muted">
+        Browse real teacher profiles and connect directly when you're ready.
+      </p>
+    </div>
 
+    <!-- Cards (no text-center here) -->
     <div class="row g-4 justify-content-center">
       @for (teacher of teachers.slice(0, 3); track teacher._id) {
       <div class="col-md-4">
-        <div class="card h-100 shadow-sm">
-
-          <!-- Profile Photo -->
-          <img [src]="teacher.profilePhoto || 'assets/default-avatar.png'" 
-               alt="{{ teacher.displayName }}" 
-               class="card-img-top"
-               style="object-fit: cover; height: 220px;">
-
-          <div class="card-body d-flex flex-column">
-            <!-- Name + Headline -->
-            <h5 class="card-title">{{ teacher.displayName }}</h5>
-            <p class="headline text-brand fw-semibold mb-2">
-              {{ teacher.headline }}
-            </p>
-
-            <!-- Quick Info (lighter than full list) -->
-            <p class="mb-1 text-muted small">{{ teacher.nationality }}</p>
-            <p class="mb-1 text-muted small">{{ teacher.location }}</p>
-            <p class="mb-3 text-muted small">
-              {{ teacher.yearsExperience }}+ years teaching
-            </p>
-
-            <!-- Button -->
-            <div class="mt-auto">
-              <a [routerLink]="['/teachers', teacher._id]" 
-                 class="btn btn-outline-brand btn-sm w-100">
-                View Profile
-              </a>
-            </div>
-          </div>
-        </div>
+        <app-teacher-card [teacher]="teacher" [photoHeight]="220"></app-teacher-card>
       </div>
       }
     </div>
 
-    <!-- CTA -->
-    <div class="mt-4">
+    <!-- CTA button centered -->
+    <!-- <div class="text-center mt-4">
       <a routerLink="/teachers" class="btn btn-primary btn-lg">
         See More Teachers
       </a>
+    </div> -->
+    <div class="text-center mt-4">
+      <a routerLink="/teachers" class="text-brand">
+        Browse all teachers →
+      </a>
     </div>
+
   </div>
 </section>
+
 
 <!-- Why Employers Use 9928 Section -->
 <section class="why-employers-section py-5">
@@ -165,36 +146,18 @@
 
 <!-- Employer Preview Section -->
 <section class="employer-preview-section py-5">
-  <div class="container text-center">
-    <h2 class="fw-bold mb-4 text-dark">Featured Employers</h2>
-    <p class="text-muted mb-5">
-      See how schools and institutions present themselves to teachers.
-    </p>
+  <div class="container">
+    <div class="text-center mb-5">
+      <h2 class="fw-bold mb-4 text-dark">Featured Employers</h2>
+      <p class="text-muted">
+        See how schools and institutions present themselves to teachers.
+      </p>
+    </div>
 
     <div class="row g-4 justify-content-center">
       @for (employer of employers.slice(0, 3); track employer._id) {
       <div class="col-md-6 col-lg-4">
-        <!-- Whole card is clickable -->
-        <a [routerLink]="['/employers', employer._id]" class="text-decoration-none text-dark">
-          <div class="card h-100 shadow-sm border-0 hover-shadow">
-            <!-- Cover Image -->
-            <img [src]="employer.coverImage || (employer.images[0] || 'assets/default-employer-cover.jpg')"
-                 alt="{{ employer.name }}"
-                 class="card-img-top"
-                 style="height: 180px; object-fit: cover;" />
-
-            <!-- Card Body -->
-            <div class="card-body">
-              <h5 class="card-title fw-bold mb-1">{{ employer.name }}</h5>
-              <p class="text-muted mb-2">{{ employer.type }}</p>
-
-              <div class="d-flex align-items-center text-muted small">
-                <i class="bi bi-geo-alt me-2"></i>
-                <span>{{ employer.location.mainAddress || 'No address provided' }}</span>
-              </div>
-            </div>
-          </div>
-        </a>
+        <app-employer-card [employer]="employer"></app-employer-card>
       </div>
       }
     </div>
@@ -213,14 +176,16 @@
       <!-- Q1 -->
       <div class="accordion-item">
         <h2 class="accordion-header" id="faqHeading1">
-          <button class="accordion-button" type="button" data-bs-toggle="collapse"
-                  data-bs-target="#faqCollapse1" aria-expanded="true" aria-controls="faqCollapse1">
+          <button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#faqCollapse1"
+            aria-expanded="true" aria-controls="faqCollapse1">
             <strong>Q:</strong>&nbsp;Do I need to post a job?
           </button>
         </h2>
-        <div id="faqCollapse1" class="accordion-collapse collapse show" aria-labelledby="faqHeading1" data-bs-parent="#faqAccordion">
+        <div id="faqCollapse1" class="accordion-collapse collapse show" aria-labelledby="faqHeading1"
+          data-bs-parent="#faqAccordion">
           <div class="accordion-body">
-            <strong>A:</strong>&nbsp;No. On 9928 you simply browse teacher profiles, unlock their contact info, and reach out directly.
+            <strong>A:</strong>&nbsp;No. On 9928 you simply browse teacher profiles, unlock their contact info, and
+            reach out directly.
           </div>
         </div>
       </div>
@@ -229,13 +194,15 @@
       <div class="accordion-item">
         <h2 class="accordion-header" id="faqHeading2">
           <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse"
-                  data-bs-target="#faqCollapse2" aria-expanded="false" aria-controls="faqCollapse2">
+            data-bs-target="#faqCollapse2" aria-expanded="false" aria-controls="faqCollapse2">
             <strong>Q:</strong>&nbsp;Do I need to create an employer account?
           </button>
         </h2>
-        <div id="faqCollapse2" class="accordion-collapse collapse" aria-labelledby="faqHeading2" data-bs-parent="#faqAccordion">
+        <div id="faqCollapse2" class="accordion-collapse collapse" aria-labelledby="faqHeading2"
+          data-bs-parent="#faqAccordion">
           <div class="accordion-body">
-            <strong>A:</strong>&nbsp;Yes. An employer account is required to buy points and unlock teacher contact information.
+            <strong>A:</strong>&nbsp;Yes. An employer account is required to buy points and unlock teacher contact
+            information.
           </div>
         </div>
       </div>
@@ -244,13 +211,15 @@
       <div class="accordion-item">
         <h2 class="accordion-header" id="faqHeading3">
           <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse"
-                  data-bs-target="#faqCollapse3" aria-expanded="false" aria-controls="faqCollapse3">
+            data-bs-target="#faqCollapse3" aria-expanded="false" aria-controls="faqCollapse3">
             <strong>Q:</strong>&nbsp;How do I contact teachers?
           </button>
         </h2>
-        <div id="faqCollapse3" class="accordion-collapse collapse" aria-labelledby="faqHeading3" data-bs-parent="#faqAccordion">
+        <div id="faqCollapse3" class="accordion-collapse collapse" aria-labelledby="faqHeading3"
+          data-bs-parent="#faqAccordion">
           <div class="accordion-body">
-            <strong>A:</strong>&nbsp;Use points to unlock teacher contact details. Once unlocked, you can message or email the teacher directly.
+            <strong>A:</strong>&nbsp;Use points to unlock teacher contact details. Once unlocked, you can message or
+            email the teacher directly.
           </div>
         </div>
       </div>
@@ -259,13 +228,15 @@
       <div class="accordion-item">
         <h2 class="accordion-header" id="faqHeading4">
           <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse"
-                  data-bs-target="#faqCollapse4" aria-expanded="false" aria-controls="faqCollapse4">
+            data-bs-target="#faqCollapse4" aria-expanded="false" aria-controls="faqCollapse4">
             <strong>Q:</strong>&nbsp;How much does it cost?
           </button>
         </h2>
-        <div id="faqCollapse4" class="accordion-collapse collapse" aria-labelledby="faqHeading4" data-bs-parent="#faqAccordion">
+        <div id="faqCollapse4" class="accordion-collapse collapse" aria-labelledby="faqHeading4"
+          data-bs-parent="#faqAccordion">
           <div class="accordion-body">
-            <strong>A:</strong>&nbsp;Employers purchase points. You only spend points when unlocking teacher contact info — there are no monthly fees.
+            <strong>A:</strong>&nbsp;Employers purchase points. You only spend points when unlocking teacher contact
+            info — there are no monthly fees.
           </div>
         </div>
       </div>
@@ -274,13 +245,15 @@
       <div class="accordion-item">
         <h2 class="accordion-header" id="faqHeading5">
           <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse"
-                  data-bs-target="#faqCollapse5" aria-expanded="false" aria-controls="faqCollapse5">
+            data-bs-target="#faqCollapse5" aria-expanded="false" aria-controls="faqCollapse5">
             <strong>Q:</strong>&nbsp;Can teachers see my profile?
           </button>
         </h2>
-        <div id="faqCollapse5" class="accordion-collapse collapse" aria-labelledby="faqHeading5" data-bs-parent="#faqAccordion">
+        <div id="faqCollapse5" class="accordion-collapse collapse" aria-labelledby="faqHeading5"
+          data-bs-parent="#faqAccordion">
           <div class="accordion-body">
-            <strong>A:</strong>&nbsp;Yes. Teachers can see your profile once you publish it. You can hide it anytime if you don’t want it visible.
+            <strong>A:</strong>&nbsp;Yes. Teachers can see your profile once you publish it. You can hide it anytime if
+            you don’t want it visible.
           </div>
         </div>
       </div>

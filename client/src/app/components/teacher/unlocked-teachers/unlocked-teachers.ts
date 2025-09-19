@@ -2,11 +2,12 @@ import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterModule } from '@angular/router';
 import { EmployerService } from '../../../services/employer.service';
+import { TeacherCardComponent } from '../../shared/teacher-card/teacher-card';
 
 @Component({
   selector: 'app-unlocked-teachers',
   standalone: true,
-  imports: [CommonModule, RouterModule],
+  imports: [CommonModule, RouterModule, TeacherCardComponent],
   templateUrl: './unlocked-teachers.html',
   styleUrls: ['./unlocked-teachers.scss']
 })

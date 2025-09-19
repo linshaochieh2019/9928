@@ -4,11 +4,12 @@ import { EmployerService } from '../../../services/employer.service';
 import { Employer } from '../../../models/employer.model';
 import { RouterModule } from '@angular/router';
 import { FormsModule } from '@angular/forms';
+import { EmployerCardComponent } from '../../shared/employer-card/employer-card';
 
 @Component({
   selector: 'app-employer-list',
   standalone: true,
-  imports: [CommonModule, RouterModule, FormsModule],
+  imports: [CommonModule, RouterModule, FormsModule, EmployerCardComponent],
   templateUrl: './list.html',
   styleUrls: ['./list.scss']
 })
